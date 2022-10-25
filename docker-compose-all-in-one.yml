@@ -1,0 +1,64 @@
+version: '3.5'
+services:
+  goal_mysql:
+    image: "mysql:5.7"
+    container_name: goal_mysql
+    restart: always
+    ports:
+      - "33306:3306"
+    volumes:
+      - "./runtime/mysql/data:/var/lib/mysql"
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: root
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+
+  goal_redis:
+    image: redis
+    container_name: goal_redis
+    restart: always
+    ports:
+      - "36379:6379"
+    volumes:
+      - "./runtime/redis/data:/data"
+      - "./runtime/redis.conf:/usr/local/etc/redis/redis.conf"
+    command:
+      redis-server /usr/local/etc/redis/redis.conf
+
+  goal_api:
+    image: goal-api
+    container_name: goal_api_service
+    restart: always
+    ports:
+      - "8100:8100"
+    links:
+      - goal_mysql
+      - goal_redis
+    depends_on:
+      - goal_mysql
+      - goal_redis
+    volumes:
+      - "./runtime/logs/api:/app/runtime/logs/api"
+      - "./settings/compose.json:/app/settings/compose.json"
+    command:
+      ["./goal", "start", "-c", "settings/compose.json"]
+
+  goal_admin:
+    image: goal-admin
+    container_name: goal_admin_service
+    restart: always
+    ports:
+      - "8200:8200"
+    links:
+      - goal_mysql
+      - goal_redis
+    depends_on:
+      - goal_mysql
+      - goal_redis
+    volumes:
+      - "./runtime/logs/admin:/app/runtime/logs/admin"
+      - "./settings/compose.json:/app/settings/compose.json"
+    command:
+      ["./goal", "start", "-c", "settings/compose.json"]

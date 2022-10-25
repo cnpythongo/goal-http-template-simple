@@ -1,0 +1,46 @@
+{
+  "app": {
+    "language": "zh_cn",
+    "secret": "db15a6fff9894e0e820e08db0bb2fdec",
+    "debug": true
+  },
+  "http": {
+    "listen_addr": ":8100",
+    "admin_listen_addr": ":8200",
+    "limit_connection": 0,
+    "read_timeout": 60,
+    "write_timeout": 60,
+    "idle_timeout": 120,
+    "max_header_bytes": 1048576,
+    "max_multipart_memory": 209715200
+  },
+  "logger": {
+    "level": "debug",
+    "formatter": "json",
+    "disable_console": false,
+    "write": true,
+    "path": "./runtime/logs",
+    "file_name": "daily",
+    "max_age": 24,
+    "rotation_time": 168,
+    "debug": true
+  },
+  "mysql": {
+    "driver": "mysql",
+    "host": "localhost",
+    "port": "3306",
+    "user": "root",
+    "password": "root",
+    "db_name": "goal",
+    "db_params": "charset=utf8mb4&parseTime=True&loc=Local"
+  },
+  "redis": {
+    "enable": true,
+    "host": "127.0.0.1",
+    "port": 6379,
+    "auth": "123456",
+    "max_idle": 20,
+    "max_active": 100,
+    "db": 0
+  }
+}

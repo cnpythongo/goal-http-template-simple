@@ -1,0 +1,25 @@
+version: '3.5'
+services:
+  goal_api:
+    image: goal-api
+    container_name: goal_api_service
+    restart: always
+    ports:
+      - "8100:8100"
+    volumes:
+      - "./runtime/logs/api:/app/runtime/logs/api"
+      - "./settings/compose.json:/app/settings/compose.json"
+    command:
+      ["./goal", "start", "-c", "settings/compose.json"]
+
+  goal_admin:
+    image: goal-admin
+    container_name: goal_admin_service
+    restart: always
+    ports:
+      - "8200:8200"
+    volumes:
+      - "./runtime/logs/admin:/app/runtime/logs/admin"
+      - "./settings/compose.json:/app/settings/compose.json"
+    command:
+      ["./goal", "start", "-c", "settings/compose.json"]
