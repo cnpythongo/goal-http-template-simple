@@ -60,7 +60,7 @@ func Get(key string) ([]byte, error) {
 	return val, KeyNotExist
 }
 
-func Set(key string, ttl uint64, value []byte) error {
+func Set(key string, ttl int64, value []byte) error {
 	if redisPool == nil {
 		return redisNotInitErr
 	}
@@ -101,7 +101,7 @@ func Exist(key string) bool {
 	return exist
 }
 
-func HSet(key string, values map[string][]byte, ttl uint64) error {
+func HSet(key string, values map[string][]byte, ttl int64) error {
 	if redisPool == nil {
 		panic(nil)
 	}

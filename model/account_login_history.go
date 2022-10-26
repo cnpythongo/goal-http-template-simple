@@ -4,7 +4,7 @@ import "github.com/cnpythongo/goal/pkg/basic"
 
 type LoginHistory struct {
 	basic.BaseModel
-	UserID int `json:"user_id" gorm:"index:loginhistory_user_id;column:user_id;type:int(11);not null"` // 用户ID
+	UserID int64 `json:"user_id" gorm:"index:loginhistory_user_id;column:user_id;type:int(11);not null;comment:用户ID"`
 }
 
 func (h *LoginHistory) TableName() string {
