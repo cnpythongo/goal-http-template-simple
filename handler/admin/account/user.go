@@ -11,13 +11,13 @@ import (
 )
 
 func CreateUser(c *gin.Context) {
-	payload := model.NewUser()
+	payload := model.NewAccountUser()
 	err := c.ShouldBindJSON(payload)
 	if err != nil {
 		resp.FailJsonResp(c, resp.PayloadError, nil)
 		return
 	}
-	eu, _ := model.GetUserByUsername(payload.Username)
+	eu, _ := model.GetUserByPhone(payload.Phone)
 	if eu != nil {
 		resp.FailJsonResp(c, resp.AccountUserExistError, nil)
 		return

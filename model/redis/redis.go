@@ -193,6 +193,6 @@ func Close() error {
 		redisPool = nil
 		return err
 	}
-	fmt.Println("redis close done.")
+	fmt.Println("redis close done")
 	return nil
 }

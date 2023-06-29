@@ -99,7 +99,7 @@ func (app *Application) Start() error {
 			IdleTimeout:    cfg.IdleTimeout * time.Second,
 			MaxHeaderBytes: cfg.MaxHeaderBytes,
 		}
-		log.GetLogger().Info("Admin Server Started, Listen on ", cfg.AdminListenAddr)
+		log.GetLogger().Info("Admin server started. Listen on ", cfg.AdminListenAddr)
 		if err := app.httpServer.ListenAndServe(); err != nil {
 			fmt.Println(err)
 		}
@@ -110,9 +110,9 @@ func (app *Application) Start() error {
 func (app *Application) Stop() error {
 	if app.httpServer != nil {
 		if err := app.httpServer.Shutdown(context.Background()); err != nil {
-			fmt.Printf("http shutdown error:%v\n", err)
+			fmt.Printf("HttpServer shutdown error:%v\n", err)
 		}
-		fmt.Println("Admin Server shutdown")
+		fmt.Println("Admin server shutdown")
 	}
 	app.wrapper.Wait()
 	status.Shutdown()
@@ -122,6 +122,6 @@ func (app *Application) Stop() error {
 	if config.GetConfig().Redis.Enable {
 		_ = redis.Close()
 	}
-	fmt.Println("Shutdown end")
+	fmt.Println("Admin server shutdown end")
 	return nil
 }

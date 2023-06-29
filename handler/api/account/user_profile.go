@@ -4,6 +4,6 @@ import (
 	"github.com/cnpythongo/goal/model"
 )
 
-func GetUserProfileObjectByUserId(userId int) (*model.UserProfile, error) {
+func GetUserProfileObjectByUserId(userId int) (*model.AccountUserProfile, error) {
 	panic("implement me")
 }

@@ -77,6 +77,6 @@ func Close() error {
 			idb.Close()
 		}
 	}
-	fmt.Println("Close mysql database connect done.")
+	fmt.Println("Close mysql database connect done")
 	return nil
 }

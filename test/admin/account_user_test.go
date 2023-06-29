@@ -10,7 +10,7 @@ import (
 )
 
 func TestCreateUser(t *testing.T) {
-	payload := model.User{
+	payload := model.AccountUser{
 		Username: "lyh333555",
 		Password: "123123",
 		Email:    "aaabbbddd@qq.com",
