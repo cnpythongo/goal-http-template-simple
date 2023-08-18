@@ -2,8 +2,8 @@ package migrate
 
 import (
 	"github.com/cnpythongo/goal/model"
-	"github.com/cnpythongo/goal/pkg/common/config"
-	"github.com/cnpythongo/goal/pkg/common/log"
+	"github.com/cnpythongo/goal/pkg/config"
+	"github.com/cnpythongo/goal/pkg/log"
 )
 
 func MigrateTables(conf *config.Configuration) {

@@ -2,15 +2,14 @@ package model
 
 import (
 	"github.com/cnpythongo/goal-tools/utils"
-	"github.com/cnpythongo/goal/pkg/basic"
-	"github.com/cnpythongo/goal/pkg/common/log"
+	"github.com/cnpythongo/goal/pkg/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"strings"
 )
 
 type AccountUser struct {
-	basic.BaseModel
+	BaseModel
 	UUID        string `json:"uuid" gorm:"column:uuid;type:varchar(64);not null;unique;comment:唯一ID"`
 	Phone       string `json:"phone" gorm:"column:phone;type:varchar(32);not null;comment:登录手机号码"`
 	Password    string `json:"-" gorm:"column:password;type:varchar(128);not null;comment:密码"`
@@ -44,13 +43,13 @@ func (u *AccountUser) BeforeCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-func GetUserByCondition(condition interface{}) (*AccountUser, error) {
+func GetUserByConditions(conditions interface{}) (*AccountUser, error) {
 	result := NewAccountUser()
-	err := db.Where(condition).First(result).Error
+	err := db.Where(conditions).First(result).Error
 	if err != nil {
 		if err != gorm.ErrRecordNotFound {
-			log.GetLogger().Infof("condition ==> %v", condition)
-			log.GetLogger().Errorf("model.account.user.GetUserByCondition Error ==> %v", err)
+			log.GetLogger().Infof("conditions ==> %v", conditions)
+			log.GetLogger().Errorf("model.account.user.GetUserByConditions Error ==> %v", err)
 		}
 		return nil, err
 	}
@@ -58,14 +57,14 @@ func GetUserByCondition(condition interface{}) (*AccountUser, error) {
 }
 
 func GetUserByPhone(phone string) (*AccountUser, error) {
-	condition := map[string]interface{}{"phone": phone}
-	result, err := GetUserByCondition(condition)
+	conditions := map[string]interface{}{"phone": phone}
+	result, err := GetUserByConditions(conditions)
 	return result, err
 }
 
 func GetUserByEmail(email string) (*AccountUser, error) {
-	condition := map[string]interface{}{"email": email}
-	result, err := GetUserByCondition(condition)
+	conditions := map[string]interface{}{"email": email}
+	result, err := GetUserByConditions(conditions)
 	return result, err
 }
 
@@ -78,9 +77,9 @@ func CreateUser(user *AccountUser) (*AccountUser, error) {
 	return user, nil
 }
 
-func GetUserByUuid(uuid string) (*AccountUser, error) {
-	condition := map[string]interface{}{"uuid": uuid}
-	result, err := GetUserByCondition(condition)
+func GetUserByUUID(uuid string) (*AccountUser, error) {
+	conditions := map[string]interface{}{"uuid": uuid}
+	result, err := GetUserByConditions(conditions)
 	return result, err
 }
 
@@ -106,10 +105,4 @@ func GetUserQueryset(page, size int, conditions interface{}) ([]*AccountUser, in
 		return nil, 0, err
 	}
 	return result, int(total), nil
-}
-
-func GetUserById(userID int) (*AccountUser, error) {
-	condition := map[string]interface{}{"id": userID}
-	result, err := GetUserByCondition(condition)
-	return result, err
 }

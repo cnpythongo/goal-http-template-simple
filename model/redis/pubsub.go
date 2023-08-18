@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"github.com/gomodule/redigo/redis"
 
-	"github.com/cnpythongo/goal/pkg/common/log"
-	"github.com/cnpythongo/goal/pkg/common/status"
+	"github.com/cnpythongo/goal/pkg/log"
+	"github.com/cnpythongo/goal/pkg/status"
 )
 
 type processFunc func(string, []byte)

@@ -4,8 +4,11 @@ var MessageEn = map[int]string{
 	SuccessCode: "ok",
 	FailCode:    "fail",
 
-	UnknownError: "Unknown error",
-	PayloadError: "Post data error",
+	UnknownError:          "Unknown error",
+	PayloadError:          "Post data error",
+	ParamsError:           "Params error",
+	AuthTokenError:        "Auth token error",
+	AuthTokenTimeoutError: "Auth token timeout",
 
 	AccountUserExistError:      "用户名已存在，请换一个",
 	AccountEmailExistsError:    "邮箱地址已存在，请换一个",

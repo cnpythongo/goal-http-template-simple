@@ -2,15 +2,23 @@ package model
 
 import (
 	"fmt"
+	"github.com/cnpythongo/goal/pkg/log"
 	"gorm.io/gorm/logger"
 	"time"
 
-	"github.com/cnpythongo/goal/pkg/common/config"
+	"github.com/cnpythongo/goal/pkg/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
+
+type BaseModel struct {
+	ID        int64 `gorm:"primary_key;comment:流水ID" json:"-"`
+	CreatedAt int64 `gorm:"column:created_at;autoCreateTime;default:0;comment:数据创建时间" json:"-"`
+	UpdatedAt int64 `gorm:"column:updated_at;autoUpdateTime;default:0;comment:数据更新时间" json:"-"`
+	DeletedAt int64 `gorm:"column:deleted_at;default:0;comment:数据删除时间" json:"-"`
+}
 
 func GetDB() *gorm.DB {
 	if db == nil {
@@ -74,9 +82,9 @@ func Close() error {
 	if db != nil {
 		idb, err := db.DB()
 		if err == nil {
-			idb.Close()
+			_ = idb.Close()
 		}
 	}
-	fmt.Println("Close mysql database connect done")
+	log.GetLogger().Info("Close mysql database connect done")
 	return nil
 }

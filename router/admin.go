@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/cnpythongo/goal/handler/liveness"
-	"github.com/cnpythongo/goal/pkg/common/config"
+	"github.com/cnpythongo/goal/pkg/config"
 )
 
 func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
@@ -14,11 +14,17 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 	// common test api
 	apiGroup := route.Group("/api")
 	apiGroup.GET("/ping", liveness.Ping)
-
 	// admin api
+	authHandler := account.NewAuthHandler()
 	adminGroup := route.Group("/api/account")
-	adminGroup.GET("/users", account.GetUserList)
-	adminGroup.GET("/users/:uid", account.GetUserByUuid)
-	adminGroup.POST("/users", account.CreateUser)
+	adminGroup.GET("/login", authHandler.Login)
+	// users
+	userHandler := account.NewUserHandler()
+	adminGroup.GET("/users", userHandler.GetUserList)
+	adminGroup.POST("/users", userHandler.CreateUser)
+	adminGroup.GET("/users/:uuid", userHandler.GetUserByUUID)
+	adminGroup.PATCH("/users/:uuid", userHandler.UpdateUserByUUID)
+	adminGroup.DELETE("/users/:uuid", userHandler.DeleteUserByUUID)
+	adminGroup.POST("/users/delete", userHandler.BatchDeleteUserByUUID)
 	return route
 }

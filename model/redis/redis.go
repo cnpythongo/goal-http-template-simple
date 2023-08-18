@@ -3,7 +3,7 @@ package redis
 import (
 	"errors"
 	"fmt"
-	"github.com/cnpythongo/goal/pkg/common/config"
+	"github.com/cnpythongo/goal/pkg/config"
 	"time"
 
 	"github.com/gomodule/redigo/redis"

@@ -15,10 +15,10 @@ import (
 	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/model/migrate"
 	"github.com/cnpythongo/goal/model/redis"
-	"github.com/cnpythongo/goal/pkg/common/config"
-	"github.com/cnpythongo/goal/pkg/common/log"
-	"github.com/cnpythongo/goal/pkg/common/status"
-	"github.com/cnpythongo/goal/pkg/common/wrapper"
+	"github.com/cnpythongo/goal/pkg/config"
+	"github.com/cnpythongo/goal/pkg/log"
+	"github.com/cnpythongo/goal/pkg/status"
+	"github.com/cnpythongo/goal/pkg/wrapper"
 	"github.com/cnpythongo/goal/router"
 )
 
@@ -48,7 +48,7 @@ var startCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(startCmd)
 	CfgFile = startCmd.Flags().StringP("config", "c", "", "api config file (required)")
-	startCmd.MarkFlagRequired("config")
+	_ = startCmd.MarkFlagRequired("config")
 }
 
 func (app *Application) GetGinEngine() *gin.Engine {
@@ -110,9 +110,9 @@ func (app *Application) Start() error {
 func (app *Application) Stop() error {
 	if app.httpServer != nil {
 		if err := app.httpServer.Shutdown(context.Background()); err != nil {
-			fmt.Printf("HttpServer shutdown error:%v\n", err)
+			log.GetLogger().Info("HttpServer shutdown error:%v\n", err)
 		}
-		fmt.Println("Admin server shutdown")
+		log.GetLogger().Info("Admin server shutdown")
 	}
 	app.wrapper.Wait()
 	status.Shutdown()
@@ -122,6 +122,6 @@ func (app *Application) Stop() error {
 	if config.GetConfig().Redis.Enable {
 		_ = redis.Close()
 	}
-	fmt.Println("Admin server shutdown end")
+	log.GetLogger().Info("Admin server shutdown done")
 	return nil
 }

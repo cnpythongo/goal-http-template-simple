@@ -1,15 +1,18 @@
 package response
 
 import (
-	"github.com/cnpythongo/goal/pkg/common/config"
+	"github.com/cnpythongo/goal/pkg/config"
 )
 
 const (
 	SuccessCode = 0
 	FailCode    = 1
 
-	UnknownError = 1000
-	PayloadError = 1100
+	UnknownError          = 1000
+	PayloadError          = 1100
+	ParamsError           = 1200
+	AuthTokenError        = 1300
+	AuthTokenTimeoutError = 1301
 
 	AccountUserExistError      = 2000
 	AccountEmailExistsError    = 2001

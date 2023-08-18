@@ -1,7 +1,6 @@
 package status
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -20,7 +19,7 @@ func IsRunnning() bool {
 
 func Shutdown() {
 	isRunnning = false
-	fmt.Println("isRunnning false")
+	// log.GetLogger().Info("isRunnning false")
 }
 
 func AddWaitGroup() {

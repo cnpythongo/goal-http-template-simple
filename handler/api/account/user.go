@@ -7,9 +7,20 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetUserByUuid(c *gin.Context) {
-	uid := c.Param("uid")
-	result, err := model.GetUserByUuid(uid)
+type IUserHandler interface {
+	GetUserByUuid(c *gin.Context)
+}
+
+type userHandler struct {
+}
+
+func NewUserHandler() IUserHandler {
+	return &userHandler{}
+}
+
+func (handler userHandler) GetUserByUuid(c *gin.Context) {
+	uuid := c.Param("uuid")
+	result, err := model.GetUserByUUID(uuid)
 	if err != nil {
 		code := resp.AccountQueryUserError
 		if err == gorm.ErrRecordNotFound {
