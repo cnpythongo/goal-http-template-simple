@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/pkg/log"
 	resp "github.com/cnpythongo/goal/pkg/response"
@@ -79,13 +78,13 @@ func (handler userHandler) GetUserList(c *gin.Context) {
 	page := payload.Page
 	size := payload.Size
 	// conditions := map[string]interface{}{}
-	result, total, err := model.GetUserQueryset(page, size, nil)
+	result, count, err := model.GetUserQueryset(page, size, nil)
 	if err != nil {
 		resp.FailJsonResp(c, resp.AccountQueryUserListError, nil)
 		return
 	}
 	resp.SuccessJsonResp(c, result, map[string]interface{}{
-		"total": total, "pages": utils.TotalPage(size, total),
+		"count": count,
 	})
 }
 

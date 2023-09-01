@@ -1,9 +1,9 @@
 package router
 
 import (
-	"github.com/cnpythongo/goal/handler/admin/account"
 	"github.com/gin-gonic/gin"
 
+	"github.com/cnpythongo/goal/handler/admin/account"
 	"github.com/cnpythongo/goal/handler/liveness"
 	"github.com/cnpythongo/goal/pkg/config"
 )

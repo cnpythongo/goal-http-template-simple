@@ -92,8 +92,8 @@ func GetUserQueryset(page, size int, conditions interface{}) ([]*AccountUser, in
 		offset := (page - 1) * size
 		qs = qs.Limit(size).Offset(offset)
 	}
-	var total int64
-	err := qs.Count(&total).Error
+	var count int64
+	err := qs.Count(&count).Error
 	if err != nil {
 		log.GetLogger().Errorf("model.account.user.GetUserQueryset Count Error ==> ", err)
 		return nil, 0, err
@@ -104,5 +104,5 @@ func GetUserQueryset(page, size int, conditions interface{}) ([]*AccountUser, in
 		log.GetLogger().Errorf("model.account.user.GetUserQueryset Query Error ==> ", err)
 		return nil, 0, err
 	}
-	return result, int(total), nil
+	return result, int(count), nil
 }

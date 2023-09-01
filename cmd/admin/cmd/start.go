@@ -75,8 +75,6 @@ func (app *Application) Init(env svc.Environment) error {
 	}
 	migrate.MigrateTables(&cfg)
 
-	app.ginEngine = router.InitAdminRouters(&cfg)
-
 	// cron task sample
 	//app.cron = cron.New()
 	//_, err = app.cron.AddFunc("5 0 * * ?", crontab.StatisticalNFTCollect)
@@ -84,6 +82,8 @@ func (app *Application) Init(env svc.Environment) error {
 	//	return err
 	//}
 	//app.cron.Start()
+
+	app.ginEngine = router.InitAdminRouters(&cfg)
 
 	return nil
 }

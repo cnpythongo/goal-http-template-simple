@@ -1,10 +1,11 @@
 package router
 
 import (
+	"github.com/gin-gonic/gin"
+	
 	"github.com/cnpythongo/goal/handler/api/account"
 	"github.com/cnpythongo/goal/handler/liveness"
 	"github.com/cnpythongo/goal/pkg/config"
-	"github.com/gin-gonic/gin"
 )
 
 func InitAPIRouters(cfg *config.Configuration) *gin.Engine {
