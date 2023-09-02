@@ -10,16 +10,16 @@ import (
 
 type AccountUser struct {
 	BaseModel
-	UUID        string `json:"uuid" gorm:"column:uuid;type:varchar(64);not null;unique;comment:唯一ID"`
-	Phone       string `json:"phone" gorm:"column:phone;type:varchar(32);not null;comment:登录手机号码"`
-	Password    string `json:"-" gorm:"column:password;type:varchar(128);not null;comment:密码"`
-	Salt        string `json:"salt" gorm:"column:salt;type:varchar(24);not null;comment:密码加盐"`
-	Nickname    string `json:"nickname" gorm:"column:nickname;type:varchar(128);not null;comment:用户昵称"`
-	Email       string `json:"email" gorm:"column:email;type:varchar(128);default:'';comment:邮箱"`
-	Avatar      string `json:"avatar" gorm:"column:avatar;type:varchar(255);default:'';comment:用户头像"`
-	Gender      int64  `json:"gender" gorm:"column:gender;type:int(11);default:0;comment:性别:0-保密,1-男,2-女"`
-	Signature   string `json:"signature" gorm:"column:signature;type:varchar(255);default:'';comment:个性化签名"`
-	LastLoginAt int64  `json:"last_login_at" gorm:"column:last_login_at;default:0;comment:最后登录时间"`
+	UUID        string     `json:"uuid" gorm:"column:uuid;type:varchar(64);not null;unique;comment:唯一ID"`
+	Phone       string     `json:"phone" gorm:"column:phone;type:varchar(32);not null;comment:登录手机号码"`
+	Password    string     `json:"-" gorm:"column:password;type:varchar(128);not null;comment:密码"`
+	Salt        string     `json:"salt" gorm:"column:salt;type:varchar(24);not null;comment:密码加盐"`
+	Nickname    string     `json:"nickname" gorm:"column:nickname;type:varchar(128);not null;comment:用户昵称"`
+	Email       string     `json:"email" gorm:"column:email;type:varchar(128);default:'';comment:邮箱"`
+	Avatar      string     `json:"avatar" gorm:"column:avatar;type:varchar(255);default:'';comment:用户头像"`
+	Gender      int64      `json:"gender" gorm:"column:gender;type:int(11);default:0;comment:性别:0-保密,1-男,2-女"`
+	Signature   string     `json:"signature" gorm:"column:signature;type:varchar(255);default:'';comment:个性化签名"`
+	LastLoginAt *LocalTime `json:"last_login_at" gorm:"column:last_login_at;default:null;comment:最后登录时间"`
 }
 
 func NewAccountUser() *AccountUser {
