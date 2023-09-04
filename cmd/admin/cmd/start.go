@@ -3,6 +3,8 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"github.com/cnpythongo/goal/model/migrate"
+	"github.com/cnpythongo/goal/pkg/redis"
 	"net/http"
 	"syscall"
 	"time"
@@ -13,8 +15,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cnpythongo/goal/model"
-	"github.com/cnpythongo/goal/model/migrate"
-	"github.com/cnpythongo/goal/model/redis"
 	"github.com/cnpythongo/goal/pkg/config"
 	"github.com/cnpythongo/goal/pkg/log"
 	"github.com/cnpythongo/goal/pkg/status"

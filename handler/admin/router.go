@@ -8,8 +8,8 @@ import (
 func RegisterAdminRoutes(r *gin.Engine) {
 	g := r.Group("/api/account")
 	// account login
-	authHandler := account.NewAuthHandler()
-	g.GET("/login", authHandler.Login)
+	auth := NewAuthHandler()
+	g.GET("/login", auth.Login)
 	// account user api
 	userHandler := account.NewUserHandler()
 	g.GET("/users", userHandler.GetUserList)
