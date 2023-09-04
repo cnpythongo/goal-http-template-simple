@@ -1,9 +1,9 @@
 package router
 
 import (
+	"github.com/cnpythongo/goal/handler/api"
 	"github.com/gin-gonic/gin"
-	
-	"github.com/cnpythongo/goal/handler/api/account"
+
 	"github.com/cnpythongo/goal/handler/liveness"
 	"github.com/cnpythongo/goal/pkg/config"
 )
@@ -14,10 +14,8 @@ func InitAPIRouters(cfg *config.Configuration) *gin.Engine {
 	// common test api
 	apiGroup := route.Group("/api")
 	apiGroup.GET("/ping", liveness.Ping)
-	// api
-	userHandler := account.NewUserHandler()
-	userGroup := route.Group("/api/account")
-	userGroup.GET("/me", userHandler.GetUserByUuid)
-	userGroup.GET("/users/:uuid", userHandler.GetUserByUuid)
+
+	api.RegisterApiRoutes(route)
+
 	return route
 }
