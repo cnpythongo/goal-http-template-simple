@@ -1,6 +1,7 @@
 package account
 
 import (
+	"errors"
 	"github.com/cnpythongo/goal/model"
 	resp "github.com/cnpythongo/goal/pkg/response"
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,7 @@ func (handler userHandler) GetUserByUuid(c *gin.Context) {
 	result, err := model.GetUserByUUID(uuid)
 	if err != nil {
 		code := resp.AccountQueryUserError
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			code = resp.AccountUserNotExistError
 		}
 		resp.FailJsonResp(c, code, nil)

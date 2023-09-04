@@ -110,5 +110,5 @@ func (handler userHandler) DeleteUserByUUID(c *gin.Context) {
 
 // 批量删除用户
 func (handler userHandler) BatchDeleteUserByUUID(c *gin.Context) {
-
+	panic("implement me")
 }
