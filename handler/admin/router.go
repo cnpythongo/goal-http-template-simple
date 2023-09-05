@@ -12,9 +12,11 @@ func RegisterAdminRoutes(r *gin.Engine) {
 	g.GET("/login", auth.Login)
 	// account user api
 	userHandler := account.NewUserHandler()
-	g.GET("/users", userHandler.GetUserList)
-	g.GET("/users/:uuid", userHandler.GetUserByUUID)
-	g.POST("/users", userHandler.CreateUser)
-	g.PATCH("/users/:uuid", userHandler.UpdateUserByUUID)
-	g.DELETE("/users/:uuid", userHandler.DeleteUserByUUID)
+	g.GET("/users", userHandler.GetList)
+	g.POST("/users", userHandler.Create)
+	g.PUT("/users", userHandler.BatchDelete)
+
+	g.GET("/users/:uuid", userHandler.Detail)
+	g.PATCH("/users/:uuid", userHandler.Update)
+	g.DELETE("/users/:uuid", userHandler.Delete)
 }

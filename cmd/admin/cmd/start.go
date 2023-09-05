@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/cnpythongo/goal/model/migrate"
-	"github.com/cnpythongo/goal/pkg/redis"
+	"github.com/cnpythongo/goal/model/redis"
 	"net/http"
 	"syscall"
 	"time"

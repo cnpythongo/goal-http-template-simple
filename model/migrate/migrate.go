@@ -4,7 +4,6 @@ import (
 	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/pkg/config"
 	"github.com/cnpythongo/goal/pkg/log"
-	"github.com/cnpythongo/goal/service/account"
 )
 
 func MigrateTables(conf *config.Configuration) {
@@ -13,16 +12,16 @@ func MigrateTables(conf *config.Configuration) {
 	}
 	log.GetLogger().Infoln("Migrate tables start .....")
 
-	err := model.GetDB().AutoMigrate(account.NewUser())
+	err := model.GetDB().AutoMigrate(model.NewUser())
 	if err != nil {
 		panic(err)
 	}
-	err = model.GetDB().AutoMigrate(account.NewUserProfile())
+	err = model.GetDB().AutoMigrate(model.NewUserProfile())
 	if err != nil {
 		panic(err)
 	}
 
-	err = model.GetDB().AutoMigrate(account.NewLoginHistory())
+	err = model.GetDB().AutoMigrate(model.NewHistory())
 	if err != nil {
 		panic(err)
 	}

@@ -1,84 +1,47 @@
 package account
 
 import (
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-
+	"fmt"
+	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/pkg/log"
 	resp "github.com/cnpythongo/goal/pkg/response"
 	"github.com/cnpythongo/goal/service/account"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type IUserHandler interface {
-	CreateUser(c *gin.Context)
-	GetUserByUUID(c *gin.Context)
-	GetUserList(c *gin.Context)
-	UpdateUserByUUID(c *gin.Context)
-	DeleteUserByUUID(c *gin.Context)
-	BatchDeleteUserByUUID(c *gin.Context)
+	GetList(c *gin.Context)
+	Create(c *gin.Context)
+	BatchDelete(c *gin.Context)
+	Delete(c *gin.Context)
+	Update(c *gin.Context)
+	Detail(c *gin.Context)
 }
 
 type userHandler struct {
+	svc account.IUserService
 }
 
 func NewUserHandler() IUserHandler {
-	return &userHandler{}
+	return &userHandler{
+		svc: account.NewUserService(),
+	}
 }
 
-// 创建用户
-func (handler *userHandler) CreateUser(c *gin.Context) {
-	payload := account.NewUser()
-	err := c.ShouldBindJSON(payload)
-	if err != nil {
-		resp.FailJsonResp(c, resp.PayloadError, nil)
-		return
-	}
-	eu, _ := account.GetUserByPhone(payload.Phone)
-	if eu != nil {
-		resp.FailJsonResp(c, resp.AccountUserExistError, nil)
-		return
-	}
-	ue, _ := account.GetUserByEmail(payload.Email)
-	if ue != nil {
-		resp.FailJsonResp(c, resp.AccountEmailExistsError, nil)
-		return
-	}
-	user, err := account.CreateUser(payload)
-	if err != nil {
-		resp.FailJsonResp(c, resp.AccountCreateError, nil)
-		return
-	}
-	resp.SuccessJsonResp(c, user, nil)
-}
-
-// 根据用户UUID获取用户详情
-func (handler *userHandler) GetUserByUUID(c *gin.Context) {
-	uuid := c.Param("uuid")
-	result, err := account.GetUserByUUID(uuid)
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			resp.FailJsonResp(c, resp.AccountUserNotExistError, nil)
-		} else {
-			resp.FailJsonResp(c, resp.AccountQueryUserError, nil)
-		}
-		return
-	}
-	resp.SuccessJsonResp(c, result, nil)
-}
-
-// 获取用户列表
-func (handler *userHandler) GetUserList(c *gin.Context) {
-	var payload ReqGetUserListPayload
-	err := c.ShouldBindQuery(&payload)
+// GetList 获取用户列表
+func (h *userHandler) GetList(c *gin.Context) {
+	var req ReqGetUserList
+	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		log.GetLogger().Error(err)
 		resp.FailJsonResp(c, resp.AccountQueryUserParamError, nil)
 		return
 	}
-	page := payload.Page
-	size := payload.Size
-	// conditions := map[string]interface{}{}
-	result, count, err := account.GetUserQueryset(page, size, nil)
+	page := req.Page
+	size := req.Size
+	conditions := map[string]interface{}{}
+	result, count, err := h.svc.GetUserList(page, size, conditions)
 	if err != nil {
 		resp.FailJsonResp(c, resp.AccountQueryUserListError, nil)
 		return
@@ -88,15 +51,62 @@ func (handler *userHandler) GetUserList(c *gin.Context) {
 	})
 }
 
+// Create 创建用户
+func (h *userHandler) Create(c *gin.Context) {
+	payload := model.NewUser()
+	err := c.ShouldBindJSON(payload)
+	if err != nil {
+		resp.FailJsonResp(c, resp.PayloadError, nil)
+		return
+	}
+	eu, _ := h.svc.GetUserByPhone(payload.Phone)
+	if eu != nil {
+		resp.FailJsonResp(c, resp.AccountUserExistError, nil)
+		return
+	}
+	ue, _ := h.svc.GetUserByEmail(payload.Email)
+	if ue != nil {
+		resp.FailJsonResp(c, resp.AccountEmailExistsError, nil)
+		return
+	}
+	user, err := h.svc.CreateUser(payload)
+	if err != nil {
+		resp.FailJsonResp(c, resp.AccountCreateError, nil)
+		return
+	}
+	resp.SuccessJsonResp(c, user, nil)
+}
+
+// BatchDelete 批量删除用户
+func (h *userHandler) BatchDelete(c *gin.Context) {
+	fmt.Println("BatchDeleteUserByUUID...")
+	panic("implement me")
+}
+
+// Delete 删除单个用户
+func (h *userHandler) Delete(c *gin.Context) {
+	uuid := c.Param("uuid")
+	err := h.svc.DeleteUserByUUID(uuid)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			resp.FailJsonResp(c, resp.AccountUserNotExistError, nil)
+		} else {
+			resp.FailJsonResp(c, resp.AccountQueryUserError, nil)
+		}
+		return
+	}
+	resp.EmptyJsonResp(c, resp.SuccessCode)
+}
+
 // 更新用户数据
-func (handler *userHandler) UpdateUserByUUID(c *gin.Context) {
+func (h *userHandler) Update(c *gin.Context) {
 
 }
 
-// DeleteUserByUUID 删除单个用户
-func (handler *userHandler) DeleteUserByUUID(c *gin.Context) {
+// Detail 根据用户UUID获取用户详情
+func (h *userHandler) Detail(c *gin.Context) {
 	uuid := c.Param("uuid")
-	result, err := account.GetUserByUUID(uuid)
+	result, err := h.svc.GetUserByUUID(uuid)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			resp.FailJsonResp(c, resp.AccountUserNotExistError, nil)
@@ -106,9 +116,4 @@ func (handler *userHandler) DeleteUserByUUID(c *gin.Context) {
 		return
 	}
 	resp.SuccessJsonResp(c, result, nil)
-}
-
-// BatchDeleteUserByUUID 批量删除用户
-func (handler *userHandler) BatchDeleteUserByUUID(c *gin.Context) {
-	panic("implement me")
 }
