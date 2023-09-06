@@ -31,7 +31,7 @@ func NewUserHandler() IUserHandler {
 
 // GetList 获取用户列表
 func (h *userHandler) GetList(c *gin.Context) {
-	var req ReqGetUserList
+	var req account.ReqGetUserList
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		log.GetLogger().Error(err)

@@ -3,23 +3,21 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"github.com/cnpythongo/goal/api"
+	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/model/migrate"
 	"github.com/cnpythongo/goal/model/redis"
-	"net/http"
-	"syscall"
-	"time"
-
-	"github.com/gin-gonic/gin"
-	"github.com/judwhite/go-svc"
-	"github.com/robfig/cron/v3"
-	"github.com/spf13/cobra"
-
-	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/pkg/config"
 	"github.com/cnpythongo/goal/pkg/log"
 	"github.com/cnpythongo/goal/pkg/status"
 	"github.com/cnpythongo/goal/pkg/wrapper"
-	"github.com/cnpythongo/goal/router"
+	"github.com/gin-gonic/gin"
+	"github.com/judwhite/go-svc"
+	"github.com/robfig/cron/v3"
+	"github.com/spf13/cobra"
+	"net/http"
+	"syscall"
+	"time"
 )
 
 type Application struct {
@@ -83,7 +81,7 @@ func (app *Application) Init(_ svc.Environment) error {
 	//}
 	//app.cron.Start()
 
-	app.ginEngine = router.InitAPIRouters(&cfg)
+	app.ginEngine = api.InitAPIRouters(&cfg)
 
 	return nil
 }

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/cnpythongo/goal/pkg/log"
 	"github.com/google/uuid"
@@ -48,7 +49,7 @@ func GetUserByConditions(db *gorm.DB, conditions interface{}) (*User, error) {
 	result := NewUser()
 	err := db.Where(conditions).First(result).Error
 	if err != nil {
-		if err != gorm.ErrRecordNotFound {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.GetLogger().Infof("conditions ==> %v", conditions)
 			log.GetLogger().Errorf("model.account.user.GetUserByConditions Error ==> %v", err)
 		}
@@ -57,12 +58,12 @@ func GetUserByConditions(db *gorm.DB, conditions interface{}) (*User, error) {
 	return result, nil
 }
 
-//	func (u *User) GetUserByPhone(phone string) (*User, error) {
-//		conditions := map[string]interface{}{"phone": phone}
-//		result, err := GetUserByConditions(conditions)
-//		return result, err
-//	}
-//
+func GetUserByPhone(db *gorm.DB, phone string) (*User, error) {
+	conditions := map[string]interface{}{"phone": phone}
+	result, err := GetUserByConditions(db, conditions)
+	return result, err
+}
+
 //	func (u *User) GetUserByEmail(email string) (*User, error) {
 //		conditions := map[string]interface{}{"email": email}
 //		result, err := GetUserByConditions(conditions)

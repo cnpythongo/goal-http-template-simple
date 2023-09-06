@@ -2,15 +2,15 @@ package router
 
 import (
 	limit "github.com/aviddiviner/gin-limit"
+	"github.com/cnpythongo/goal/pkg/liveness"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 
-	"github.com/cnpythongo/goal/handler/liveness"
 	"github.com/cnpythongo/goal/pkg/config"
 	"github.com/cnpythongo/goal/router/middleware"
 )
 
-func initDefaultRouter(cfg *config.Configuration) *gin.Engine {
+func InitDefaultRouter(cfg *config.Configuration) *gin.Engine {
 	if cfg.App.Debug {
 		gin.SetMode(gin.DebugMode)
 	} else {
