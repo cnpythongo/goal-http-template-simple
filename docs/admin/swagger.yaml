@@ -1,0 +1,23 @@
+basePath: /api/v1
+host: localhost
+info:
+  contact: {}
+  title: 后台管理系统接口文档
+  version: "1.0"
+paths:
+  /account/login:
+    post:
+      consumes:
+      - application/json
+      description: 后台管理系统登录接口
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+      summary: 管理员登录
+      tags:
+      - 登录
+swagger: "2.0"

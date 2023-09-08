@@ -24,6 +24,14 @@ func NewAuthHandler() IAuthHandler {
 	}
 }
 
+// @Summary 管理员登录
+// @Schemes
+// @Description 后台管理系统登录接口
+// @Tags 登录
+// @Accept json
+// @Produce json
+// @Success 200 {json} Helloworld
+// @Router /account/login [post]
 func (h *authHandler) Login(c *gin.Context) {
 	var payload *types.ReqAdminAuth
 	if err := c.ShouldBindJSON(&payload); err != nil {

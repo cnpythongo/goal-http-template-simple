@@ -32,6 +32,21 @@ $ go run cmd/admin/main.go start -c settings/local.json
 
     {本地IP}/api/ping
 
+## 生成Swagger接口文档
+
+* 生成Admin接口文档
+
+```shell
+$ swag init -g ./cmd/admin/main.go -o docs/admin/ --exclude ./api
+```
+
+* 生成前台API接口文档
+
+```shell
+$ swag init -g ./cmd/api/main.go -o docs/api/ --exclude ./admin
+```
+
+
 ## Docker相关：
 
 #### 构建 docker image

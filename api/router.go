@@ -6,10 +6,13 @@ import (
 	"github.com/cnpythongo/goal/pkg/config"
 	"github.com/cnpythongo/goal/router"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func InitAPIRouters(cfg *config.Configuration) *gin.Engine {
 	route := router.InitDefaultRouter(cfg)
+	route.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	g := route.Group("/api/v1/account")
 	// account login
