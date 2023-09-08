@@ -11,10 +11,10 @@ import (
 func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 	route := router.InitDefaultRouter(cfg)
 
-	g := route.Group("/api/account")
+	g := route.Group("/api/v1/account")
 	// account login
-	auth := auth.NewAuthHandler()
-	g.POST("/login", auth.Login)
+	authHandler := auth.NewAuthHandler()
+	g.POST("/login", authHandler.Login)
 	// account user api
 	userHandler := account.NewUserHandler()
 	g.GET("/users", userHandler.GetList)
