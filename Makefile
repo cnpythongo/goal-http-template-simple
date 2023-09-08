@@ -6,6 +6,12 @@ ADMIN_IMAGE_NAME = goal-admin
 ADMIN_CONTAINER_NAME = goal-admin-service
 ADMIN_PORT = 8200
 
+admin-doc:
+	swag init -g ./cmd/admin/main.go -o docs/admin/ --exclude ./api
+
+api-doc:
+	swag init -g ./cmd/api/main.go -o docs/api/ --exclude ./admin
+
 build-api:
 	docker build --build-arg GOAL_APP=api -t $(API_IMAGE_NAME) .
 
