@@ -7,7 +7,7 @@ var MessageEn = map[int]string{
 	UnknownError:          "Unknown error",
 	PayloadError:          "Post data error",
 	ParamsError:           "Params error",
-	AuthError:             "认证失败",
+	AuthError:             "用户名或密码不正确",
 	AuthTokenError:        "Auth token error",
 	AuthTokenTimeoutError: "Auth token timeout",
 

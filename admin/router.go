@@ -2,6 +2,7 @@ package admin
 
 import (
 	"github.com/cnpythongo/goal/admin/handler/account"
+	"github.com/cnpythongo/goal/admin/handler/auth"
 	"github.com/cnpythongo/goal/pkg/config"
 	"github.com/cnpythongo/goal/router"
 	"github.com/gin-gonic/gin"
@@ -12,7 +13,7 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 
 	g := route.Group("/api/account")
 	// account login
-	auth := account.NewAuthHandler()
+	auth := auth.NewAuthHandler()
 	g.POST("/login", auth.Login)
 	// account user api
 	userHandler := account.NewUserHandler()

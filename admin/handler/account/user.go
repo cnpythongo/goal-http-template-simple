@@ -6,6 +6,7 @@ import (
 	"github.com/cnpythongo/goal/pkg/log"
 	resp "github.com/cnpythongo/goal/pkg/response"
 	"github.com/cnpythongo/goal/service/account"
+	"github.com/cnpythongo/goal/service/types"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -31,7 +32,7 @@ func NewUserHandler() IUserHandler {
 
 // GetList 获取用户列表
 func (h *userHandler) GetList(c *gin.Context) {
-	var req account.ReqGetUserList
+	var req types.ReqGetUserList
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		log.GetLogger().Error(err)

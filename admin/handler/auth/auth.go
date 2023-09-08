@@ -1,8 +1,9 @@
-package account
+package auth
 
 import (
 	resp "github.com/cnpythongo/goal/pkg/response"
 	"github.com/cnpythongo/goal/service/account"
+	"github.com/cnpythongo/goal/service/types"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,18 +14,18 @@ type (
 	}
 
 	authHandler struct {
-		svc account.IUserService
+		svc account.IAdminAuthService
 	}
 )
 
 func NewAuthHandler() IAuthHandler {
 	return &authHandler{
-		svc: account.NewUserService(),
+		svc: account.NewAdminAuthService(),
 	}
 }
 
-func (h authHandler) Login(c *gin.Context) {
-	var payload *account.ReqAdminAuth
+func (h *authHandler) Login(c *gin.Context) {
+	var payload *types.ReqAdminAuth
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		resp.FailJsonResp(c, resp.PayloadError, err)
 		return
@@ -38,6 +39,6 @@ func (h authHandler) Login(c *gin.Context) {
 	resp.SuccessJsonResp(c, data, nil)
 }
 
-func (h authHandler) Logout(c *gin.Context) {
+func (h *authHandler) Logout(c *gin.Context) {
 	panic("implement me")
 }

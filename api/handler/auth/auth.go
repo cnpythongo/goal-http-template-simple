@@ -1,4 +1,4 @@
-package account
+package auth
 
 import (
 	"github.com/cnpythongo/goal/service/account"
@@ -11,12 +11,12 @@ type IAuthHandler interface {
 }
 
 type authHandler struct {
-	svc account.IUserService
+	svc account.IApiAuthService
 }
 
 func NewAuthHandler() IAuthHandler {
 	return &authHandler{
-		svc: account.NewUserService(),
+		svc: account.NewApiAuthService(),
 	}
 }
 
