@@ -15,12 +15,16 @@ type IAdminAuthService interface {
 }
 
 type adminAuthService struct {
-	db *gorm.DB
+	db      *gorm.DB
+	userSvc IUserService
 }
 
 func NewAdminAuthService() IAdminAuthService {
 	db := model.GetDB()
-	return &adminAuthService{db: db}
+	return &adminAuthService{
+		db:      db,
+		userSvc: NewUserService(),
+	}
 }
 
 func (a *adminAuthService) AdminLogin(payload *types.ReqAdminAuth) (*types.RespAdminAuth, int) {
@@ -31,27 +35,33 @@ func (a *adminAuthService) AdminLogin(payload *types.ReqAdminAuth) (*types.RespA
 		}
 		return nil, response.AccountQueryUserError
 	}
-	if user.Status == model.INACTIVE {
-		return nil, response.AccountUserInactiveError
-	} else if user.Status == model.FREEZE {
+
+	if user.Status == model.FREEZE {
 		return nil, response.AccountUserFreezeError
+	}
+	if !user.IsAdmin {
+		return nil, response.AuthForbiddenError
 	}
 
 	if !utils.VerifyPassword(payload.Password, user.Password, user.Salt) {
 		return nil, response.AuthError
 	}
 
-	token, err := jwt.GenerateToken(user.Phone, user.Password)
+	token, expireTime, err := jwt.GenerateToken(user.Phone, user.Password)
 	if err != nil {
 		return nil, response.AuthTokenGenerateError
 	}
 	data := &types.RespAdminAuth{
-		Token: token,
+		Token:      token,
+		ExpireTime: expireTime.Format(utils.DateTimeLayout),
 		User: types.RespAdminAuthUser{
 			UUID:        user.UUID,
-			Nickname:    user.Nickname,
+			Phone:       user.PhoneMask(),
 			LastLoginAt: user.LastLoginAt,
 		},
 	}
+	go func() {
+		err = a.userSvc.UpdateUserLastLogin(user.ID)
+	}()
 	return data, response.SuccessCode
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/cnpythongo/goal/admin/handler/auth"
 	"github.com/cnpythongo/goal/pkg/config"
 	"github.com/cnpythongo/goal/router"
+	"github.com/cnpythongo/goal/router/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,7 +16,9 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 	// account login
 	authHandler := auth.NewAuthHandler()
 	g.POST("/login", authHandler.Login)
+
 	// account user api
+	g.Use(middleware.JWTAuthenticationMiddleware())
 	userHandler := account.NewUserHandler()
 	g.GET("/users", userHandler.GetList)
 	g.POST("/users", userHandler.Create)

@@ -2,22 +2,22 @@ package model
 
 import (
 	"fmt"
-	"github.com/cnpythongo/goal/pkg/log"
-	"gorm.io/gorm/logger"
-	"time"
-
+	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/cnpythongo/goal/pkg/config"
+	"github.com/cnpythongo/goal/pkg/log"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"time"
 )
 
 var db *gorm.DB
 
 type BaseModel struct {
-	ID        int64      `gorm:"primary_key;comment:流水ID" json:"-"`
-	CreatedAt *LocalTime `gorm:"column:created_at;autoCreateTime;comment:数据创建时间" json:"-"`
-	UpdatedAt *LocalTime `gorm:"column:updated_at;autoUpdateTime;comment:数据更新时间" json:"-"`
-	DeletedAt *LocalTime `gorm:"column:deleted_at;default:null;comment:数据删除时间" json:"-"`
+	ID        int64            `gorm:"primary_key;comment:流水ID" json:"-"`
+	CreatedAt *utils.LocalTime `gorm:"column:created_at;autoCreateTime;comment:数据创建时间" json:"-"`
+	UpdatedAt *utils.LocalTime `gorm:"column:updated_at;autoUpdateTime;comment:数据更新时间" json:"-"`
+	DeletedAt *utils.LocalTime `gorm:"column:deleted_at;default:null;comment:数据删除时间" json:"-"`
 }
 
 func GetDB() *gorm.DB {

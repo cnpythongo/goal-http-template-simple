@@ -13,13 +13,14 @@ const (
 	ParamsError            = 1200
 	AuthError              = 1300
 	AuthTokenError         = 1301
-	AuthTokenTimeoutError  = 1302
-	AuthTokenGenerateError = 1303
+	AuthTokenGenerateError = 1302
+	AuthForbiddenError     = 1303
+	AuthRequireError       = 1304
 
 	AccountUserExistError      = 2000
 	AccountEmailExistsError    = 2001
 	AccountCreateError         = 2002
-	AccountUserIdError         = 2003
+	AccountUserOrPwdError      = 2003
 	AccountUserNotExistError   = 2004
 	AccountQueryUserError      = 2005
 	AccountQueryUserParamError = 2006

@@ -1,6 +1,6 @@
 package types
 
-import "github.com/cnpythongo/goal/model"
+import "github.com/cnpythongo/goal-tools/utils"
 
 type (
 	ReqAdminAuth struct {
@@ -10,12 +10,13 @@ type (
 
 	RespAdminAuthUser struct {
 		UUID        string           `json:"uuid"`
-		Nickname    string           `json:"nickname"`
-		LastLoginAt *model.LocalTime `json:"last_login_at"`
+		Phone       string           `json:"phone"`
+		LastLoginAt *utils.LocalTime `json:"last_login_at"`
 	}
 
 	RespAdminAuth struct {
-		Token string            `json:"token"`
-		User  RespAdminAuthUser `json:"user"`
+		Token      string            `json:"token"`
+		ExpireTime string            `json:"expire_time"`
+		User       RespAdminAuthUser `json:"user"`
 	}
 )

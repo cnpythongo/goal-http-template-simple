@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -10,21 +11,21 @@ import (
 	"github.com/cnpythongo/goal/pkg/response"
 )
 
-func JWT() gin.HandlerFunc {
+func JWTAuthenticationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var code int
-		var data interface{}
-
 		code = response.SuccessCode
-		token := c.Query("token")
+		token := c.GetHeader("Authorization")
+
 		if token == "" {
-			code = response.ParamsError
+			code = response.AuthRequireError
 		} else {
+			token = strings.TrimSpace(strings.Replace(token, "Bearer", "", 1))
 			claims, err := jwt.ParseToken(token)
 			if err != nil {
 				code = response.AuthTokenError
 			} else if time.Now().Unix() > claims.ExpiresAt {
-				code = response.AuthTokenTimeoutError
+				code = response.AuthTokenError
 			}
 		}
 
@@ -32,7 +33,6 @@ func JWT() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code": code,
 				"msg":  response.GetCodeMsg(code),
-				"data": data,
 			})
 
 			c.Abort()

@@ -4,24 +4,24 @@ import (
 	"errors"
 	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/cnpythongo/goal/pkg/log"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"strings"
+	"time"
 )
 
 type User struct {
 	BaseModel
-	UUID        string         `json:"uuid" gorm:"column:uuid;type:varchar(64);not null;unique;comment:唯一ID"`
-	Phone       string         `json:"phone" gorm:"column:phone;type:varchar(32);not null;comment:登录手机号码"`
-	Password    string         `json:"-" gorm:"column:password;type:varchar(128);not null;comment:密码"`
-	Salt        string         `json:"salt" gorm:"column:salt;type:varchar(24);not null;comment:密码加盐"`
-	Nickname    string         `json:"nickname" gorm:"column:nickname;type:varchar(128);not null;comment:用户昵称"`
-	Email       string         `json:"email" gorm:"column:email;type:varchar(128);not null;default:'';comment:邮箱"`
-	Avatar      string         `json:"avatar" gorm:"column:avatar;type:varchar(255);not null;default:'';comment:用户头像"`
-	Gender      int64          `json:"gender" gorm:"column:gender;type:int(11);not null;default:3;comment:性别:3-保密,1-男,2-女"`
-	Signature   string         `json:"signature" gorm:"column:signature;type:varchar(255);not null;default:'';comment:个性化签名"`
-	Status      userStatusType `json:"status" gorm:"column:status;type:varchar(20);not null;default:'INACTIVE';comment:用户状态"`
-	LastLoginAt *LocalTime     `json:"last_login_at" gorm:"column:last_login_at;default:null;comment:最后登录时间"`
+	UUID        string           `json:"uuid" gorm:"column:uuid;type:varchar(64);not null;unique;comment:唯一ID"`
+	Phone       string           `json:"phone" gorm:"column:phone;type:varchar(32);not null;comment:登录手机号码"`
+	Password    string           `json:"-" gorm:"column:password;type:varchar(128);not null;comment:密码"`
+	Salt        string           `json:"salt" gorm:"column:salt;type:varchar(24);not null;comment:密码加盐"`
+	Nickname    string           `json:"nickname" gorm:"column:nickname;type:varchar(128);not null;comment:用户昵称"`
+	Email       string           `json:"email" gorm:"column:email;type:varchar(128);not null;default:'';comment:邮箱"`
+	Avatar      string           `json:"avatar" gorm:"column:avatar;type:varchar(255);not null;default:'';comment:用户头像"`
+	Gender      int64            `json:"gender" gorm:"column:gender;type:int(11);not null;default:3;comment:性别:3-保密,1-男,2-女"`
+	Signature   string           `json:"signature" gorm:"column:signature;type:varchar(255);not null;default:'';comment:个性化签名"`
+	Status      userStatusType   `json:"status" gorm:"column:status;type:varchar(20);not null;default:'INACTIVE';comment:用户状态"`
+	IsAdmin     bool             `json:"is_admin" gorm:"column:is_admin;type:tinyint(1);not null;default:0;comment:是否admin账号,默认否"`
+	LastLoginAt *utils.LocalTime `json:"last_login_at" gorm:"column:last_login_at;default:null;comment:最后登录时间"`
 }
 
 func (u *User) TableName() string {
@@ -29,12 +29,18 @@ func (u *User) TableName() string {
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
-	us := uuid.New().String()
-	u.UUID = strings.ReplaceAll(us, "-", "")
+	u.UUID = utils.UUID()
 	hashPwd, salt := utils.GeneratePassword(u.Password)
 	u.Password = hashPwd
 	u.Salt = salt
 	return nil
+}
+
+func (u *User) PhoneMask() string {
+	if len(u.Phone) == 11 {
+		return u.Phone[0:4] + "****" + u.Phone[7:11]
+	}
+	return u.Phone
 }
 
 func NewUser() *User {
@@ -106,4 +112,11 @@ func GetUserList(db *gorm.DB, page, size int, conditions interface{}) ([]*User, 
 		return nil, 0, err
 	}
 	return result, int(count), nil
+}
+
+// UpdateUserLastLoginAt 更新用户最近登录时间
+func UpdateUserLastLoginAt(db *gorm.DB, id int64) error {
+	return db.Model(NewUser()).Where("id = ?", id).UpdateColumn(
+		"last_login_at", time.Now(),
+	).Error
 }

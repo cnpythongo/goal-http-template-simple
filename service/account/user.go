@@ -12,10 +12,16 @@ type IUserService interface {
 	GetUserByEmail(email string) (*model.User, error)
 	CreateUser(payload *model.User) (*model.User, error)
 	DeleteUserByUUID(uuid string) error
+
+	UpdateUserLastLogin(id int64) error
 }
 
 type userService struct {
 	db *gorm.DB
+}
+
+func (s *userService) UpdateUserLastLogin(id int64) error {
+	return model.UpdateUserLastLoginAt(s.db, id)
 }
 
 func (s *userService) DeleteUserByUUID(uuid string) error {

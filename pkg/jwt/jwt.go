@@ -11,14 +11,14 @@ import (
 var jwtSecret = []byte(config.GetConfig().App.Secret)
 
 type Claims struct {
-	Phone    string `json:"phone"`
-	Password string `json:"password"`
+	Phone    string `json:"phone" binding:"required"`
+	Password string `json:"password" binding:"required"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(phone, password string) (string, error) {
+func GenerateToken(phone, password string) (string, time.Time, error) {
 	nowTime := time.Now()
-	expireTime := nowTime.Add(7 * 24 * time.Hour)
+	expireTime := nowTime.Add(15 * 24 * time.Hour)
 
 	claims := Claims{
 		phone,
@@ -31,7 +31,7 @@ func GenerateToken(phone, password string) (string, error) {
 
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	token, err := tokenClaims.SignedString(jwtSecret)
-	return token, err
+	return token, expireTime, err
 }
 
 func ParseToken(token string) (*Claims, error) {
