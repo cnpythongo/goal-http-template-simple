@@ -1,5 +1,67 @@
 basePath: /api/v1
-host: localhost
+definitions:
+  types.ReqAdminAuth:
+    properties:
+      password:
+        description: 密码
+        example: "123456"
+        type: string
+      phone:
+        description: 手机号
+        example: "13800138000"
+        type: string
+    required:
+    - password
+    - phone
+    type: object
+  types.RespAdminAuth:
+    properties:
+      expire_time:
+        description: 过期时间
+        type: string
+      token:
+        description: 令牌
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/types.RespAdminAuthUser'
+        description: 用户基本信息
+    type: object
+  types.RespAdminAuthUser:
+    properties:
+      last_login_at:
+        description: 最近的登录时间
+        type: string
+      phone:
+        description: 带掩码的手机号
+        example: 138****8000
+        type: string
+      uuid:
+        description: 用户uuid
+        type: string
+    type: object
+  types.RespEmptyJson:
+    properties:
+      code:
+        description: 结果码：0-成功，其它-失败
+        type: integer
+      msg:
+        description: 消息, code不为0时，返回简单的错误描述
+        type: string
+    type: object
+  types.RespFailJson:
+    properties:
+      code:
+        description: 结果码：0-成功，其它-失败
+        type: integer
+      error:
+        description: 具体的错误信息
+        type: string
+      msg:
+        description: 消息, code不为0时，返回简单的错误描述
+        type: string
+    type: object
+host: localhost:8200
 info:
   contact: {}
   title: 后台管理系统接口文档
@@ -10,14 +72,45 @@ paths:
       consumes:
       - application/json
       description: 后台管理系统登录接口
+      parameters:
+      - description: 请求体
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ReqAdminAuth'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: json
-      summary: 管理员登录
+            $ref: '#/definitions/types.RespAdminAuth'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.RespFailJson'
+      summary: 登录
       tags:
-      - 登录
+      - 登录退出
+  /account/logout:
+    post:
+      description: 退出后台管理系统，前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页
+      parameters:
+      - description: Bearer 用户令牌
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.RespEmptyJson'
+      security:
+      - ApiKeyAuth: []
+      summary: 退出
+      tags:
+      - 登录退出
 swagger: "2.0"

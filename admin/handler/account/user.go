@@ -6,7 +6,7 @@ import (
 	"github.com/cnpythongo/goal/pkg/log"
 	resp "github.com/cnpythongo/goal/pkg/response"
 	"github.com/cnpythongo/goal/service/account"
-	"github.com/cnpythongo/goal/service/types"
+	"github.com/cnpythongo/goal/types"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )

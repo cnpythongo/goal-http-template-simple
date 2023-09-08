@@ -6,7 +6,7 @@ import (
 	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/pkg/jwt"
 	"github.com/cnpythongo/goal/pkg/response"
-	"github.com/cnpythongo/goal/service/types"
+	"github.com/cnpythongo/goal/types"
 	"gorm.io/gorm"
 )
 
@@ -47,7 +47,7 @@ func (a *adminAuthService) AdminLogin(payload *types.ReqAdminAuth) (*types.RespA
 		return nil, response.AuthError
 	}
 
-	token, expireTime, err := jwt.GenerateToken(user.Phone, user.Password)
+	token, expireTime, err := jwt.GenerateToken(user.ID, user.UUID, user.Phone)
 	if err != nil {
 		return nil, response.AuthTokenGenerateError
 	}

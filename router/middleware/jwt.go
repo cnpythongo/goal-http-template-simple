@@ -14,6 +14,9 @@ import (
 func JWTAuthenticationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var code int
+		var err error
+		var claims *jwt.Claims
+
 		code = response.SuccessCode
 		token := c.GetHeader("Authorization")
 
@@ -21,7 +24,7 @@ func JWTAuthenticationMiddleware() gin.HandlerFunc {
 			code = response.AuthRequireError
 		} else {
 			token = strings.TrimSpace(strings.Replace(token, "Bearer", "", 1))
-			claims, err := jwt.ParseToken(token)
+			claims, err = jwt.ParseToken(token)
 			if err != nil {
 				code = response.AuthTokenError
 			} else if time.Now().Unix() > claims.ExpiresAt {
@@ -39,6 +42,8 @@ func JWTAuthenticationMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		c.Set(jwt.ContextUserKey, claims)
+		c.Set(jwt.ContextUserTokenKey, token)
 		c.Next()
 	}
 }

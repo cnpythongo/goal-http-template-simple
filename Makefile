@@ -7,10 +7,10 @@ ADMIN_CONTAINER_NAME = goal-admin-service
 ADMIN_PORT = 8200
 
 admin-doc:
-	swag init -g ./cmd/admin/main.go -o docs/admin/ --exclude ./api
+	swag init -g ./cmd/admin/main.go -o docs/admin/ --exclude ./api --parseDependency --parseInternal
 
 api-doc:
-	swag init -g ./cmd/api/main.go -o docs/api/ --exclude ./admin
+	swag init -g ./cmd/api/main.go -o docs/api/ --exclude ./admin --parseDependency --parseInternal
 
 build-api:
 	docker build --build-arg GOAL_APP=api -t $(API_IMAGE_NAME) .

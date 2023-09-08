@@ -8,21 +8,27 @@ import (
 	"github.com/cnpythongo/goal/pkg/config"
 )
 
-var jwtSecret = []byte(config.GetConfig().App.Secret)
+var (
+	jwtSecret           = []byte(config.GetConfig().App.Secret)
+	ContextUserKey      = "GoalUser"
+	ContextUserTokenKey = "GoalUserToken"
+)
 
 type Claims struct {
-	Phone    string `json:"phone" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	ID    int64  `json:"id"`
+	UUID  string `json:"uuid"`
+	Phone string `json:"phone"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(phone, password string) (string, time.Time, error) {
+func GenerateToken(id int64, uid, phone string) (string, time.Time, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(15 * 24 * time.Hour)
 
 	claims := Claims{
+		id,
+		uid,
 		phone,
-		password,
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    "goal-app",

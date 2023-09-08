@@ -1,14 +1,15 @@
 package response
 
 import (
+	"github.com/cnpythongo/goal/types"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 func EmptyJsonResp(c *gin.Context, code int) {
-	data := gin.H{
-		"code": code,
-		"msg":  GetCodeMsg(code),
+	data := types.RespEmptyJson{
+		Code: code,
+		Msg:  GetCodeMsg(code),
 	}
 	c.JSON(http.StatusOK, data)
 }
@@ -33,5 +34,5 @@ func FailJsonResp(c *gin.Context, code int, err interface{}) {
 		"msg":   GetCodeMsg(code),
 		"error": err,
 	}
-	c.JSON(http.StatusOK, data)
+	c.JSON(http.StatusBadRequest, data)
 }

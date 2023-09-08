@@ -20,8 +20,10 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 	authHandler := auth.NewAuthHandler()
 	g.POST("/login", authHandler.Login)
 
-	// account user api
 	g.Use(middleware.JWTAuthenticationMiddleware())
+
+	g.POST("/logout", authHandler.Logout)
+	// account user api
 	userHandler := account.NewUserHandler()
 	g.GET("/users", userHandler.GetList)
 	g.POST("/users", userHandler.Create)
