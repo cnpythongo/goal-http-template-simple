@@ -32,9 +32,9 @@ func NewAuthHandler() IAuthHandler {
 // @Description 后台管理系统登录接口
 // @Accept json
 // @Produce json
-// @Param request body types.ReqAdminAuth true "请求体"
+// @Param data body types.ReqAdminAuth true "请求体"
 // @Success 200 {object} types.RespAdminAuth
-// @failure 400 {object} types.RespFailJson
+// @Failure 400 {object} types.RespFailJson
 // @Router /account/login [post]
 func (h *authHandler) Login(c *gin.Context) {
 	var payload *types.ReqAdminAuth

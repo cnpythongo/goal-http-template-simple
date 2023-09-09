@@ -12,7 +12,9 @@ import (
 
 func InitAPIRouters(cfg *config.Configuration) *gin.Engine {
 	route := router.InitDefaultRouter(cfg)
-	route.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	if cfg.App.Debug {
+		route.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
 	g := route.Group("/api/v1/account")
 	// account login

@@ -32,7 +32,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "请求体",
-                        "name": "request",
+                        "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {

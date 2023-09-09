@@ -75,7 +75,7 @@ paths:
       parameters:
       - description: 请求体
         in: body
-        name: request
+        name: data
         required: true
         schema:
           $ref: '#/definitions/types.ReqAdminAuth'
