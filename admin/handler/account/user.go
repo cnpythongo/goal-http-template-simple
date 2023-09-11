@@ -1,6 +1,7 @@
 package account
 
 import (
+	"errors"
 	"fmt"
 	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/pkg/log"
@@ -11,27 +12,8 @@ import (
 	"gorm.io/gorm"
 )
 
-type IUserHandler interface {
-	GetList(c *gin.Context)
-	Create(c *gin.Context)
-	BatchDelete(c *gin.Context)
-	Delete(c *gin.Context)
-	Update(c *gin.Context)
-	Detail(c *gin.Context)
-}
-
-type userHandler struct {
-	svc account.IUserService
-}
-
-func NewUserHandler() IUserHandler {
-	return &userHandler{
-		svc: account.NewUserService(),
-	}
-}
-
-// GetList 获取用户列表
-func (h *userHandler) GetList(c *gin.Context) {
+// GetUserList 获取用户列表
+func GetUserList(c *gin.Context) {
 	var req types.ReqGetUserList
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
@@ -39,38 +21,33 @@ func (h *userHandler) GetList(c *gin.Context) {
 		resp.FailJsonResp(c, resp.AccountQueryUserParamError, nil)
 		return
 	}
-	page := req.Page
-	size := req.Size
-	conditions := map[string]interface{}{}
-	result, count, err := h.svc.GetUserList(page, size, conditions)
+	result, code := account.NewUserService(c).GetUserList(&req)
 	if err != nil {
-		resp.FailJsonResp(c, resp.AccountQueryUserListError, nil)
+		resp.FailJsonResp(c, code, nil)
 		return
 	}
-	resp.SuccessJsonResp(c, result, map[string]interface{}{
-		"count": count,
-	})
+	resp.SuccessJsonResp(c, result, nil)
 }
 
-// Create 创建用户
-func (h *userHandler) Create(c *gin.Context) {
+// UserCreate 创建用户
+func UserCreate(c *gin.Context) {
 	payload := model.NewUser()
 	err := c.ShouldBindJSON(payload)
 	if err != nil {
 		resp.FailJsonResp(c, resp.PayloadError, nil)
 		return
 	}
-	eu, _ := h.svc.GetUserByPhone(payload.Phone)
+	eu, _ := account.NewUserService(c).GetUserByPhone(payload.Phone)
 	if eu != nil {
 		resp.FailJsonResp(c, resp.AccountUserExistError, nil)
 		return
 	}
-	ue, _ := h.svc.GetUserByEmail(payload.Email)
+	ue, _ := account.NewUserService(c).GetUserByEmail(payload.Email)
 	if ue != nil {
 		resp.FailJsonResp(c, resp.AccountEmailExistsError, nil)
 		return
 	}
-	user, err := h.svc.CreateUser(payload)
+	user, err := account.NewUserService(c).CreateUser(payload)
 	if err != nil {
 		resp.FailJsonResp(c, resp.AccountCreateError, nil)
 		return
@@ -78,18 +55,18 @@ func (h *userHandler) Create(c *gin.Context) {
 	resp.SuccessJsonResp(c, user, nil)
 }
 
-// BatchDelete 批量删除用户
-func (h *userHandler) BatchDelete(c *gin.Context) {
+// UserBatchDelete 批量删除用户
+func UserBatchDelete(c *gin.Context) {
 	fmt.Println("BatchDeleteUserByUUID...")
 	panic("implement me")
 }
 
-// Delete 删除单个用户
-func (h *userHandler) Delete(c *gin.Context) {
+// UserDelete 删除单个用户
+func UserDelete(c *gin.Context) {
 	uuid := c.Param("uuid")
-	err := h.svc.DeleteUserByUUID(uuid)
+	err := account.NewUserService(c).DeleteUserByUUID(uuid)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			resp.FailJsonResp(c, resp.AccountUserNotExistError, nil)
 		} else {
 			resp.FailJsonResp(c, resp.AccountQueryUserError, nil)
@@ -99,17 +76,17 @@ func (h *userHandler) Delete(c *gin.Context) {
 	resp.EmptyJsonResp(c, resp.SuccessCode)
 }
 
-// 更新用户数据
-func (h *userHandler) Update(c *gin.Context) {
+// UserUpdate 更新用户数据
+func UserUpdate(c *gin.Context) {
 
 }
 
-// Detail 根据用户UUID获取用户详情
-func (h *userHandler) Detail(c *gin.Context) {
+// UserDetail 根据用户UUID获取用户详情
+func UserDetail(c *gin.Context) {
 	uuid := c.Param("uuid")
-	result, err := h.svc.GetUserByUUID(uuid)
+	result, err := account.NewUserService(c).GetUserByUUID(uuid)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			resp.FailJsonResp(c, resp.AccountUserNotExistError, nil)
 		} else {
 			resp.FailJsonResp(c, resp.AccountQueryUserError, nil)

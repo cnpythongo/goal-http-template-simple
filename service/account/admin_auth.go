@@ -7,28 +7,28 @@ import (
 	"github.com/cnpythongo/goal/pkg/jwt"
 	"github.com/cnpythongo/goal/pkg/response"
 	"github.com/cnpythongo/goal/types"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type IAdminAuthService interface {
-	AdminLogin(payload *types.ReqAdminAuth) (*types.RespAdminAuth, int)
+	Login(payload *types.ReqAdminAuth) (*types.RespAdminAuth, int)
 }
 
 type adminAuthService struct {
-	db      *gorm.DB
+	ctx     *gin.Context
 	userSvc IUserService
 }
 
-func NewAdminAuthService() IAdminAuthService {
-	db := model.GetDB()
+func NewAdminAuthService(ctx *gin.Context) IAdminAuthService {
 	return &adminAuthService{
-		db:      db,
-		userSvc: NewUserService(),
+		ctx:     ctx,
+		userSvc: NewUserService(ctx),
 	}
 }
 
-func (a *adminAuthService) AdminLogin(payload *types.ReqAdminAuth) (*types.RespAdminAuth, int) {
-	user, err := model.GetUserByPhone(a.db, payload.Phone)
+func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminAuth, int) {
+	user, err := a.userSvc.GetUserByPhone(payload.Phone)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, response.AccountUserNotExistError

@@ -4,18 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type IUserHandler interface {
-	GetUserByUuid(c *gin.Context)
-}
-
-type userHandler struct {
-}
-
-func NewUserHandler() IUserHandler {
-	return &userHandler{}
-}
-
-func (handler userHandler) GetUserByUuid(c *gin.Context) {
+func GetUserByUuid(c *gin.Context) {
 	//uuid := c.Param("uuid")
 	//result, err := account.GetUserByUUID(uuid)
 	//if err != nil {

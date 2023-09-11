@@ -16,6 +16,8 @@ const (
 	AuthTokenGenerateError = 1302
 	AuthForbiddenError     = 1303
 	AuthRequireError       = 1304
+	DBQueryError           = 1400
+	DBAttributesCopyError  = 1401
 
 	AccountUserExistError      = 2000
 	AccountEmailExistsError    = 2001

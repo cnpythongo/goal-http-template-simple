@@ -9,23 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type (
-	IAuthHandler interface {
-		Login(c *gin.Context)
-		Logout(c *gin.Context)
-	}
-
-	authHandler struct {
-		svc account.IAdminAuthService
-	}
-)
-
-func NewAuthHandler() IAuthHandler {
-	return &authHandler{
-		svc: account.NewAdminAuthService(),
-	}
-}
-
 // Login 登录接口
 // @Tags 登录退出
 // @Summary 登录
@@ -36,14 +19,14 @@ func NewAuthHandler() IAuthHandler {
 // @Success 200 {object} types.RespAdminAuth
 // @Failure 400 {object} types.RespFailJson
 // @Router /account/login [post]
-func (h *authHandler) Login(c *gin.Context) {
+func Login(c *gin.Context) {
 	var payload *types.ReqAdminAuth
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		resp.FailJsonResp(c, resp.PayloadError, err)
 		return
 	}
 
-	data, code := h.svc.AdminLogin(payload)
+	data, code := account.NewAdminAuthService(c).Login(payload)
 	if code != resp.SuccessCode {
 		resp.FailJsonResp(c, code, nil)
 		return
@@ -60,7 +43,7 @@ func (h *authHandler) Login(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Success 200 {object} types.RespEmptyJson
 // @Router /account/logout [post]
-func (h *authHandler) Logout(c *gin.Context) {
+func Logout(c *gin.Context) {
 	value, ok := c.Get(jwt.ContextUserKey)
 	if ok {
 		claims := value.(*jwt.Claims)

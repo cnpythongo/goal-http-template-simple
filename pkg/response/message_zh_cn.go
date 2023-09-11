@@ -22,4 +22,6 @@ var MessageZHCN = map[int]string{
 	AccountQueryUserListError:  "查询用户列表数据失败",
 	AccountUserInactiveError:   "用户账号未激活",
 	AccountUserFreezeError:     "用户账号被冻结",
+
+	DBQueryError: "查询失败",
 }

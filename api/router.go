@@ -18,12 +18,10 @@ func InitAPIRouters(cfg *config.Configuration) *gin.Engine {
 
 	g := route.Group("/api/v1/account")
 	// account login
-	authHandler := auth.NewAuthHandler()
-	g.POST("/login", authHandler.Login)
+	g.POST("/login", auth.Login)
 	// user api
-	userHandler := account.NewUserHandler()
-	g.GET("/me", userHandler.GetUserByUuid)
-	g.GET("/users/:uuid", userHandler.GetUserByUuid)
+	g.GET("/me", account.GetUserByUuid)
+	g.GET("/users/:uuid", account.GetUserByUuid)
 
 	return route
 }

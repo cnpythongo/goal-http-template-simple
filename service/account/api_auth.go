@@ -1,8 +1,7 @@
 package account
 
 import (
-	"github.com/cnpythongo/goal/model"
-	"gorm.io/gorm"
+	"github.com/gin-gonic/gin"
 )
 
 type IApiAuthService interface {
@@ -10,12 +9,11 @@ type IApiAuthService interface {
 }
 
 type apiAuthService struct {
-	db *gorm.DB
+	ctx *gin.Context
 }
 
-func NewApiAuthService() IApiAuthService {
-	db := model.GetDB()
-	return &apiAuthService{db: db}
+func NewApiAuthService(ctx *gin.Context) IApiAuthService {
+	return &apiAuthService{ctx: ctx}
 }
 
 func (a *apiAuthService) Login(phone, password string) (map[string]interface{}, int) {
