@@ -1,6 +1,7 @@
 package account
 
 import (
+	"errors"
 	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/cnpythongo/goal/admin/types"
 	"github.com/cnpythongo/goal/model"
@@ -42,13 +43,18 @@ func (s *userService) GetUserByPhone(phone string) (*model.User, error) {
 func (s *userService) GetUserByUUID(uuid string) (*types.RespUserDetail, int, error) {
 	user, err := model.GetUserByConditions(s.db, map[string]interface{}{"uuid": uuid})
 	if err != nil {
-		return nil, response.DBQueryError, err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, response.AccountUserNotExistError, err
+		} else {
+			return nil, response.AccountQueryUserError, err
+		}
 	}
 	result := new(types.RespUserDetail)
 	err = copier.Copy(result, user)
 	if err != nil {
 		return nil, response.DBAttributesCopyError, err
 	}
+	result.Phone = user.PhoneMask()
 	return result, response.SuccessCode, nil
 }
 

@@ -18,7 +18,7 @@ import (
 // @Description 获取用户列表
 // @Accept json
 // @Produce json
-// @Param query query types.ReqGetUserList true "请求体"
+// @Param data query types.ReqGetUserList false "请求体"
 // @Success 200 {object} types.RespGetUserList
 // @Failure 400 {object} types.RespFailJson
 // @Security ApiKeyAuth
@@ -28,7 +28,7 @@ func GetUserList(c *gin.Context) {
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		log.GetLogger().Error(err)
-		response.FailJsonResp(c, response.AccountQueryUserParamError, nil)
+		response.FailJsonResp(c, response.AccountQueryUserParamError, err)
 		return
 	}
 	result, code, err := account.NewUserService(c).GetUserList(&req)
@@ -93,19 +93,18 @@ func UserUpdate(c *gin.Context) {
 }
 
 // UserDetail 根据用户UUID获取用户详情
+// @Tags 用户管理
+// @Summary 通过用户UUID获取用户详情
+// @Description 获取用户详情
+// @Accept json
+// @Produce json
+// @Param uuid path string true "用户UUID"
+// @Success 200 {object} types.RespUserDetail
+// @Failure 400 {object} types.RespFailJson
+// @Security ApiKeyAuth
+// @Router /account/users/{uuid} [get]
 func UserDetail(c *gin.Context) {
 	uuid := c.Param("uuid")
-	//result, code, err := account.NewUserService(c).GetUserByUUID(uuid)
-	//if err != nil {
-	//	if errors.Is(err, gorm.ErrRecordNotFound) {
-	//		response.FailJsonResp(c, response.AccountUserNotExistError, nil)
-	//	} else {
-	//		response.FailJsonResp(c, response.AccountQueryUserError, nil)
-	//	}
-	//	return
-	//}
-	//response.SuccessJsonResp(c, result, nil)
-
 	result, code, err := account.NewUserService(c).GetUserByUUID(uuid)
 	if err != nil {
 		response.FailJsonResp(c, code, nil)

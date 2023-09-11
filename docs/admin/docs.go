@@ -154,6 +154,49 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/account/users/{uuid}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取用户详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "通过用户UUID获取用户详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户UUID",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -270,6 +313,31 @@ const docTemplate = `{
             }
         },
         "github_com_cnpythongo_goal_admin_types.RespUser": {
+            "type": "object",
+            "properties": {
+                "last_login_at": {
+                    "description": "最近登录时间",
+                    "type": "string",
+                    "example": "2023-09-01 13:30:59"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string",
+                    "example": "goal-nick"
+                },
+                "phone": {
+                    "description": "手机号",
+                    "type": "string",
+                    "example": "13800138000"
+                },
+                "uuid": {
+                    "description": "用户UUID,32位字符串",
+                    "type": "string",
+                    "example": "826d6b1aa64d471d822d667e92218158"
+                }
+            }
+        },
+        "github_com_cnpythongo_goal_admin_types.RespUserDetail": {
             "type": "object",
             "properties": {
                 "last_login_at": {

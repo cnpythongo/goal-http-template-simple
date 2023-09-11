@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"github.com/cnpythongo/goal/admin/service/account"
+	"github.com/cnpythongo/goal/admin/service/auth"
 	"github.com/cnpythongo/goal/admin/types"
 	"github.com/cnpythongo/goal/pkg/log"
 	"github.com/cnpythongo/goal/pkg/response"
@@ -25,7 +25,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	data, code, err := account.NewAdminAuthService(c).Login(payload)
+	data, code, err := auth.NewAdminAuthService(c).Login(payload)
 	if code != response.SuccessCode {
 		response.FailJsonResp(c, code, err)
 		return
@@ -46,7 +46,7 @@ func Login(c *gin.Context) {
 // @Router /account/logout [post]
 func Logout(c *gin.Context) {
 	go func() {
-		err := account.NewAdminAuthService(c).Logout()
+		err := auth.NewAdminAuthService(c).Logout()
 		if err != nil {
 			log.GetLogger().Error(err)
 		}
