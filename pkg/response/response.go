@@ -30,9 +30,11 @@ func SuccessJsonResp(c *gin.Context, result interface{}, extends map[string]inte
 
 func FailJsonResp(c *gin.Context, code int, err interface{}) {
 	data := gin.H{
-		"code":  code,
-		"msg":   GetCodeMsg(code),
-		"error": err,
+		"code": code,
+		"msg":  GetCodeMsg(code),
+	}
+	if err != nil {
+		data["error"] = err
 	}
 	c.JSON(http.StatusBadRequest, data)
 }
