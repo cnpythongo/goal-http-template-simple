@@ -41,9 +41,9 @@ services:
       - goal_redis
     volumes:
       - "./runtime/logs/api:/app/runtime/logs/api"
-      - "./settings/compose.json:/app/settings/compose.json"
+      - "./settings/server.json:/app/settings/server.json"
     command:
-      ["./goal", "start", "-c", "settings/compose.json"]
+      ["./goal", "start", "-c", "settings/server.json"]
 
   goal_admin:
     image: goal-admin
@@ -59,6 +59,6 @@ services:
       - goal_redis
     volumes:
       - "./runtime/logs/admin:/app/runtime/logs/admin"
-      - "./settings/compose.json:/app/settings/compose.json"
+      - "./settings/server.json:/app/settings/server.json"
     command:
-      ["./goal", "start", "-c", "settings/compose.json"]
+      ["./goal", "start", "-c", "settings/server.json"]
