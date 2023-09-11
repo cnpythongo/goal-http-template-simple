@@ -5,7 +5,7 @@ import "github.com/cnpythongo/goal-tools/utils"
 type (
 	// ReqGetUserList 获取用户列表的请求参数体
 	ReqGetUserList struct {
-		Page             int    `json:"page,default=1" form:"page,default=1" example:"1"`                             // 页码
+		Page             int    `json:"page,default=1" form:"page,default=1" default:"1" example:"1"`                 // 页码
 		Size             int    `json:"size,default=10" form:"size,default=10" default:"10" example:"10"`             // 每页数量
 		LastLoginAtStart string `json:"last_login_at_start" form:"last_login_at_start" example:"2023-09-01 01:30:59"` // 最近登录时间起始
 		LastLoginAtEnd   string `json:"last_login_at_end" form:"last_login_at_end" example:"2023-09-01 22:59:59"`     // 最近登录时间截止
@@ -25,5 +25,9 @@ type (
 		Total  int         `json:"total"`  // 总页数
 		Count  int         `json:"count"`  // 总记录数
 		Result []*RespUser `json:"result"` // 当前结果集
+	}
+
+	RespUserDetail struct {
+		RespUser
 	}
 )

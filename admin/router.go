@@ -20,18 +20,17 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 	g := route.Group("/api/v1/account")
 	// account login
 	g.POST("/login", auth.Login)
-
-	g.Use(middleware.JWTAuthenticationMiddleware())
-
 	g.POST("/logout", auth.Logout)
+	g.Use(middleware.JWTAuthenticationMiddleware())
 	// account user api
-	g.POST("/users", account.UserCreate)
-	g.GET("/users", account.GetUserList)
-	g.PUT("/users", account.UserBatchDelete)
+	u := route.Group("/api/v1/account/users")
+	u.POST("", account.UserCreate)
+	u.GET("", account.GetUserList)
+	u.PUT("", account.UserBatchDelete)
 
-	g.GET("/users/:uuid", account.UserDetail)
-	g.PATCH("/users/:uuid", account.UserUpdate)
-	g.DELETE("/users/:uuid", account.UserDelete)
+	u.GET("/:uuid", account.UserDetail)
+	u.PATCH("/:uuid", account.UserUpdate)
+	u.DELETE("/:uuid", account.UserDelete)
 
 	return route
 }

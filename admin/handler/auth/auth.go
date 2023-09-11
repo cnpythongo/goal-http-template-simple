@@ -1,15 +1,14 @@
 package auth
 
 import (
-	"fmt"
-	"github.com/cnpythongo/goal/pkg/jwt"
-	resp "github.com/cnpythongo/goal/pkg/response"
-	"github.com/cnpythongo/goal/service/account"
-	"github.com/cnpythongo/goal/types"
+	"github.com/cnpythongo/goal/admin/service/account"
+	"github.com/cnpythongo/goal/admin/types"
+	"github.com/cnpythongo/goal/pkg/log"
+	"github.com/cnpythongo/goal/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
-// Login 登录接口
+// Login 登录
 // @Tags 登录退出
 // @Summary 登录
 // @Description 后台管理系统登录接口
@@ -22,38 +21,35 @@ import (
 func Login(c *gin.Context) {
 	var payload *types.ReqAdminAuth
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		resp.FailJsonResp(c, resp.PayloadError, err)
+		response.FailJsonResp(c, response.PayloadError, err)
 		return
 	}
 
-	data, code := account.NewAdminAuthService(c).Login(payload)
-	if code != resp.SuccessCode {
-		resp.FailJsonResp(c, code, nil)
+	data, code, err := account.NewAdminAuthService(c).Login(payload)
+	if code != response.SuccessCode {
+		response.FailJsonResp(c, code, err)
 		return
 	}
-	resp.SuccessJsonResp(c, data, nil)
+	response.SuccessJsonResp(c, data, nil)
 }
 
-// Logout 退出接口
+// Logout 退出
 // @Tags 登录退出
 // @Summary 退出
-// @Description 退出后台管理系统，前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页
+// @Description 退出后台管理系统
+// @Description 前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页
+// @Description 后端可以执行清理redis缓存, 设置token黑名单等操作
 // @Produce json
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Security ApiKeyAuth
 // @Success 200 {object} types.RespEmptyJson
 // @Router /account/logout [post]
 func Logout(c *gin.Context) {
-	value, ok := c.Get(jwt.ContextUserKey)
-	if ok {
-		claims := value.(*jwt.Claims)
-		userId := claims.ID
-		token, _ := c.Get(jwt.ContextUserTokenKey)
-		go func() {
-			// 清理redis缓存, 设置token黑名单等操作
-			fmt.Println(userId)
-			fmt.Println(token)
-		}()
-	}
-	resp.EmptyJsonResp(c, resp.SuccessCode)
+	go func() {
+		err := account.NewAdminAuthService(c).Logout()
+		if err != nil {
+			log.GetLogger().Error(err)
+		}
+	}()
+	response.EmptyJsonResp(c, response.SuccessCode)
 }

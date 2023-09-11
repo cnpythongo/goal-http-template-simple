@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  types.ReqAdminAuth:
+  github_com_cnpythongo_goal_admin_types.ReqAdminAuth:
     properties:
       password:
         description: 密码
@@ -14,7 +14,7 @@ definitions:
     - password
     - phone
     type: object
-  types.RespAdminAuth:
+  github_com_cnpythongo_goal_admin_types.RespAdminAuth:
     properties:
       expire_time:
         description: 过期时间
@@ -24,10 +24,10 @@ definitions:
         type: string
       user:
         allOf:
-        - $ref: '#/definitions/types.RespAdminAuthUser'
+        - $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespAdminAuthUser'
         description: 用户基本信息
     type: object
-  types.RespAdminAuthUser:
+  github_com_cnpythongo_goal_admin_types.RespAdminAuthUser:
     properties:
       last_login_at:
         description: 最近的登录时间
@@ -40,7 +40,7 @@ definitions:
         description: 用户uuid
         type: string
     type: object
-  types.RespEmptyJson:
+  github_com_cnpythongo_goal_admin_types.RespEmptyJson:
     properties:
       code:
         description: 结果码：0-成功，其它-失败
@@ -49,7 +49,7 @@ definitions:
         description: 消息, code不为0时，返回简单的错误描述
         type: string
     type: object
-  types.RespFailJson:
+  github_com_cnpythongo_goal_admin_types.RespFailJson:
     properties:
       code:
         description: 结果码：0-成功，其它-失败
@@ -59,6 +59,42 @@ definitions:
         type: string
       msg:
         description: 消息, code不为0时，返回简单的错误描述
+        type: string
+    type: object
+  github_com_cnpythongo_goal_admin_types.RespGetUserList:
+    properties:
+      count:
+        description: 总记录数
+        type: integer
+      page:
+        description: 当前页
+        type: integer
+      result:
+        description: 当前结果集
+        items:
+          $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespUser'
+        type: array
+      total:
+        description: 总页数
+        type: integer
+    type: object
+  github_com_cnpythongo_goal_admin_types.RespUser:
+    properties:
+      last_login_at:
+        description: 最近登录时间
+        example: "2023-09-01 13:30:59"
+        type: string
+      nickname:
+        description: 昵称
+        example: goal-nick
+        type: string
+      phone:
+        description: 手机号
+        example: "13800138000"
+        type: string
+      uuid:
+        description: 用户UUID,32位字符串
+        example: 826d6b1aa64d471d822d667e92218158
         type: string
     type: object
 host: localhost:8200
@@ -78,24 +114,27 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.ReqAdminAuth'
+          $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.ReqAdminAuth'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.RespAdminAuth'
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespAdminAuth'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.RespFailJson'
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
       summary: 登录
       tags:
       - 登录退出
   /account/logout:
     post:
-      description: 退出后台管理系统，前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页
+      description: |-
+        退出后台管理系统
+        前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页
+        后端可以执行清理redis缓存, 设置token黑名单等操作
       parameters:
       - description: Bearer 用户令牌
         in: header
@@ -107,10 +146,54 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.RespEmptyJson'
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson'
       security:
       - ApiKeyAuth: []
       summary: 退出
       tags:
       - 登录退出
+  /account/users:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户列表
+      parameters:
+      - description: 最近登录时间截止
+        example: "2023-09-01 22:59:59"
+        in: query
+        name: last_login_at_end
+        type: string
+      - description: 最近登录时间起始
+        example: "2023-09-01 01:30:59"
+        in: query
+        name: last_login_at_start
+        type: string
+      - default: 1
+        description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        example: 10
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespGetUserList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户列表
+      tags:
+      - 用户管理
 swagger: "2.0"

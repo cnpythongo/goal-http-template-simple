@@ -36,7 +36,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.ReqAdminAuth"
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqAdminAuth"
                         }
                     }
                 ],
@@ -44,13 +44,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.RespAdminAuth"
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespAdminAuth"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/types.RespFailJson"
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
                         }
                     }
                 }
@@ -63,7 +63,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "退出后台管理系统，前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页",
+                "description": "退出后台管理系统\n前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页\n后端可以执行清理redis缓存, 设置token黑名单等操作",
                 "produces": [
                     "application/json"
                 ],
@@ -83,7 +83,73 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.RespEmptyJson"
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/users": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取用户列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "获取用户列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "2023-09-01 22:59:59",
+                        "description": "最近登录时间截止",
+                        "name": "last_login_at_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2023-09-01 01:30:59",
+                        "description": "最近登录时间起始",
+                        "name": "last_login_at_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "example": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "每页数量",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespGetUserList"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
                         }
                     }
                 }
@@ -91,7 +157,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "types.ReqAdminAuth": {
+        "github_com_cnpythongo_goal_admin_types.ReqAdminAuth": {
             "type": "object",
             "required": [
                 "password",
@@ -110,7 +176,7 @@ const docTemplate = `{
                 }
             }
         },
-        "types.RespAdminAuth": {
+        "github_com_cnpythongo_goal_admin_types.RespAdminAuth": {
             "type": "object",
             "properties": {
                 "expire_time": {
@@ -125,13 +191,13 @@ const docTemplate = `{
                     "description": "用户基本信息",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.RespAdminAuthUser"
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespAdminAuthUser"
                         }
                     ]
                 }
             }
         },
-        "types.RespAdminAuthUser": {
+        "github_com_cnpythongo_goal_admin_types.RespAdminAuthUser": {
             "type": "object",
             "properties": {
                 "last_login_at": {
@@ -149,7 +215,7 @@ const docTemplate = `{
                 }
             }
         },
-        "types.RespEmptyJson": {
+        "github_com_cnpythongo_goal_admin_types.RespEmptyJson": {
             "type": "object",
             "properties": {
                 "code": {
@@ -162,7 +228,7 @@ const docTemplate = `{
                 }
             }
         },
-        "types.RespFailJson": {
+        "github_com_cnpythongo_goal_admin_types.RespFailJson": {
             "type": "object",
             "properties": {
                 "code": {
@@ -176,6 +242,55 @@ const docTemplate = `{
                 "msg": {
                     "description": "消息, code不为0时，返回简单的错误描述",
                     "type": "string"
+                }
+            }
+        },
+        "github_com_cnpythongo_goal_admin_types.RespGetUserList": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "description": "总记录数",
+                    "type": "integer"
+                },
+                "page": {
+                    "description": "当前页",
+                    "type": "integer"
+                },
+                "result": {
+                    "description": "当前结果集",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUser"
+                    }
+                },
+                "total": {
+                    "description": "总页数",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_cnpythongo_goal_admin_types.RespUser": {
+            "type": "object",
+            "properties": {
+                "last_login_at": {
+                    "description": "最近登录时间",
+                    "type": "string",
+                    "example": "2023-09-01 13:30:59"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string",
+                    "example": "goal-nick"
+                },
+                "phone": {
+                    "description": "手机号",
+                    "type": "string",
+                    "example": "13800138000"
+                },
+                "uuid": {
+                    "description": "用户UUID,32位字符串",
+                    "type": "string",
+                    "example": "826d6b1aa64d471d822d667e92218158"
                 }
             }
         }
