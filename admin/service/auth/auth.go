@@ -33,7 +33,7 @@ func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminA
 		return nil, response.AccountQueryUserError, err
 	}
 
-	if user.Status == model.FREEZE {
+	if user.Status == model.UserStatusFreeze {
 		return nil, response.AccountUserFreezeError, err
 	}
 	if !user.IsAdmin {
@@ -58,7 +58,7 @@ func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminA
 		},
 	}
 	go func() {
-		err = a.userSvc.UpdateUserLastLogin(user.ID)
+		err = a.userSvc.UpdateUserLastLogin(user.UUID)
 	}()
 	return data, response.SuccessCode, nil
 }

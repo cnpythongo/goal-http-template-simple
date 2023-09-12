@@ -1,14 +1,12 @@
 package account
 
 import (
-	"errors"
 	"fmt"
 	"github.com/cnpythongo/goal/admin/service/account"
 	"github.com/cnpythongo/goal/admin/types"
 	"github.com/cnpythongo/goal/pkg/log"
 	"github.com/cnpythongo/goal/pkg/response"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 // GetUserList 获取用户列表
@@ -70,24 +68,40 @@ func UserBatchDelete(c *gin.Context) {
 	panic("implement me")
 }
 
-// UserDelete 删除单个用户
+// UserDelete 删除用户
+// @Tags 用户管理
+// @Summary 删除用户
+// @Description 删除单个用户
+// @Accept json
+// @Produce json
+// @Param uuid path string true "用户UUID"
+// @Success 200 {object} types.RespEmptyJson
+// @Failure 400 {object} types.RespFailJson
+// @Security ApiKeyAuth
+// @Router /account/users/{uuid} [delete]
 func UserDelete(c *gin.Context) {
 	uuid := c.Param("uuid")
-	err := account.NewUserService(c).DeleteUserByUUID(uuid)
+	code, err := account.NewUserService(c).DeleteUserByUUID(uuid)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			response.FailJsonResp(c, response.AccountUserNotExistError, nil)
-		} else {
-			log.GetLogger().Error(err)
-			response.FailJsonResp(c, response.AccountQueryUserError, err)
-		}
+		response.FailJsonResp(c, code, err)
 		return
 	}
 	response.EmptyJsonResp(c, response.SuccessCode)
 }
 
 // UserUpdate 更新用户数据
+// @Tags 用户管理
+// @Summary 更新用户
+// @Description 更新用户数据
+// @Accept json
+// @Produce json
+// @Param data body types.ReqUpdateUser true "请求体"
+// @Success 200 {object} types.RespEmptyJson
+// @Failure 400 {object} types.RespFailJson
+// @Security ApiKeyAuth
+// @Router /account/users/{uuid} [put]
 func UserUpdate(c *gin.Context) {
+	// svc := account.NewUserService(c).UpdateUserLastLogin()
 
 }
 

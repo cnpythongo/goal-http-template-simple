@@ -29,6 +29,8 @@ const (
 	AccountQueryUserListError  = 2007
 	AccountUserInactiveError   = 2008
 	AccountUserFreezeError     = 2009
+	AccountUserDeleteError     = 2010
+	AccountUserUpdateError     = 2011
 )
 
 var MsgMapping = map[string]map[int]string{

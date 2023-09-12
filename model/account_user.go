@@ -85,10 +85,10 @@ func CreateUser(db *gorm.DB, user *User) (*User, error) {
 	return user, nil
 }
 
-func GetUserList(db *gorm.DB, page, size int, conditions interface{}) ([]*User, int, error) {
-	qs := db.Model(NewUser())
-	if conditions != nil {
-		qs = qs.Where(conditions)
+func GetUserList(db *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*User, int, error) {
+	qs := db.Model(NewUser()).Where("status != ?", UserStatusDelete)
+	if query != nil && args != nil {
+		qs = qs.Where(query, args...)
 	}
 	if page > 0 && size > 0 {
 		offset := (page - 1) * size
@@ -110,11 +110,18 @@ func GetUserList(db *gorm.DB, page, size int, conditions interface{}) ([]*User, 
 }
 
 // UpdateUserLastLoginAt 更新用户最近登录时间
-func UpdateUserLastLoginAt(db *gorm.DB, id int64) error {
-	return db.Model(NewUser()).Where("id = ?", id).UpdateColumns(
-		map[string]interface{}{
-			"status":        ACTIVE,
-			"last_login_at": time.Now(),
-		},
-	).Error
+func UpdateUserLastLoginAt(db *gorm.DB, uuid string) error {
+	return UpdateUser(db, uuid, map[string]interface{}{
+		"status":        UserStatusActive,
+		"last_login_at": time.Now(),
+		"updated_at":    time.Now(),
+	})
+}
+
+func UpdateUser(db *gorm.DB, uuid string, data map[string]interface{}) error {
+	return db.Model(NewUser()).Where("uuid = ?", uuid).UpdateColumns(data).Error
+}
+
+func DeleteUser(db *gorm.DB, uuid string) error {
+	return db.Where("uuid = ?", uuid).Delete(NewUser()).Error
 }

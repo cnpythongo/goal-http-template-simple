@@ -5,10 +5,10 @@ import "database/sql/driver"
 type UserStatusType string
 
 const (
-	INACTIVE UserStatusType = "INACTIVE"
-	ACTIVE   UserStatusType = "ACTIVE"
-	FREEZE   UserStatusType = "FREEZE"
-	REMOVE   UserStatusType = "REMOVE"
+	UserStatusInactive UserStatusType = "INACTIVE"
+	UserStatusActive   UserStatusType = "ACTIVE"
+	UserStatusFreeze   UserStatusType = "FREEZE"
+	UserStatusDelete   UserStatusType = "DELETE"
 )
 
 func (st *UserStatusType) Scan(value interface{}) error {

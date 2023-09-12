@@ -102,6 +102,13 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "abc@abc.com",
+                        "description": "邮箱",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "example": "2023-09-01 22:59:59",
                         "description": "最近登录时间截止",
                         "name": "last_login_at_end",
@@ -115,6 +122,13 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "example": "Tom",
+                        "description": "昵称",
+                        "name": "nickname",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "default": 1,
                         "example": 1,
@@ -123,11 +137,38 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "example": "13800138000",
+                        "description": "手机号",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "default": 10,
                         "example": 10,
                         "description": "每页数量",
                         "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "enum": [
+                                "INACTIVE",
+                                "ACTIVE",
+                                "FREEZE",
+                                "DELETE"
+                            ],
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "example": [
+                            "FREEZE",
+                            "ACTIVE"
+                        ],
+                        "description": "用户状态,多种状态过滤使用逗号分隔",
+                        "name": "status",
                         "in": "query"
                     }
                 ],
@@ -231,6 +272,90 @@
                         }
                     }
                 }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "更新用户数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "更新用户",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqUpdateUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "删除单个用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "删除用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户UUID",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                        }
+                    }
+                }
             }
         }
     },
@@ -287,6 +412,40 @@
                 }
             }
         },
+        "github_com_cnpythongo_goal_admin_types.ReqUpdateUser": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "用户头像URL",
+                    "type": "string",
+                    "example": "a/b/c.jpg"
+                },
+                "email": {
+                    "description": "邮箱",
+                    "type": "string",
+                    "example": "abc@abc.com"
+                },
+                "gender": {
+                    "description": "性别:3-保密,1-男,2-女",
+                    "type": "integer"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string",
+                    "example": "Tom"
+                },
+                "signature": {
+                    "description": "个性化签名",
+                    "type": "string",
+                    "example": "haha"
+                },
+                "status": {
+                    "description": "用户状态",
+                    "type": "string",
+                    "example": "FREEZE"
+                }
+            }
+        },
         "github_com_cnpythongo_goal_admin_types.RespAdminAuth": {
             "type": "object",
             "properties": {
@@ -331,11 +490,13 @@
             "properties": {
                 "code": {
                     "description": "结果码：0-成功，其它-失败",
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 0
                 },
                 "msg": {
                     "description": "消息, code不为0时，返回简单的错误描述",
-                    "type": "string"
+                    "type": "string",
+                    "example": "ok"
                 }
             }
         },
@@ -344,15 +505,18 @@
             "properties": {
                 "code": {
                     "description": "结果码：0-成功，其它-失败",
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1000
                 },
                 "error": {
                     "description": "具体的错误信息",
-                    "type": "string"
+                    "type": "string",
+                    "example": "not found"
                 },
                 "msg": {
                     "description": "消息, code不为0时，返回简单的错误描述",
-                    "type": "string"
+                    "type": "string",
+                    "example": "error"
                 }
             }
         },
@@ -464,13 +628,13 @@
                 "INACTIVE",
                 "ACTIVE",
                 "FREEZE",
-                "REMOVE"
+                "DELETE"
             ],
             "x-enum-varnames": [
-                "INACTIVE",
-                "ACTIVE",
-                "FREEZE",
-                "REMOVE"
+                "UserStatusInactive",
+                "UserStatusActive",
+                "UserStatusFreeze",
+                "UserStatusDelete"
             ]
         }
     }

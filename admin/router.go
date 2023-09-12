@@ -29,7 +29,7 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 	u.PUT("", account.UserBatchDelete)
 
 	u.GET("/:uuid", account.UserDetail)
-	u.PATCH("/:uuid", account.UserUpdate)
+	u.PUT("/:uuid", account.UserUpdate)
 	u.DELETE("/:uuid", account.UserDelete)
 
 	return route
