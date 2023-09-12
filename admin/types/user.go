@@ -1,6 +1,9 @@
 package types
 
-import "github.com/cnpythongo/goal-tools/utils"
+import (
+	"github.com/cnpythongo/goal-tools/utils"
+	"github.com/cnpythongo/goal/model"
+)
 
 type (
 	// ReqGetUserList 获取用户列表的请求参数体
@@ -13,10 +16,12 @@ type (
 
 	// RespUser 用户详情数据结构体
 	RespUser struct {
-		UUID        string           `json:"uuid" example:"826d6b1aa64d471d822d667e92218158"` // 用户UUID,32位字符串
-		Phone       string           `json:"phone" example:"13800138000"`                     // 手机号
-		Nickname    string           `json:"nickname" example:"goal-nick"`                    // 昵称
-		LastLoginAt *utils.LocalTime `json:"last_login_at" example:"2023-09-01 13:30:59"`     // 最近登录时间
+		UUID        string               `json:"uuid" example:"826d6b1aa64d471d822d667e92218158"` // 用户UUID,32位字符串
+		Phone       string               `json:"phone" example:"13800138000"`                     // 手机号
+		Nickname    string               `json:"nickname" example:"goal-nick"`                    // 昵称
+		LastLoginAt *utils.LocalTime     `json:"last_login_at" example:"2023-09-01 13:30:59"`     // 最近登录时间
+		Status      model.UserStatusType `json:"status" example:"ACTIVE"`                         // 用户状态
+		IsAdmin     bool                 `json:"is_admin" example:"false"`                        // 是否管理员
 	}
 
 	// RespGetUserList 获取用户列表的响应数据结构

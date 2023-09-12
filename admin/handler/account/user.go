@@ -47,19 +47,20 @@ func UserCreate(c *gin.Context) {
 		response.FailJsonResp(c, response.PayloadError, nil)
 		return
 	}
-	eu, _ := account.NewUserService(c).GetUserByPhone(payload.Phone)
-	if eu != nil {
+	userSvc := account.NewUserService(c)
+	user, _ := userSvc.GetUserByPhone(payload.Phone)
+	if user != nil {
 		response.FailJsonResp(c, response.AccountUserExistError, nil)
 		return
 	}
-	ue, _ := account.NewUserService(c).GetUserByEmail(payload.Email)
-	if ue != nil {
+	user, _ = userSvc.GetUserByEmail(payload.Email)
+	if user != nil {
 		response.FailJsonResp(c, response.AccountEmailExistsError, nil)
 		return
 	}
-	user, err := account.NewUserService(c).CreateUser(payload)
+	user, err = userSvc.CreateUser(payload)
 	if err != nil {
-		response.FailJsonResp(c, response.AccountCreateError, nil)
+		response.FailJsonResp(c, response.AccountCreateError, err)
 		return
 	}
 	response.SuccessJsonResp(c, user, nil)
@@ -105,7 +106,7 @@ func UserUpdate(c *gin.Context) {
 // @Router /account/users/{uuid} [get]
 func UserDetail(c *gin.Context) {
 	uuid := c.Param("uuid")
-	result, code, err := account.NewUserService(c).GetUserByUUID(uuid)
+	result, code, err := account.NewUserService(c).GetUserDetail(uuid)
 	if err != nil {
 		response.FailJsonResp(c, code, nil)
 		return

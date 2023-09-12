@@ -13,18 +13,31 @@ import (
 
 type IUserService interface {
 	GetUserList(req *types.ReqGetUserList) (*types.RespGetUserList, int, error)
-	GetUserByPhone(phone string) (*model.User, error)
-	GetUserByUUID(uuid string) (*types.RespUserDetail, int, error)
-	GetUserByEmail(email string) (*model.User, error)
+	GetUserDetail(uuid string) (*types.RespUserDetail, int, error)
 	CreateUser(payload *model.User) (*model.User, error)
 	DeleteUserByUUID(uuid string) error
 
+	GetUserByPhone(phone string) (*model.User, error)
+	GetUserByUUID(uuid string) (*model.User, error)
+	GetUserByEmail(email string) (*model.User, error)
 	UpdateUserLastLogin(id int64) error
 }
 
 type userService struct {
 	ctx *gin.Context
 	db  *gorm.DB
+}
+
+func (s *userService) GetUserDetail(uuid string) (*types.RespUserDetail, int, error) {
+	user, err := s.GetUserByUUID(uuid)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, response.AccountUserNotExistError, err
+		} else {
+			return nil, response.AccountQueryUserError, err
+		}
+	}
+	return s.transUserToResponseData(user)
 }
 
 func (s *userService) UpdateUserLastLogin(id int64) error {
@@ -40,27 +53,12 @@ func (s *userService) GetUserByPhone(phone string) (*model.User, error) {
 	return model.GetUserByPhone(s.db, phone)
 }
 
-func (s *userService) GetUserByUUID(uuid string) (*types.RespUserDetail, int, error) {
-	user, err := model.GetUserByConditions(s.db, map[string]interface{}{"uuid": uuid})
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, response.AccountUserNotExistError, err
-		} else {
-			return nil, response.AccountQueryUserError, err
-		}
-	}
-	result := new(types.RespUserDetail)
-	err = copier.Copy(result, user)
-	if err != nil {
-		return nil, response.DBAttributesCopyError, err
-	}
-	result.Phone = user.PhoneMask()
-	return result, response.SuccessCode, nil
+func (s *userService) GetUserByUUID(uuid string) (*model.User, error) {
+	return model.GetUserByUUID(s.db, uuid)
 }
 
 func (s *userService) GetUserByEmail(email string) (*model.User, error) {
-	//TODO implement me
-	panic("implement me")
+	return model.GetUserByEmail(s.db, email)
 }
 
 func (s *userService) CreateUser(payload *model.User) (*model.User, error) {
@@ -93,6 +91,16 @@ func (s *userService) GetUserList(req *types.ReqGetUserList) (*types.RespGetUser
 		Result: result,
 	}
 	return resp, response.SuccessCode, nil
+}
+
+func (s *userService) transUserToResponseData(user *model.User) (*types.RespUserDetail, int, error) {
+	result := new(types.RespUserDetail)
+	err := copier.Copy(result, user)
+	if err != nil {
+		return nil, response.DBAttributesCopyError, err
+	}
+	result.Phone = user.PhoneMask()
+	return result, response.SuccessCode, nil
 }
 
 func NewUserService(ctx *gin.Context) IUserService {

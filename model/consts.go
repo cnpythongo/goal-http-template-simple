@@ -2,20 +2,20 @@ package model
 
 import "database/sql/driver"
 
-type userStatusType string
+type UserStatusType string
 
 const (
-	INACTIVE userStatusType = "INACTIVE"
-	ACTIVE   userStatusType = "ACTIVE"
-	FREEZE   userStatusType = "FREEZE"
-	REMOVE   userStatusType = "REMOVE"
+	INACTIVE UserStatusType = "INACTIVE"
+	ACTIVE   UserStatusType = "ACTIVE"
+	FREEZE   UserStatusType = "FREEZE"
+	REMOVE   UserStatusType = "REMOVE"
 )
 
-func (st *userStatusType) Scan(value interface{}) error {
-	*st = userStatusType(value.([]byte))
+func (st *UserStatusType) Scan(value interface{}) error {
+	*st = UserStatusType(value.([]byte))
 	return nil
 }
 
-func (st userStatusType) Value() (driver.Value, error) {
+func (st UserStatusType) Value() (driver.Value, error) {
 	return string(st), nil
 }

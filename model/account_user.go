@@ -19,7 +19,7 @@ type User struct {
 	Avatar      string           `json:"avatar" gorm:"column:avatar;type:varchar(255);not null;default:'';comment:用户头像"`
 	Gender      int64            `json:"gender" gorm:"column:gender;type:int(11);not null;default:3;comment:性别:3-保密,1-男,2-女"`
 	Signature   string           `json:"signature" gorm:"column:signature;type:varchar(255);not null;default:'';comment:个性化签名"`
-	Status      userStatusType   `json:"status" gorm:"column:status;type:varchar(20);not null;default:'INACTIVE';comment:用户状态"`
+	Status      UserStatusType   `json:"status" gorm:"column:status;type:varchar(20);not null;default:'INACTIVE';comment:用户状态"`
 	IsAdmin     bool             `json:"is_admin" gorm:"column:is_admin;type:tinyint(1);not null;default:0;comment:是否admin账号,默认否"`
 	LastLoginAt *utils.LocalTime `json:"last_login_at" gorm:"column:last_login_at;default:null;comment:最后登录时间"`
 }
@@ -65,16 +65,17 @@ func GetUserByConditions(db *gorm.DB, conditions interface{}) (*User, error) {
 }
 
 func GetUserByPhone(db *gorm.DB, phone string) (*User, error) {
-	conditions := map[string]interface{}{"phone": phone}
-	result, err := GetUserByConditions(db, conditions)
-	return result, err
+	return GetUserByConditions(db, map[string]interface{}{"phone": phone})
 }
 
-//	func (u *User) GetUserByEmail(email string) (*User, error) {
-//		conditions := map[string]interface{}{"email": email}
-//		result, err := GetUserByConditions(conditions)
-//		return result, err
-//	}
+func GetUserByEmail(db *gorm.DB, email string) (*User, error) {
+	return GetUserByConditions(db, map[string]interface{}{"email": email})
+}
+
+func GetUserByUUID(db *gorm.DB, uuid string) (*User, error) {
+	return GetUserByConditions(db, map[string]interface{}{"uuid": uuid})
+}
+
 //
 //	func (u *User) CreateUser(user *User) (*User, error) {
 //		err := model.GetDB().Create(user).Error
@@ -85,11 +86,7 @@ func GetUserByPhone(db *gorm.DB, phone string) (*User, error) {
 //		return user, nil
 //	}
 //
-//	func (u *User) GetUserByUUID(uuid string) (*User, error) {
-//		conditions := map[string]interface{}{"uuid": uuid}
-//		result, err := GetUserByConditions(conditions)
-//		return result, err
-//	}
+
 func GetUserList(db *gorm.DB, page, size int, conditions interface{}) ([]*User, int, error) {
 	qs := db.Model(NewUser())
 	if conditions != nil {
