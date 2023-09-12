@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/cnpythongo/goal/admin/service/account"
 	"github.com/cnpythongo/goal/admin/types"
-	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/pkg/log"
 	"github.com/cnpythongo/goal/pkg/response"
 	"github.com/gin-gonic/gin"
@@ -40,27 +39,26 @@ func GetUserList(c *gin.Context) {
 }
 
 // UserCreate 创建用户
+// @Tags 用户管理
+// @Summary 创建用户
+// @Description 创建新用户
+// @Accept json
+// @Produce json
+// @Param data body types.ReqCreateUser true "请求体"
+// @Success 200 {object} types.RespUserDetail
+// @Failure 400 {object} types.RespFailJson
+// @Security ApiKeyAuth
+// @Router /account/users [post]
 func UserCreate(c *gin.Context) {
-	payload := model.NewUser()
-	err := c.ShouldBindJSON(payload)
+	var payload types.ReqCreateUser
+	err := c.ShouldBindJSON(&payload)
 	if err != nil {
 		response.FailJsonResp(c, response.PayloadError, nil)
 		return
 	}
-	userSvc := account.NewUserService(c)
-	user, _ := userSvc.GetUserByPhone(payload.Phone)
-	if user != nil {
-		response.FailJsonResp(c, response.AccountUserExistError, nil)
-		return
-	}
-	user, _ = userSvc.GetUserByEmail(payload.Email)
-	if user != nil {
-		response.FailJsonResp(c, response.AccountEmailExistsError, nil)
-		return
-	}
-	user, err = userSvc.CreateUser(payload)
-	if err != nil {
-		response.FailJsonResp(c, response.AccountCreateError, err)
+	user, code, err := account.NewUserService(c).CreateUser(&payload)
+	if code != response.SuccessCode {
+		response.FailJsonResp(c, code, err)
 		return
 	}
 	response.SuccessJsonResp(c, user, nil)

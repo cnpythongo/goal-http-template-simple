@@ -153,6 +153,49 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "创建新用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "创建用户",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqCreateUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                        }
+                    }
+                }
             }
         },
         "/account/users/{uuid}": {
@@ -209,6 +252,39 @@ const docTemplate = `{
             "properties": {
                 "password": {
                     "description": "密码",
+                    "type": "string",
+                    "example": "123456"
+                },
+                "phone": {
+                    "description": "手机号",
+                    "type": "string",
+                    "example": "13800138000"
+                }
+            }
+        },
+        "github_com_cnpythongo_goal_admin_types.ReqCreateUser": {
+            "type": "object",
+            "required": [
+                "phone"
+            ],
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string",
+                    "example": "abc@a.com"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string",
+                    "example": "Tom"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string",
+                    "example": "123456"
+                },
+                "password_confirm": {
+                    "description": "确认密码",
                     "type": "string",
                     "example": "123456"
                 },
@@ -303,7 +379,7 @@ const docTemplate = `{
                     "description": "当前结果集",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUser"
+                        "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUserBasic"
                     }
                 },
                 "total": {
@@ -312,9 +388,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_cnpythongo_goal_admin_types.RespUser": {
+        "github_com_cnpythongo_goal_admin_types.RespUserBasic": {
             "type": "object",
             "properties": {
+                "is_admin": {
+                    "description": "是否管理员",
+                    "type": "boolean",
+                    "example": false
+                },
                 "last_login_at": {
                     "description": "最近登录时间",
                     "type": "string",
@@ -323,12 +404,21 @@ const docTemplate = `{
                 "nickname": {
                     "description": "昵称",
                     "type": "string",
-                    "example": "goal-nick"
+                    "example": "Tom"
                 },
                 "phone": {
                     "description": "手机号",
                     "type": "string",
                     "example": "13800138000"
+                },
+                "status": {
+                    "description": "用户状态",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.UserStatusType"
+                        }
+                    ],
+                    "example": "ACTIVE"
                 },
                 "uuid": {
                     "description": "用户UUID,32位字符串",
@@ -340,6 +430,11 @@ const docTemplate = `{
         "github_com_cnpythongo_goal_admin_types.RespUserDetail": {
             "type": "object",
             "properties": {
+                "is_admin": {
+                    "description": "是否管理员",
+                    "type": "boolean",
+                    "example": false
+                },
                 "last_login_at": {
                     "description": "最近登录时间",
                     "type": "string",
@@ -348,12 +443,21 @@ const docTemplate = `{
                 "nickname": {
                     "description": "昵称",
                     "type": "string",
-                    "example": "goal-nick"
+                    "example": "Tom"
                 },
                 "phone": {
                     "description": "手机号",
                     "type": "string",
                     "example": "13800138000"
+                },
+                "status": {
+                    "description": "用户状态",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.UserStatusType"
+                        }
+                    ],
+                    "example": "ACTIVE"
                 },
                 "uuid": {
                     "description": "用户UUID,32位字符串",
@@ -361,6 +465,21 @@ const docTemplate = `{
                     "example": "826d6b1aa64d471d822d667e92218158"
                 }
             }
+        },
+        "model.UserStatusType": {
+            "type": "string",
+            "enum": [
+                "INACTIVE",
+                "ACTIVE",
+                "FREEZE",
+                "REMOVE"
+            ],
+            "x-enum-varnames": [
+                "INACTIVE",
+                "ACTIVE",
+                "FREEZE",
+                "REMOVE"
+            ]
         }
     }
 }`

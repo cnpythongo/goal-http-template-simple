@@ -14,6 +14,31 @@ definitions:
     - password
     - phone
     type: object
+  github_com_cnpythongo_goal_admin_types.ReqCreateUser:
+    properties:
+      email:
+        description: 邮箱
+        example: abc@a.com
+        type: string
+      nickname:
+        description: 昵称
+        example: Tom
+        type: string
+      password:
+        description: 密码
+        example: "123456"
+        type: string
+      password_confirm:
+        description: 确认密码
+        example: "123456"
+        type: string
+      phone:
+        description: 手机号
+        example: "13800138000"
+        type: string
+    required:
+    - phone
+    type: object
   github_com_cnpythongo_goal_admin_types.RespAdminAuth:
     properties:
       expire_time:
@@ -72,26 +97,35 @@ definitions:
       result:
         description: 当前结果集
         items:
-          $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespUser'
+          $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespUserBasic'
         type: array
       total:
         description: 总页数
         type: integer
     type: object
-  github_com_cnpythongo_goal_admin_types.RespUser:
+  github_com_cnpythongo_goal_admin_types.RespUserBasic:
     properties:
+      is_admin:
+        description: 是否管理员
+        example: false
+        type: boolean
       last_login_at:
         description: 最近登录时间
         example: "2023-09-01 13:30:59"
         type: string
       nickname:
         description: 昵称
-        example: goal-nick
+        example: Tom
         type: string
       phone:
         description: 手机号
         example: "13800138000"
         type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/model.UserStatusType'
+        description: 用户状态
+        example: ACTIVE
       uuid:
         description: 用户UUID,32位字符串
         example: 826d6b1aa64d471d822d667e92218158
@@ -99,23 +133,44 @@ definitions:
     type: object
   github_com_cnpythongo_goal_admin_types.RespUserDetail:
     properties:
+      is_admin:
+        description: 是否管理员
+        example: false
+        type: boolean
       last_login_at:
         description: 最近登录时间
         example: "2023-09-01 13:30:59"
         type: string
       nickname:
         description: 昵称
-        example: goal-nick
+        example: Tom
         type: string
       phone:
         description: 手机号
         example: "13800138000"
         type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/model.UserStatusType'
+        description: 用户状态
+        example: ACTIVE
       uuid:
         description: 用户UUID,32位字符串
         example: 826d6b1aa64d471d822d667e92218158
         type: string
     type: object
+  model.UserStatusType:
+    enum:
+    - INACTIVE
+    - ACTIVE
+    - FREEZE
+    - REMOVE
+    type: string
+    x-enum-varnames:
+    - INACTIVE
+    - ACTIVE
+    - FREEZE
+    - REMOVE
 host: localhost:8200
 info:
   contact: {}
@@ -213,6 +268,33 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 获取用户列表
+      tags:
+      - 用户管理
+    post:
+      consumes:
+      - application/json
+      description: 创建新用户
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.ReqCreateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+      security:
+      - ApiKeyAuth: []
+      summary: 创建用户
       tags:
       - 用户管理
   /account/users/{uuid}:

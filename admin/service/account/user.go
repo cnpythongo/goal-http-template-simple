@@ -14,7 +14,7 @@ import (
 type IUserService interface {
 	GetUserList(req *types.ReqGetUserList) (*types.RespGetUserList, int, error)
 	GetUserDetail(uuid string) (*types.RespUserDetail, int, error)
-	CreateUser(payload *model.User) (*model.User, error)
+	CreateUser(payload *types.ReqCreateUser) (*types.RespUserDetail, int, error)
 	DeleteUserByUUID(uuid string) error
 
 	GetUserByPhone(phone string) (*model.User, error)
@@ -61,9 +61,25 @@ func (s *userService) GetUserByEmail(email string) (*model.User, error) {
 	return model.GetUserByEmail(s.db, email)
 }
 
-func (s *userService) CreateUser(payload *model.User) (*model.User, error) {
-	//TODO implement me
-	panic("implement me")
+func (s *userService) CreateUser(payload *types.ReqCreateUser) (*types.RespUserDetail, int, error) {
+	user, err := s.GetUserByPhone(payload.Phone)
+	if user != nil {
+		return nil, response.AccountUserExistError, err
+	}
+	user, err = s.GetUserByEmail(payload.Email)
+	if user != nil {
+		return nil, response.AccountEmailExistsError, err
+	}
+	user = model.NewUser()
+	err = copier.Copy(user, payload)
+	if err != nil {
+		return nil, response.DBAttributesCopyError, err
+	}
+	user, err = model.CreateUser(s.db, user)
+	if err != nil {
+		return nil, response.AccountCreateError, err
+	}
+	return s.transUserToResponseData(user)
 }
 
 func (s *userService) GetUserList(req *types.ReqGetUserList) (*types.RespGetUserList, int, error) {
@@ -75,9 +91,9 @@ func (s *userService) GetUserList(req *types.ReqGetUserList) (*types.RespGetUser
 		return nil, response.DBQueryError, err
 	}
 
-	result := make([]*types.RespUser, 0)
+	result := make([]*types.RespUserBasic, 0)
 	for _, row := range rows {
-		item := new(types.RespUser)
+		item := new(types.RespUserBasic)
 		err = copier.Copy(item, row)
 		if err != nil {
 			return nil, response.DBAttributesCopyError, err

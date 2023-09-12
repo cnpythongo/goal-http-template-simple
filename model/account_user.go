@@ -76,16 +76,14 @@ func GetUserByUUID(db *gorm.DB, uuid string) (*User, error) {
 	return GetUserByConditions(db, map[string]interface{}{"uuid": uuid})
 }
 
-//
-//	func (u *User) CreateUser(user *User) (*User, error) {
-//		err := model.GetDB().Create(user).Error
-//		if err != nil {
-//			log.GetLogger().Errorf("model.account.user.CreateUser Error ==> %v", err)
-//			return nil, err
-//		}
-//		return user, nil
-//	}
-//
+func CreateUser(db *gorm.DB, user *User) (*User, error) {
+	err := db.Create(&user).Error
+	if err != nil {
+		log.GetLogger().Errorf("model.account.user.CreateUser Error ==> %v", err)
+		return nil, err
+	}
+	return user, nil
+}
 
 func GetUserList(db *gorm.DB, page, size int, conditions interface{}) ([]*User, int, error) {
 	qs := db.Model(NewUser())
@@ -113,7 +111,10 @@ func GetUserList(db *gorm.DB, page, size int, conditions interface{}) ([]*User, 
 
 // UpdateUserLastLoginAt 更新用户最近登录时间
 func UpdateUserLastLoginAt(db *gorm.DB, id int64) error {
-	return db.Model(NewUser()).Where("id = ?", id).UpdateColumn(
-		"last_login_at", time.Now(),
+	return db.Model(NewUser()).Where("id = ?", id).UpdateColumns(
+		map[string]interface{}{
+			"status":        ACTIVE,
+			"last_login_at": time.Now(),
+		},
 	).Error
 }
