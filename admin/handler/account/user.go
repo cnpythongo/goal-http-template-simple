@@ -55,7 +55,7 @@ func UserCreate(c *gin.Context) {
 		return
 	}
 	user, code, err := account.NewUserService(c).CreateUser(&payload)
-	if code != response.SuccessCode {
+	if err != nil {
 		response.FailJsonResp(c, code, err)
 		return
 	}
@@ -95,14 +95,25 @@ func UserDelete(c *gin.Context) {
 // @Description 更新用户数据
 // @Accept json
 // @Produce json
+// @Param uuid path string true "用户UUID"
 // @Param data body types.ReqUpdateUser true "请求体"
 // @Success 200 {object} types.RespEmptyJson
 // @Failure 400 {object} types.RespFailJson
 // @Security ApiKeyAuth
-// @Router /account/users/{uuid} [put]
+// @Router /account/users/{uuid} [patch]
 func UserUpdate(c *gin.Context) {
-	// svc := account.NewUserService(c).UpdateUserLastLogin()
-
+	uuid := c.Param("uuid")
+	var payload types.ReqUpdateUser
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		response.FailJsonResp(c, response.ParamsError, err)
+		return
+	}
+	code, err := account.NewUserService(c).UpdateUserByUUID(uuid, &payload)
+	if err != nil {
+		response.FailJsonResp(c, code, err)
+		return
+	}
+	response.EmptyJsonResp(c, code)
 }
 
 // UserDetail 根据用户UUID获取用户详情

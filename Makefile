@@ -6,10 +6,10 @@ ADMIN_IMAGE_NAME = goal-admin
 ADMIN_CONTAINER_NAME = goal-admin-service
 ADMIN_PORT = 8200
 
-admin-doc:
+doc-admin:
 	swag init -g ./cmd/admin/main.go -o docs/admin/ --exclude ./api --parseDependency --parseInternal
 
-api-doc:
+doc-api:
 	swag init -g ./cmd/api/main.go -o docs/api/ --exclude ./admin --parseDependency --parseInternal
 
 build-api:

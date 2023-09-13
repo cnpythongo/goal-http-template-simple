@@ -39,11 +39,19 @@ $ go run cmd/admin/main.go start -c settings/local.json
 ```shell
 $ swag init -g ./cmd/admin/main.go -o docs/admin/ --exclude ./api
 ```
+或
+```shell
+$ make doc-admin
+```
 
 * 生成前台API接口文档
 
 ```shell
 $ swag init -g ./cmd/api/main.go -o docs/api/ --exclude ./admin
+```
+或
+```shell
+$ make doc-api
 ```
 
 

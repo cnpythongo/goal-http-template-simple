@@ -98,11 +98,11 @@ func (s *userService) GetUserDetail(uuid string) (*types.RespUserDetail, int, er
 func (s *userService) CreateUser(payload *types.ReqCreateUser) (*types.RespUserDetail, int, error) {
 	user, err := s.GetUserByPhone(payload.Phone)
 	if user != nil {
-		return nil, response.AccountUserExistError, err
+		return nil, response.AccountUserExistError, errors.New(response.GetCodeMsg(response.AccountUserExistError))
 	}
 	user, err = s.GetUserByEmail(payload.Email)
 	if user != nil {
-		return nil, response.AccountEmailExistsError, err
+		return nil, response.AccountEmailExistsError, errors.New(response.GetCodeMsg(response.AccountEmailExistsError))
 	}
 	user = model.NewUser()
 	err = copier.Copy(user, payload)

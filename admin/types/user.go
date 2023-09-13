@@ -13,7 +13,7 @@ type (
 		Phone            string                 `json:"phone" form:"phone" example:"13800138000"`                                     // 手机号
 		Email            string                 `json:"email" form:"email" example:"abc@abc.com"`                                     // 邮箱
 		Nickname         string                 `json:"nickname" form:"nickname" example:"Tom"`                                       // 昵称
-		Status           []model.UserStatusType `json:"status" form:"status" example:"FREEZE,ACTIVE" collectionFormat:"multi"`        // 用户状态,多种状态过滤使用逗号分隔
+		Status           []model.UserStatusType `json:"status" form:"status" example:"FREEZE,ACTIVE"`                                 // 用户状态,多种状态过滤使用逗号分隔
 		LastLoginAtStart string                 `json:"last_login_at_start" form:"last_login_at_start" example:"2023-09-01 01:30:59"` // 最近登录时间起始
 		LastLoginAtEnd   string                 `json:"last_login_at_end" form:"last_login_at_end" example:"2023-09-01 22:59:59"`     // 最近登录时间截止
 	}
@@ -43,20 +43,20 @@ type (
 
 	// ReqCreateUser 创建用户的请求结构体
 	ReqCreateUser struct {
-		Phone           string `json:"phone" form:"phone" binding:"required" example:"13800138000"` // 手机号
-		Email           string `json:"email" form:"email" example:"abc@a.com"`                      // 邮箱
-		Nickname        string `json:"nickname" form:"nickname" example:"Tom"`                      // 昵称
-		Password        string `json:"password" form:"password" example:"123456"`                   // 密码
-		PasswordConfirm string `json:"password_confirm" form:"password_confirm" example:"123456"`   // 确认密码
+		Phone           string `json:"phone" binding:"required" example:"13800138000"` // 手机号
+		Email           string `json:"email" example:"abc@a.com"`                      // 邮箱
+		Nickname        string `json:"nickname" example:"Tom"`                         // 昵称
+		Password        string `json:"password" example:"123456"`                      // 密码
+		PasswordConfirm string `json:"password_confirm" example:"123456"`              // 确认密码
 	}
 
 	// ReqUpdateUser 更新用户的请求结构体
 	ReqUpdateUser struct {
-		Email     string `json:"email" form:"email" example:"abc@abc.com"`  // 邮箱
-		Nickname  string `json:"nickname" form:"nickname" example:"Tom"`    // 昵称
-		Avatar    string `json:"avatar" form:"avatar" example:"a/b/c.jpg"`  // 用户头像URL
-		Gender    int64  `json:"gender" form:"gender" exmaple:"3"`          // 性别:3-保密,1-男,2-女
-		Signature string `json:"signature" form:"signature" example:"haha"` // 个性化签名
-		Status    string `json:"status" form:"status" example:"FREEZE"`     // 用户状态
+		Email     string `json:"email,omitempty" example:"abc@abc.com"` // 邮箱
+		Nickname  string `json:"nickname,omitempty" example:"Tom"`      // 昵称
+		Avatar    string `json:"avatar,omitempty" example:"a/b/c.jpg"`  // 用户头像URL
+		Gender    int64  `json:"gender,omitempty" example:"3"`          // 性别:3-保密,1-男,2-女
+		Signature string `json:"signature,omitempty" example:"haha"`    // 个性化签名
+		Status    string `json:"status,omitempty" example:"FREEZE"`     // 用户状态
 	}
 )
