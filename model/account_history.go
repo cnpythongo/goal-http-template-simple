@@ -30,7 +30,7 @@ func (h *History) TableName() string {
 // GetHistoryById 获取单条历史记录
 func GetHistoryById(db *gorm.DB, id int) (*History, error) {
 	result := NewHistory()
-	err := db.Where("id = ?", id).Limit(1).First(&result).Error
+	err := db.Model(NewHistory()).Where("id = ?", id).Limit(1).First(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.GetLogger().Errorf("model.account_history.GetHistoryById Error ==> %v", err)
