@@ -19,3 +19,20 @@ func (st *UserStatusType) Scan(value interface{}) error {
 func (st UserStatusType) Value() (driver.Value, error) {
 	return string(st), nil
 }
+
+type SystemConfigScope string
+
+const (
+	SystemConfigScopeGlobal SystemConfigScope = "global"
+	SystemConfigScopeAdmin  SystemConfigScope = "admin"
+	SystemConfigScopeApp    SystemConfigScope = "app"
+)
+
+func (st *SystemConfigScope) Scan(value interface{}) error {
+	*st = SystemConfigScope(value.([]byte))
+	return nil
+}
+
+func (st SystemConfigScope) Value() (driver.Value, error) {
+	return string(st), nil
+}
