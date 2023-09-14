@@ -203,7 +203,6 @@ definitions:
     - UserStatusActive
     - UserStatusFreeze
     - UserStatusDelete
-host: localhost:8200
 info:
   contact: {}
   title: 后台管理系统接口文档
