@@ -36,3 +36,20 @@ func (st *SystemConfigScope) Scan(value interface{}) error {
 func (st SystemConfigScope) Value() (driver.Value, error) {
 	return string(st), nil
 }
+
+type AccountHistoryDevice string
+
+const (
+	AccountHistoryDeviceWeb     AccountHistoryDevice = "web"
+	AccountHistoryDeviceAndroid AccountHistoryDevice = "andriod"
+	AccountHistoryDeviceIOS     AccountHistoryDevice = "ios"
+)
+
+func (st *AccountHistoryDevice) Scan(value interface{}) error {
+	*st = AccountHistoryDevice(value.([]byte))
+	return nil
+}
+
+func (st AccountHistoryDevice) Value() (driver.Value, error) {
+	return string(st), nil
+}

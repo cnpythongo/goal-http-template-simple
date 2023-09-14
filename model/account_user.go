@@ -53,11 +53,11 @@ func NewUserList() []*User {
 
 func GetUserByConditions(db *gorm.DB, conditions interface{}) (*User, error) {
 	result := NewUser()
-	err := db.Where(conditions).First(&result).Error
+	err := db.Where(conditions).Limit(1).First(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			log.GetLogger().Infof("model.account.user.GetUserByConditions conditions ==> %v", conditions)
-			log.GetLogger().Errorf("model.account.user.GetUserByConditions Error ==> %v", err)
+			log.GetLogger().Infof("model.account_user.GetUserByConditions conditions ==> %v", conditions)
+			log.GetLogger().Errorf("model.account_user.GetUserByConditions Error ==> %v", err)
 		}
 		return nil, err
 	}
@@ -87,13 +87,13 @@ func CreateUser(db *gorm.DB, user *User) (*User, error) {
 
 func GetUserList(db *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*User, int, error) {
 	qs := db.Model(NewUser()).Where("status != ?", UserStatusDelete)
-	if query != nil && args != nil {
+	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}
 	var count int64
 	err := qs.Count(&count).Error
 	if err != nil {
-		log.GetLogger().Errorf("model.account_user.GetUserQueryset Count Error ==> %v", err)
+		log.GetLogger().Errorf("model.account_user.GetUserList Count Error ==> %v", err)
 		return nil, 0, err
 	}
 	if page > 0 && size > 0 {
@@ -103,7 +103,7 @@ func GetUserList(db *gorm.DB, page, size int, query interface{}, args []interfac
 	result := NewUserList()
 	err = qs.Find(&result).Error
 	if err != nil {
-		log.GetLogger().Errorf("model.account_user.GetUserQueryset Query Error ==> %v", err)
+		log.GetLogger().Errorf("model.account_user.GetUserList Query Error ==> %v", err)
 		return nil, 0, err
 	}
 	return result, int(count), nil
