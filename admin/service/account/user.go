@@ -37,12 +37,16 @@ func (s *userService) GetUserList(req *types.ReqGetUserList) (*types.RespGetUser
 	var query []string
 	var args []interface{}
 	if req.Email != "" {
-		query = append(query, "email = ?")
+		query = append(query, "email like concat('%', ?, '%s')")
 		args = append(args, req.Email)
 	}
 	if req.Phone != "" {
-		query = append(query, "phone = ?")
+		query = append(query, "phone like concat('%', ?, '%s')")
 		args = append(args, req.Phone)
+	}
+	if req.Nickname != "" {
+		query = append(query, "nickname like concat('%s', ?, '%s')")
+		args = append(args, req.Nickname)
 	}
 	if len(req.Status) > 0 {
 		status := strings.Split(string(req.Status[0]), ",")

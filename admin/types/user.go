@@ -10,9 +10,9 @@ type (
 	ReqGetUserList struct {
 		Page             int                    `json:"page,default=1" form:"page,default=1" default:"1" example:"1"`                 // 页码
 		Size             int                    `json:"size,default=10" form:"size,default=10" default:"10" example:"10"`             // 每页数量
-		Phone            string                 `json:"phone" form:"phone" example:"13800138000"`                                     // 手机号
-		Email            string                 `json:"email" form:"email" example:"abc@abc.com"`                                     // 邮箱
-		Nickname         string                 `json:"nickname" form:"nickname" example:"Tom"`                                       // 昵称
+		Phone            string                 `json:"phone" form:"phone" example:"13800138000"`                                     // 手机号,模糊查询
+		Email            string                 `json:"email" form:"email" example:"abc@abc.com"`                                     // 邮箱,模糊查旬
+		Nickname         string                 `json:"nickname" form:"nickname" example:"Tom"`                                       // 昵称,模糊查询
 		Status           []model.UserStatusType `json:"status" form:"status" example:"FREEZE,ACTIVE"`                                 // 用户状态,多种状态过滤使用逗号分隔
 		LastLoginAtStart string                 `json:"last_login_at_start" form:"last_login_at_start" example:"2023-09-01 01:30:59"` // 最近登录时间起始
 		LastLoginAtEnd   string                 `json:"last_login_at_end" form:"last_login_at_end" example:"2023-09-01 22:59:59"`     // 最近登录时间截止

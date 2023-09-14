@@ -111,7 +111,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "example": "abc@abc.com",
-                        "description": "邮箱",
+                        "description": "邮箱,模糊查旬",
                         "name": "email",
                         "in": "query"
                     },
@@ -132,7 +132,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "example": "Tom",
-                        "description": "昵称",
+                        "description": "昵称,模糊查询",
                         "name": "nickname",
                         "in": "query"
                     },
@@ -147,7 +147,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "example": "13800138000",
-                        "description": "手机号",
+                        "description": "手机号,模糊查询",
                         "name": "phone",
                         "in": "query"
                     },

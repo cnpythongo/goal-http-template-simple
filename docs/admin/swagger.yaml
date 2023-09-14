@@ -263,7 +263,7 @@ paths:
       - application/json
       description: 获取用户列表
       parameters:
-      - description: 邮箱
+      - description: 邮箱,模糊查旬
         example: abc@abc.com
         in: query
         name: email
@@ -278,7 +278,7 @@ paths:
         in: query
         name: last_login_at_start
         type: string
-      - description: 昵称
+      - description: 昵称,模糊查询
         example: Tom
         in: query
         name: nickname
@@ -289,7 +289,7 @@ paths:
         in: query
         name: page
         type: integer
-      - description: 手机号
+      - description: 手机号,模糊查询
         example: "13800138000"
         in: query
         name: phone

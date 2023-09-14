@@ -53,10 +53,10 @@ func NewUserList() []*User {
 
 func GetUserByConditions(db *gorm.DB, conditions interface{}) (*User, error) {
 	result := NewUser()
-	err := db.Where(conditions).First(result).Error
+	err := db.Where(conditions).First(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			log.GetLogger().Infof("conditions ==> %v", conditions)
+			log.GetLogger().Infof("model.account.user.GetUserByConditions conditions ==> %v", conditions)
 			log.GetLogger().Errorf("model.account.user.GetUserByConditions Error ==> %v", err)
 		}
 		return nil, err
@@ -79,7 +79,7 @@ func GetUserByUUID(db *gorm.DB, uuid string) (*User, error) {
 func CreateUser(db *gorm.DB, user *User) (*User, error) {
 	err := db.Create(&user).Error
 	if err != nil {
-		log.GetLogger().Errorf("model.account.user.CreateUser Error ==> %v", err)
+		log.GetLogger().Errorf("model.account_user.CreateUser Error ==> %v", err)
 		return nil, err
 	}
 	return user, nil
@@ -90,20 +90,20 @@ func GetUserList(db *gorm.DB, page, size int, query interface{}, args []interfac
 	if query != nil && args != nil {
 		qs = qs.Where(query, args...)
 	}
+	var count int64
+	err := qs.Count(&count).Error
+	if err != nil {
+		log.GetLogger().Errorf("model.account_user.GetUserQueryset Count Error ==> %v", err)
+		return nil, 0, err
+	}
 	if page > 0 && size > 0 {
 		offset := (page - 1) * size
 		qs = qs.Limit(size).Offset(offset)
 	}
-	var count int64
-	err := qs.Count(&count).Error
-	if err != nil {
-		log.GetLogger().Errorf("model.account.user.GetUserQueryset Count Error ==> ", err)
-		return nil, 0, err
-	}
 	result := NewUserList()
 	err = qs.Find(&result).Error
 	if err != nil {
-		log.GetLogger().Errorf("model.account.user.GetUserQueryset Query Error ==> ", err)
+		log.GetLogger().Errorf("model.account_user.GetUserQueryset Query Error ==> %v", err)
 		return nil, 0, err
 	}
 	return result, int(count), nil
@@ -119,9 +119,16 @@ func UpdateUserLastLoginAt(db *gorm.DB, uuid string) error {
 }
 
 func UpdateUser(db *gorm.DB, uuid string, data map[string]interface{}) error {
-	return db.Model(NewUser()).Where("uuid = ?", uuid).UpdateColumns(data).Error
+	err := db.Model(NewUser()).Where("uuid = ?", uuid).UpdateColumns(data).Error
+	if err != nil {
+		log.GetLogger().Errorf("model.account_user.UpdateUser Error ==> %v", err)
+	}
+	return err
 }
 
 func DeleteUser(db *gorm.DB, uuid string) error {
-	return db.Where("uuid = ?", uuid).Delete(NewUser()).Error
+	return UpdateUser(db, uuid, map[string]interface{}{
+		"status":     UserStatusDelete,
+		"deleted_at": time.Now(),
+	})
 }
