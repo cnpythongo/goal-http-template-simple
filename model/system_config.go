@@ -80,11 +80,13 @@ func DeleteConfig(db *gorm.DB, id int) error {
 	return UpdateConfig(db, id, map[string]interface{}{"deleted_at": time.Now()})
 }
 
+// GetConfigById 根据ID获取单个配置数据
 func GetConfigById(db *gorm.DB, id int) (*Config, error) {
 	result := NewConfig()
 	err := db.Model(NewConfig()).Where("id = ?", id).Limit(1).First(&result).Error
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.GetLogger().Errorf("model.system_config.CreateConfig Error ==> %v", err)
+		return nil, err
 	}
-	return result, err
+	return result, nil
 }
