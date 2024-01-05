@@ -8,8 +8,7 @@ import (
 type (
 	// ReqGetUserList 获取用户列表的请求参数体
 	ReqGetUserList struct {
-		Page             int                    `json:"page,default=1" form:"page,default=1" default:"1" example:"1"`                 // 页码
-		Size             int                    `json:"size,default=10" form:"size,default=10" default:"10" example:"10"`             // 每页数量
+		Pagination
 		Phone            string                 `json:"phone" form:"phone" example:"13800138000"`                                     // 手机号,模糊查询
 		Email            string                 `json:"email" form:"email" example:"abc@abc.com"`                                     // 邮箱,模糊查旬
 		Nickname         string                 `json:"nickname" form:"nickname" example:"Tom"`                                       // 昵称,模糊查询

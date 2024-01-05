@@ -61,7 +61,7 @@ func (app *Application) Init(env svc.Environment) error {
 	logger := log.Init(&cfg.Logger, "admin")
 	logger.Info(cfg)
 
-	if err := model.Init(&cfg.Mysql); err != nil {
+	if err = model.Init(&cfg.Mysql); err != nil {
 		logger.Error("Init Mysql Err:", err.Error())
 		return err
 	}

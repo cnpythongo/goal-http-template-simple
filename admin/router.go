@@ -32,5 +32,9 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 	u.PUT("/:uuid", account.UserUpdate)
 	u.DELETE("/:uuid", account.UserDelete)
 
+	h := route.Group("/api/v1/account/history")
+	h.GET("", account.GetHistoryList)
+	h.DELETE("/:user_id", account.UserDelete)
+
 	return route
 }
