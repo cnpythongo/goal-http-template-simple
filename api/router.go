@@ -1,8 +1,7 @@
 package api
 
 import (
-	"github.com/cnpythongo/goal/api/handler/account"
-	"github.com/cnpythongo/goal/api/handler/auth"
+	"github.com/cnpythongo/goal/api/handler"
 	"github.com/cnpythongo/goal/pkg/config"
 	"github.com/cnpythongo/goal/router"
 	"github.com/gin-gonic/gin"
@@ -18,10 +17,10 @@ func InitAPIRouters(cfg *config.Configuration) *gin.Engine {
 
 	g := route.Group("/api/v1/account")
 	// account login
-	g.POST("/login", auth.Login)
+	g.POST("/login", handler.Login)
 	// user api
-	g.GET("/me", account.GetUserByUuid)
-	g.GET("/users/:uuid", account.GetUserByUuid)
+	g.GET("/me", handler.GetUserByUuid)
+	g.GET("/users/:uuid", handler.GetUserByUuid)
 
 	return route
 }

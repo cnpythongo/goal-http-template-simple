@@ -17,6 +17,7 @@ type (
 		Language string `json:"language" default:"zh_cn"`
 		Secret   string `json:"secret" default:"secret."`
 		Debug    bool   `json:"debug"`
+		RunMode  string `json:"run_mode" default:"local"` // 运行模式，也可以理解为运行环境：local-本地开发, test-测试, prod-生产
 	}
 
 	HttpConfig struct {

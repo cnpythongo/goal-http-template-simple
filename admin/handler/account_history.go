@@ -1,7 +1,7 @@
-package account
+package handler
 
 import (
-	"github.com/cnpythongo/goal/admin/service/account"
+	"github.com/cnpythongo/goal/admin/service"
 	"github.com/cnpythongo/goal/admin/types"
 	"github.com/cnpythongo/goal/pkg/log"
 	"github.com/cnpythongo/goal/pkg/response"
@@ -27,7 +27,7 @@ func GetHistoryList(c *gin.Context) {
 		response.FailJsonResp(c, response.AccountQueryUserParamError, err)
 		return
 	}
-	result, code, err := account.NewUserService(c).GetUserList(&req)
+	result, code, err := service.NewUserService(c).GetUserList(&req)
 	if err != nil {
 		response.FailJsonResp(c, code, err)
 		return

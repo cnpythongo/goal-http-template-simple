@@ -2,7 +2,8 @@
   "app": {
     "language": "zh_cn",
     "secret": "db15a6fff9894e0e820e08db0bb2fdec",
-    "debug": true
+    "debug": true,
+    "run_mode": "prod"
   },
   "http": {
     "listen_addr": ":8100",

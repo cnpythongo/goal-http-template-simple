@@ -1,10 +1,9 @@
-package auth
+package service
 
 import (
 	"errors"
 	"fmt"
 	"github.com/cnpythongo/goal-tools/utils"
-	"github.com/cnpythongo/goal/admin/service/account"
 	"github.com/cnpythongo/goal/admin/types"
 	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/pkg/jwt"
@@ -20,7 +19,7 @@ type IAdminAuthService interface {
 
 type adminAuthService struct {
 	ctx     *gin.Context
-	userSvc account.IUserService
+	userSvc IUserService
 }
 
 // Login 登录
@@ -82,6 +81,6 @@ func (a *adminAuthService) Logout() error {
 func NewAdminAuthService(ctx *gin.Context) IAdminAuthService {
 	return &adminAuthService{
 		ctx:     ctx,
-		userSvc: account.NewUserService(ctx),
+		userSvc: NewUserService(ctx),
 	}
 }

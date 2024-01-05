@@ -1,8 +1,8 @@
-package account
+package handler
 
 import (
 	"fmt"
-	"github.com/cnpythongo/goal/admin/service/account"
+	"github.com/cnpythongo/goal/admin/service"
 	"github.com/cnpythongo/goal/admin/types"
 	"github.com/cnpythongo/goal/pkg/log"
 	"github.com/cnpythongo/goal/pkg/response"
@@ -28,7 +28,7 @@ func GetUserList(c *gin.Context) {
 		response.FailJsonResp(c, response.AccountQueryUserParamError, err)
 		return
 	}
-	result, code, err := account.NewUserService(c).GetUserList(&req)
+	result, code, err := service.NewUserService(c).GetUserList(&req)
 	if err != nil {
 		response.FailJsonResp(c, code, err)
 		return
@@ -54,7 +54,7 @@ func UserCreate(c *gin.Context) {
 		response.FailJsonResp(c, response.PayloadError, nil)
 		return
 	}
-	user, code, err := account.NewUserService(c).CreateUser(&payload)
+	user, code, err := service.NewUserService(c).CreateUser(&payload)
 	if err != nil {
 		response.FailJsonResp(c, code, err)
 		return
@@ -81,7 +81,7 @@ func UserBatchDelete(c *gin.Context) {
 // @Router /account/users/{uuid} [delete]
 func UserDelete(c *gin.Context) {
 	uuid := c.Param("uuid")
-	code, err := account.NewUserService(c).DeleteUserByUUID(uuid)
+	code, err := service.NewUserService(c).DeleteUserByUUID(uuid)
 	if err != nil {
 		response.FailJsonResp(c, code, err)
 		return
@@ -108,7 +108,7 @@ func UserUpdate(c *gin.Context) {
 		response.FailJsonResp(c, response.ParamsError, err)
 		return
 	}
-	code, err := account.NewUserService(c).UpdateUserByUUID(uuid, &payload)
+	code, err := service.NewUserService(c).UpdateUserByUUID(uuid, &payload)
 	if err != nil {
 		response.FailJsonResp(c, code, err)
 		return
@@ -129,7 +129,7 @@ func UserUpdate(c *gin.Context) {
 // @Router /account/users/{uuid} [get]
 func UserDetail(c *gin.Context) {
 	uuid := c.Param("uuid")
-	result, code, err := account.NewUserService(c).GetUserDetail(uuid)
+	result, code, err := service.NewUserService(c).GetUserDetail(uuid)
 	if err != nil {
 		response.FailJsonResp(c, code, nil)
 		return
