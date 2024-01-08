@@ -205,9 +205,85 @@ definitions:
     - UserStatusDelete
 info:
   contact: {}
+  description: |-
+    http状态码是200，code是0时表示正常返回；code不是200时表示有业务错误。返回的JSON数据由下面的结构包裹
+    {
+    "code": 0, // 0是成功，其他是失败
+    "data": {object},  // 接口返回的成功数据
+    "msg": "ok"    // ok 或其他失败信息
+    }
   title: 后台管理系统接口文档
   version: "1.0"
 paths:
+  /account/history:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户列表
+      parameters:
+      - description: 数据创建时间截止
+        example: "2023-09-01 22:59:59"
+        in: query
+        name: last_login_at_end
+        type: string
+      - description: 数据创建时间起始
+        example: "2023-09-01 01:30:59"
+        in: query
+        name: created_at_start
+        type: string
+      - description: 用户邮箱
+        example: abc@abc.com
+        in: query
+        name: email
+        type: string
+      - description: 用户昵称
+        example: Tom
+        in: query
+        name: nickname
+        type: string
+      - default: 1
+        description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 用户手机号
+        example: "13800138000"
+        in: query
+        name: phone
+        type: string
+      - default: 10
+        description: 每页数量
+        example: 10
+        in: query
+        name: size
+        type: integer
+      - description: 用户ID
+        example: 123
+        in: query
+        name: user_id
+        type: integer
+      - description: 用户UUID
+        example: abcef123
+        in: query
+        name: user_uuid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespGetUserList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户列表
+      tags:
+      - 用户管理
   /account/login:
     post:
       consumes:
@@ -240,11 +316,6 @@ paths:
         退出后台管理系统
         前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页
         后端可以执行清理redis缓存, 设置token黑名单等操作
-      parameters:
-      - description: Bearer 用户令牌
-        in: header
-        name: Authorization
-        type: string
       produces:
       - application/json
       responses:
@@ -257,12 +328,98 @@ paths:
       summary: 退出
       tags:
       - 登录退出
-  /account/users:
-    get:
+  /account/user/create:
+    post:
       consumes:
       - application/json
+      description: 创建新用户
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.ReqCreateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+      security:
+      - ApiKeyAuth: []
+      summary: 创建用户
+      tags:
+      - 用户管理
+  /account/user/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除单个用户
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除用户
+      tags:
+      - 用户管理
+  /account/user/detail:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 获取用户详情
+      parameters:
+      - description: 用户UUID
+        in: query
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+      security:
+      - ApiKeyAuth: []
+      summary: 通过用户UUID获取用户详情
+      tags:
+      - 用户管理
+  /account/user/list:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
       description: 获取用户列表
       parameters:
+      - description: 数据创建时间截止
+        example: "2023-09-01 22:59:59"
+        in: query
+        name: last_login_at_end
+        type: string
+      - description: 数据创建时间起始
+        example: "2023-09-01 01:30:59"
+        in: query
+        name: created_at_start
+        type: string
       - description: 邮箱,模糊查旬
         example: abc@abc.com
         in: query
@@ -300,7 +457,7 @@ paths:
         in: query
         name: size
         type: integer
-      - collectionFormat: csv
+      - collectionFormat: multi
         description: 用户状态,多种状态过滤使用逗号分隔
         example:
         - FREEZE
@@ -331,96 +488,12 @@ paths:
       summary: 获取用户列表
       tags:
       - 用户管理
+  /account/user/update:
     post:
-      consumes:
-      - application/json
-      description: 创建新用户
-      parameters:
-      - description: 请求体
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.ReqCreateUser'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
-      security:
-      - ApiKeyAuth: []
-      summary: 创建用户
-      tags:
-      - 用户管理
-  /account/users/{uuid}:
-    delete:
-      consumes:
-      - application/json
-      description: 删除单个用户
-      parameters:
-      - description: 用户UUID
-        in: path
-        name: uuid
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
-      security:
-      - ApiKeyAuth: []
-      summary: 删除用户
-      tags:
-      - 用户管理
-    get:
-      consumes:
-      - application/json
-      description: 获取用户详情
-      parameters:
-      - description: 用户UUID
-        in: path
-        name: uuid
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
-      security:
-      - ApiKeyAuth: []
-      summary: 通过用户UUID获取用户详情
-      tags:
-      - 用户管理
-    patch:
       consumes:
       - application/json
       description: 更新用户数据
       parameters:
-      - description: 用户UUID
-        in: path
-        name: uuid
-        required: true
-        type: string
       - description: 请求体
         in: body
         name: data
@@ -443,4 +516,10 @@ paths:
       summary: 更新用户
       tags:
       - 用户管理
+securityDefinitions:
+  ApiKeyAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

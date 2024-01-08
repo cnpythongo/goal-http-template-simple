@@ -19,7 +19,7 @@ type IAdminAuthService interface {
 
 type adminAuthService struct {
 	ctx     *gin.Context
-	userSvc IUserService
+	userSvc IAccountUserService
 }
 
 // Login 登录
@@ -81,6 +81,6 @@ func (a *adminAuthService) Logout() error {
 func NewAdminAuthService(ctx *gin.Context) IAdminAuthService {
 	return &adminAuthService{
 		ctx:     ctx,
-		userSvc: NewUserService(ctx),
+		userSvc: NewAccountUserService(),
 	}
 }

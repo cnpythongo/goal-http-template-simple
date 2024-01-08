@@ -1,12 +1,114 @@
 {
     "swagger": "2.0",
     "info": {
+        "description": "http状态码是200，code是0时表示正常返回；code不是200时表示有业务错误。返回的JSON数据由下面的结构包裹\n{\n\"code\": 0, // 0是成功，其他是失败\n\"data\": {object},  // 接口返回的成功数据\n\"msg\": \"ok\"    // ok 或其他失败信息\n}",
         "title": "后台管理系统接口文档",
         "contact": {},
         "version": "1.0"
     },
     "basePath": "/api/v1",
     "paths": {
+        "/account/history": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取用户列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "获取用户列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "2023-09-01 22:59:59",
+                        "description": "数据创建时间截止",
+                        "name": "last_login_at_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2023-09-01 01:30:59",
+                        "description": "数据创建时间起始",
+                        "name": "created_at_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "abc@abc.com",
+                        "description": "用户邮箱",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "Tom",
+                        "description": "用户昵称",
+                        "name": "nickname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "example": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "13800138000",
+                        "description": "用户手机号",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "每页数量",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 123,
+                        "description": "用户ID",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "abcef123",
+                        "description": "用户UUID",
+                        "name": "user_uuid",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespGetUserList"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                        }
+                    }
+                }
+            }
+        },
         "/account/login": {
             "post": {
                 "description": "后台管理系统登录接口",
@@ -62,14 +164,6 @@
                     "登录退出"
                 ],
                 "summary": "退出",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -80,14 +174,14 @@
                 }
             }
         },
-        "/account/users": {
-            "get": {
+        "/account/user/create": {
+            "post": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "获取用户列表",
+                "description": "创建新用户",
                 "consumes": [
                     "application/json"
                 ],
@@ -97,8 +191,144 @@
                 "tags": [
                     "用户管理"
                 ],
+                "summary": "创建用户",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqCreateUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/user/delete": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "删除单个用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "删除用户",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/user/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取用户详情",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "通过用户UUID获取用户详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户UUID",
+                        "name": "uuid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/user/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取用户列表",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
                 "summary": "获取用户列表",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "2023-09-01 22:59:59",
+                        "description": "数据创建时间截止",
+                        "name": "last_login_at_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2023-09-01 01:30:59",
+                        "description": "数据创建时间起始",
+                        "name": "created_at_start",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "example": "abc@abc.com",
@@ -161,7 +391,7 @@
                             ],
                             "type": "string"
                         },
-                        "collectionFormat": "csv",
+                        "collectionFormat": "multi",
                         "example": [
                             "FREEZE",
                             "ACTIVE"
@@ -185,135 +415,10 @@
                         }
                     }
                 }
-            },
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "创建新用户",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户管理"
-                ],
-                "summary": "创建用户",
-                "parameters": [
-                    {
-                        "description": "请求体",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqCreateUser"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
-                        }
-                    }
-                }
             }
         },
-        "/account/users/{uuid}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "获取用户详情",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户管理"
-                ],
-                "summary": "通过用户UUID获取用户详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户UUID",
-                        "name": "uuid",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "删除单个用户",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户管理"
-                ],
-                "summary": "删除用户",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户UUID",
-                        "name": "uuid",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
-                        }
-                    }
-                }
-            },
-            "patch": {
+        "/account/user/update": {
+            "post": {
                 "security": [
                     {
                         "ApiKeyAuth": []
@@ -331,13 +436,6 @@
                 ],
                 "summary": "更新用户",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户UUID",
-                        "name": "uuid",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "description": "请求体",
                         "name": "data",
@@ -643,6 +741,14 @@
                 "UserStatusFreeze",
                 "UserStatusDelete"
             ]
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

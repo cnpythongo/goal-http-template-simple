@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 )
@@ -19,6 +20,7 @@ func DoRequest(r http.Handler, method, path string, data interface{}) *httptest.
 	req, _ := http.NewRequest(method, path, reqBody)
 	w := httptest.NewRecorder()
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", AuthToken))
 	r.ServeHTTP(w, req)
 	return w
 }

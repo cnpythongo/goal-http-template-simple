@@ -7,13 +7,12 @@ import (
 	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/pkg/log"
 	"github.com/cnpythongo/goal/pkg/response"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 	"strings"
 )
 
-type IUserService interface {
+type IAccountUserService interface {
 	GetUserList(req *types.ReqGetUserList) (*types.RespGetUserList, int, error)
 	GetUserDetail(uuid string) (*types.RespUserDetail, int, error)
 	CreateUser(payload *types.ReqCreateUser) (*types.RespUserDetail, int, error)
@@ -26,12 +25,11 @@ type IUserService interface {
 	UpdateUserLastLogin(uuid string) error
 }
 
-type userService struct {
-	ctx *gin.Context
-	db  *gorm.DB
+type accountUserService struct {
+	db *gorm.DB
 }
 
-func (s *userService) GetUserList(req *types.ReqGetUserList) (*types.RespGetUserList, int, error) {
+func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.RespGetUserList, int, error) {
 	page := req.Page
 	size := req.Size
 	var query []string
@@ -86,7 +84,7 @@ func (s *userService) GetUserList(req *types.ReqGetUserList) (*types.RespGetUser
 	return resp, response.SuccessCode, nil
 }
 
-func (s *userService) GetUserDetail(uuid string) (*types.RespUserDetail, int, error) {
+func (s *accountUserService) GetUserDetail(uuid string) (*types.RespUserDetail, int, error) {
 	user, err := s.GetUserByUUID(uuid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -99,7 +97,7 @@ func (s *userService) GetUserDetail(uuid string) (*types.RespUserDetail, int, er
 	return s.transUserToResponseData(user)
 }
 
-func (s *userService) CreateUser(payload *types.ReqCreateUser) (*types.RespUserDetail, int, error) {
+func (s *accountUserService) CreateUser(payload *types.ReqCreateUser) (*types.RespUserDetail, int, error) {
 	user, err := s.GetUserByPhone(payload.Phone)
 	if user != nil {
 		return nil, response.DataExistError, errors.New(response.GetCodeMsg(response.DataExistError))
@@ -122,7 +120,7 @@ func (s *userService) CreateUser(payload *types.ReqCreateUser) (*types.RespUserD
 	return s.transUserToResponseData(user)
 }
 
-func (s *userService) DeleteUserByUUID(uuid string) (int, error) {
+func (s *accountUserService) DeleteUserByUUID(uuid string) (int, error) {
 	go func() {
 		// todo 异步清理用户的其他数据
 	}()
@@ -134,23 +132,23 @@ func (s *userService) DeleteUserByUUID(uuid string) (int, error) {
 	return response.SuccessCode, nil
 }
 
-func (s *userService) GetUserByPhone(phone string) (*model.User, error) {
+func (s *accountUserService) GetUserByPhone(phone string) (*model.User, error) {
 	return model.GetUserByPhone(s.db, phone)
 }
 
-func (s *userService) GetUserByUUID(uuid string) (*model.User, error) {
+func (s *accountUserService) GetUserByUUID(uuid string) (*model.User, error) {
 	return model.GetUserByUUID(s.db, uuid)
 }
 
-func (s *userService) GetUserByEmail(email string) (*model.User, error) {
+func (s *accountUserService) GetUserByEmail(email string) (*model.User, error) {
 	return model.GetUserByEmail(s.db, email)
 }
 
-func (s *userService) UpdateUserLastLogin(uuid string) error {
+func (s *accountUserService) UpdateUserLastLogin(uuid string) error {
 	return model.UpdateUserLastLoginAt(s.db, uuid)
 }
 
-func (s *userService) transUserToResponseData(user *model.User) (*types.RespUserDetail, int, error) {
+func (s *accountUserService) transUserToResponseData(user *model.User) (*types.RespUserDetail, int, error) {
 	result := new(types.RespUserDetail)
 	err := copier.Copy(result, user)
 	if err != nil {
@@ -161,7 +159,7 @@ func (s *userService) transUserToResponseData(user *model.User) (*types.RespUser
 	return result, response.SuccessCode, nil
 }
 
-func (s *userService) UpdateUserByUUID(uuid string, payload *types.ReqUpdateUser) (int, error) {
+func (s *accountUserService) UpdateUserByUUID(uuid string, payload *types.ReqUpdateUser) (int, error) {
 	user, err := s.GetUserByUUID(uuid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -184,10 +182,9 @@ func (s *userService) UpdateUserByUUID(uuid string, payload *types.ReqUpdateUser
 	return response.SuccessCode, nil
 }
 
-func NewUserService(ctx *gin.Context) IUserService {
+func NewAccountUserService() IAccountUserService {
 	db := model.GetDB()
-	return &userService{
-		ctx: ctx,
-		db:  db,
+	return &accountUserService{
+		db: db,
 	}
 }

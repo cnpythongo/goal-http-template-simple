@@ -27,58 +27,10 @@ func GetHistoryList(c *gin.Context) {
 		response.FailJson(c, response.ParamsError, err)
 		return
 	}
-	result, code, err := service.NewUserService(c).GetUserList(&req)
+	result, code, err := service.NewAccountUserService().GetUserList(&req)
 	if err != nil {
 		response.FailJson(c, code, err)
 		return
 	}
 	response.SuccessJson(c, result, nil)
 }
-
-//// UserDelete 删除用户
-//// @Tags 用户管理
-//// @Summary 删除用户
-//// @Description 删除单个用户
-//// @Accept json
-//// @Produce json
-//// @Param uuid path string true "用户UUID"
-//// @Success 200 {object} types.RespEmptyJson
-//// @Failure 400 {object} types.RespFailJson
-//// @Security ApiKeyAuth
-//// @Router /account/users/{uuid} [delete]
-//func UserDelete(c *gin.Context) {
-//	uuid := c.Param("uuid")
-//	code, err := account.NewUserService(c).DeleteUserByUUID(uuid)
-//	if err != nil {
-//		response.FailJson(c, code, err)
-//		return
-//	}
-//	response.EmptyJsonResp(c, response.SuccessCode)
-//}
-//
-//// UserUpdate 更新用户数据
-//// @Tags 用户管理
-//// @Summary 更新用户
-//// @Description 更新用户数据
-//// @Accept json
-//// @Produce json
-//// @Param uuid path string true "用户UUID"
-//// @Param data body types.ReqUpdateUser true "请求体"
-//// @Success 200 {object} types.RespEmptyJson
-//// @Failure 400 {object} types.RespFailJson
-//// @Security ApiKeyAuth
-//// @Router /account/users/{uuid} [patch]
-//func UserUpdate(c *gin.Context) {
-//	uuid := c.Param("uuid")
-//	var payload types.ReqUpdateUser
-//	if err := c.ShouldBindJSON(&payload); err != nil {
-//		response.FailJson(c, response.ParamsError, err)
-//		return
-//	}
-//	code, err := account.NewUserService(c).UpdateUserByUUID(uuid, &payload)
-//	if err != nil {
-//		response.FailJson(c, code, err)
-//		return
-//	}
-//	response.EmptyJsonResp(c, code)
-//}

@@ -40,7 +40,6 @@ func Login(c *gin.Context) {
 // @Description 前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页
 // @Description 后端可以执行清理redis缓存, 设置token黑名单等操作
 // @Produce json
-// @Param Authorization header string false "Bearer 用户令牌"
 // @Security ApiKeyAuth
 // @Success 200 {object} types.RespEmptyJson
 // @Router /account/logout [post]
