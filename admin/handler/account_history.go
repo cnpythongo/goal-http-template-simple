@@ -24,15 +24,15 @@ func GetHistoryList(c *gin.Context) {
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		log.GetLogger().Error(err)
-		response.FailJsonResp(c, response.AccountQueryUserParamError, err)
+		response.FailJson(c, response.ParamsError, err)
 		return
 	}
 	result, code, err := service.NewUserService(c).GetUserList(&req)
 	if err != nil {
-		response.FailJsonResp(c, code, err)
+		response.FailJson(c, code, err)
 		return
 	}
-	response.SuccessJsonResp(c, result, nil)
+	response.SuccessJson(c, result, nil)
 }
 
 //// UserDelete 删除用户
@@ -50,7 +50,7 @@ func GetHistoryList(c *gin.Context) {
 //	uuid := c.Param("uuid")
 //	code, err := account.NewUserService(c).DeleteUserByUUID(uuid)
 //	if err != nil {
-//		response.FailJsonResp(c, code, err)
+//		response.FailJson(c, code, err)
 //		return
 //	}
 //	response.EmptyJsonResp(c, response.SuccessCode)
@@ -72,12 +72,12 @@ func GetHistoryList(c *gin.Context) {
 //	uuid := c.Param("uuid")
 //	var payload types.ReqUpdateUser
 //	if err := c.ShouldBindJSON(&payload); err != nil {
-//		response.FailJsonResp(c, response.ParamsError, err)
+//		response.FailJson(c, response.ParamsError, err)
 //		return
 //	}
 //	code, err := account.NewUserService(c).UpdateUserByUUID(uuid, &payload)
 //	if err != nil {
-//		response.FailJsonResp(c, code, err)
+//		response.FailJson(c, code, err)
 //		return
 //	}
 //	response.EmptyJsonResp(c, code)

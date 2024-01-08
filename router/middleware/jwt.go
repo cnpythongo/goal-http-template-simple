@@ -21,7 +21,7 @@ func JWTAuthenticationMiddleware() gin.HandlerFunc {
 		token := c.GetHeader("Authorization")
 
 		if token == "" {
-			code = response.AuthRequireError
+			code = response.AuthLoginRequireError
 		} else {
 			token = strings.TrimSpace(strings.Replace(token, "Bearer", "", 1))
 			claims, err = jwt.ParseToken(token)

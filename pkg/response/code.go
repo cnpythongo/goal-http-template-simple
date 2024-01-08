@@ -9,28 +9,27 @@ const (
 	FailCode    = 1
 
 	UnknownError           = 1000
-	PayloadError           = 1100
-	ParamsError            = 1200
-	AuthError              = 1300
-	AuthTokenError         = 1301
-	AuthTokenGenerateError = 1302
-	AuthForbiddenError     = 1303
-	AuthRequireError       = 1304
-	DBQueryError           = 1400
-	DBAttributesCopyError  = 1401
+	PayloadError           = 1001
+	ParamsError            = 1002
+	AuthError              = 1003
+	AuthTokenError         = 1004
+	AuthTokenGenerateError = 1005
+	AuthForbiddenError     = 1006
+	AuthLoginRequireError  = 1007
 
-	AccountUserExistError      = 2000
-	AccountEmailExistsError    = 2001
-	AccountCreateError         = 2002
-	AccountUserOrPwdError      = 2003
-	AccountUserNotExistError   = 2004
-	AccountQueryUserError      = 2005
-	AccountQueryUserParamError = 2006
-	AccountQueryUserListError  = 2007
-	AccountUserInactiveError   = 2008
-	AccountUserFreezeError     = 2009
-	AccountUserDeleteError     = 2010
-	AccountUserUpdateError     = 2011
+	QueryError            = 1100
+	DBAttributesCopyError = 1101
+	DeleteError           = 1102
+	UpdateError           = 1103
+	CreateError           = 1104
+	DataExistError        = 1105
+	DataNotExistError     = 1106
+
+	AccountEmailExistsError  = 1200
+	AccountUserOrPwdError    = 1201
+	AccountUserNotExistError = 1202
+	AccountUserInactiveError = 1203
+	AccountUserFreezeError   = 1204
 )
 
 var MsgMapping = map[string]map[int]string{
@@ -42,11 +41,11 @@ func GetCodeMsg(code int) string {
 	lang := config.GetConfig().App.Language
 	mapping, ok := MsgMapping[lang]
 	if !ok {
-		return ""
+		return "unsupport language"
 	}
 	msg, ok := mapping[code]
 	if !ok {
-		return ""
+		return "unknown error"
 	}
 	return msg
 }

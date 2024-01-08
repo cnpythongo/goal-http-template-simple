@@ -24,7 +24,7 @@ func (s *userService) GetUserByPhone(phone string) (*model.User, error) {
 func (s *userService) GetUserByUUID(uuid string) (*model.User, int, error) {
 	user, err := model.GetUserByConditions(s.db, map[string]interface{}{"uuid": uuid})
 	if err != nil {
-		return nil, response.DBQueryError, err
+		return nil, response.QueryError, err
 	}
 	return user, response.SuccessCode, nil
 }

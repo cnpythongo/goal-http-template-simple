@@ -21,16 +21,16 @@ import (
 func Login(c *gin.Context) {
 	var payload *types.ReqAdminAuth
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		response.FailJsonResp(c, response.PayloadError, err)
+		response.FailJson(c, response.PayloadError, err)
 		return
 	}
 
 	data, code, err := service.NewAdminAuthService(c).Login(payload)
 	if code != response.SuccessCode {
-		response.FailJsonResp(c, code, err)
+		response.FailJson(c, code, err)
 		return
 	}
-	response.SuccessJsonResp(c, data, nil)
+	response.SuccessJson(c, data, nil)
 }
 
 // Logout 退出

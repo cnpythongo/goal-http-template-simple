@@ -25,15 +25,15 @@ func GetUserList(c *gin.Context) {
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		log.GetLogger().Error(err)
-		response.FailJsonResp(c, response.AccountQueryUserParamError, err)
+		response.FailJson(c, response.ParamsError, err)
 		return
 	}
 	result, code, err := service.NewUserService(c).GetUserList(&req)
 	if err != nil {
-		response.FailJsonResp(c, code, err)
+		response.FailJson(c, code, err)
 		return
 	}
-	response.SuccessJsonResp(c, result, nil)
+	response.SuccessJson(c, result, nil)
 }
 
 // UserCreate 创建用户
@@ -51,15 +51,15 @@ func UserCreate(c *gin.Context) {
 	var payload types.ReqCreateUser
 	err := c.ShouldBindJSON(&payload)
 	if err != nil {
-		response.FailJsonResp(c, response.PayloadError, nil)
+		response.FailJson(c, response.PayloadError, nil)
 		return
 	}
 	user, code, err := service.NewUserService(c).CreateUser(&payload)
 	if err != nil {
-		response.FailJsonResp(c, code, err)
+		response.FailJson(c, code, err)
 		return
 	}
-	response.SuccessJsonResp(c, user, nil)
+	response.SuccessJson(c, user, nil)
 }
 
 // UserBatchDelete 批量删除用户
@@ -83,7 +83,7 @@ func UserDelete(c *gin.Context) {
 	uuid := c.Param("uuid")
 	code, err := service.NewUserService(c).DeleteUserByUUID(uuid)
 	if err != nil {
-		response.FailJsonResp(c, code, err)
+		response.FailJson(c, code, err)
 		return
 	}
 	response.EmptyJsonResp(c, response.SuccessCode)
@@ -105,12 +105,12 @@ func UserUpdate(c *gin.Context) {
 	uuid := c.Param("uuid")
 	var payload types.ReqUpdateUser
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		response.FailJsonResp(c, response.ParamsError, err)
+		response.FailJson(c, response.ParamsError, err)
 		return
 	}
 	code, err := service.NewUserService(c).UpdateUserByUUID(uuid, &payload)
 	if err != nil {
-		response.FailJsonResp(c, code, err)
+		response.FailJson(c, code, err)
 		return
 	}
 	response.EmptyJsonResp(c, code)
@@ -131,8 +131,8 @@ func UserDetail(c *gin.Context) {
 	uuid := c.Param("uuid")
 	result, code, err := service.NewUserService(c).GetUserDetail(uuid)
 	if err != nil {
-		response.FailJsonResp(c, code, nil)
+		response.FailJson(c, code, nil)
 		return
 	}
-	response.SuccessJsonResp(c, result, nil)
+	response.SuccessJson(c, result, nil)
 }

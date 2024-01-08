@@ -13,7 +13,7 @@ func EmptyJsonResp(c *gin.Context, code int) {
 	c.JSON(http.StatusOK, data)
 }
 
-func SuccessJsonResp(c *gin.Context, result interface{}, extends map[string]interface{}) {
+func SuccessJson(c *gin.Context, result interface{}, extends map[string]interface{}) {
 	ret := gin.H{
 		"code": SuccessCode,
 		"msg":  GetCodeMsg(SuccessCode),
@@ -27,7 +27,7 @@ func SuccessJsonResp(c *gin.Context, result interface{}, extends map[string]inte
 	c.JSON(http.StatusOK, ret)
 }
 
-func FailJsonResp(c *gin.Context, code int, err interface{}) {
+func FailJson(c *gin.Context, code int, err interface{}) {
 	data := gin.H{
 		"code": code,
 		"msg":  GetCodeMsg(code),

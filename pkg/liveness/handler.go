@@ -6,5 +6,5 @@ import (
 )
 
 func Ping(c *gin.Context) {
-	response.SuccessJsonResp(c, "hello world", nil)
+	response.SuccessJson(c, "hello world", nil)
 }

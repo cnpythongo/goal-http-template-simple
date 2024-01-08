@@ -27,9 +27,9 @@ func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminA
 	user, err := a.userSvc.GetUserByPhone(payload.Phone)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, response.AccountUserNotExistError, err
+			return nil, response.DataExistError, err
 		}
-		return nil, response.AccountQueryUserError, err
+		return nil, response.QueryError, err
 	}
 
 	if user.Status == model.UserStatusFreeze {

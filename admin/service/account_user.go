@@ -64,7 +64,7 @@ func (s *userService) GetUserList(req *types.ReqGetUserList) (*types.RespGetUser
 	queryStr := strings.Join(query, " AND ")
 	rows, count, err := model.GetUserList(s.db, page, size, queryStr, args)
 	if err != nil {
-		return nil, response.DBQueryError, err
+		return nil, response.QueryError, err
 	}
 
 	result := make([]*types.RespUserBasic, 0)
@@ -90,10 +90,10 @@ func (s *userService) GetUserDetail(uuid string) (*types.RespUserDetail, int, er
 	user, err := s.GetUserByUUID(uuid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, response.AccountUserNotExistError, err
+			return nil, response.DataNotExistError, err
 		} else {
 			log.GetLogger().Error(err)
-			return nil, response.AccountQueryUserError, err
+			return nil, response.QueryError, err
 		}
 	}
 	return s.transUserToResponseData(user)
@@ -102,7 +102,7 @@ func (s *userService) GetUserDetail(uuid string) (*types.RespUserDetail, int, er
 func (s *userService) CreateUser(payload *types.ReqCreateUser) (*types.RespUserDetail, int, error) {
 	user, err := s.GetUserByPhone(payload.Phone)
 	if user != nil {
-		return nil, response.AccountUserExistError, errors.New(response.GetCodeMsg(response.AccountUserExistError))
+		return nil, response.DataExistError, errors.New(response.GetCodeMsg(response.DataExistError))
 	}
 	user, err = s.GetUserByEmail(payload.Email)
 	if user != nil {
@@ -117,7 +117,7 @@ func (s *userService) CreateUser(payload *types.ReqCreateUser) (*types.RespUserD
 	user, err = model.CreateUser(s.db, user)
 	if err != nil {
 		log.GetLogger().Error(err)
-		return nil, response.AccountCreateError, err
+		return nil, response.CreateError, err
 	}
 	return s.transUserToResponseData(user)
 }
@@ -129,7 +129,7 @@ func (s *userService) DeleteUserByUUID(uuid string) (int, error) {
 	err := model.DeleteUser(s.db, uuid)
 	if err != nil {
 		log.GetLogger().Error(err)
-		return response.AccountQueryUserError, err
+		return response.QueryError, err
 	}
 	return response.SuccessCode, nil
 }
@@ -165,10 +165,10 @@ func (s *userService) UpdateUserByUUID(uuid string, payload *types.ReqUpdateUser
 	user, err := s.GetUserByUUID(uuid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return response.AccountUserNotExistError, err
+			return response.DataNotExistError, err
 		} else {
 			log.GetLogger().Error(err)
-			return response.AccountQueryUserError, err
+			return response.QueryError, err
 		}
 	}
 	err = copier.Copy(user, payload)
@@ -179,7 +179,7 @@ func (s *userService) UpdateUserByUUID(uuid string, payload *types.ReqUpdateUser
 	err = s.db.Save(&user).Error
 	if err != nil {
 		log.GetLogger().Error(err)
-		return response.AccountUserExistError, err
+		return response.DataExistError, err
 	}
 	return response.SuccessCode, nil
 }
