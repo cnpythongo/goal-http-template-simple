@@ -36,13 +36,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "2023-09-01 22:59:59",
-                        "description": "数据创建时间截止",
-                        "name": "last_login_at_end",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "example": "2023-09-01 01:30:59",
                         "description": "数据创建时间起始",
                         "name": "created_at_start",
@@ -53,6 +46,13 @@ const docTemplate = `{
                         "example": "abc@abc.com",
                         "description": "用户邮箱",
                         "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2023-09-01 22:59:59",
+                        "description": "数据创建时间截止",
+                        "name": "last_login_at_end",
                         "in": "query"
                     },
                     {
@@ -104,13 +104,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqGetHistoryList"
+                            "$ref": "#/definitions/types.ReqGetHistoryList"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                            "$ref": "#/definitions/types.RespFailJson"
                         }
                     }
                 }
@@ -136,7 +136,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqAdminAuth"
+                            "$ref": "#/definitions/types.ReqAdminAuth"
                         }
                     }
                 ],
@@ -144,13 +144,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespAdminAuth"
+                            "$ref": "#/definitions/types.RespAdminAuth"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                            "$ref": "#/definitions/types.RespFailJson"
                         }
                     }
                 }
@@ -175,7 +175,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson"
+                            "$ref": "#/definitions/types.RespEmptyJson"
                         }
                     }
                 }
@@ -206,7 +206,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqCreateUser"
+                            "$ref": "#/definitions/types.ReqCreateUser"
                         }
                     }
                 ],
@@ -214,13 +214,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail"
+                            "$ref": "#/definitions/types.RespUserDetail"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                            "$ref": "#/definitions/types.RespFailJson"
                         }
                     }
                 }
@@ -248,13 +248,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson"
+                            "$ref": "#/definitions/types.RespEmptyJson"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                            "$ref": "#/definitions/types.RespFailJson"
                         }
                     }
                 }
@@ -291,13 +291,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail"
+                            "$ref": "#/definitions/types.RespUserDetail"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                            "$ref": "#/definitions/types.RespFailJson"
                         }
                     }
                 }
@@ -322,13 +322,6 @@ const docTemplate = `{
                 ],
                 "summary": "获取用户列表",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "example": "2023-09-01 22:59:59",
-                        "description": "数据创建时间截止",
-                        "name": "last_login_at_end",
-                        "in": "query"
-                    },
                     {
                         "type": "string",
                         "example": "2023-09-01 01:30:59",
@@ -412,13 +405,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqGetUserList"
+                            "$ref": "#/definitions/types.ReqGetUserList"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                            "$ref": "#/definitions/types.RespFailJson"
                         }
                     }
                 }
@@ -449,7 +442,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqUpdateUser"
+                            "$ref": "#/definitions/types.ReqUpdateUser"
                         }
                     }
                 ],
@@ -457,13 +450,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson"
+                            "$ref": "#/definitions/types.RespEmptyJson"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson"
+                            "$ref": "#/definitions/types.RespFailJson"
                         }
                     }
                 }
@@ -471,7 +464,22 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_cnpythongo_goal_admin_types.ReqAdminAuth": {
+        "model.UserStatusType": {
+            "type": "string",
+            "enum": [
+                "INACTIVE",
+                "ACTIVE",
+                "FREEZE",
+                "DELETE"
+            ],
+            "x-enum-varnames": [
+                "UserStatusInactive",
+                "UserStatusActive",
+                "UserStatusFreeze",
+                "UserStatusDelete"
+            ]
+        },
+        "types.ReqAdminAuth": {
             "type": "object",
             "required": [
                 "password",
@@ -490,9 +498,11 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_cnpythongo_goal_admin_types.ReqCreateUser": {
+        "types.ReqCreateUser": {
             "type": "object",
             "required": [
+                "password",
+                "password_confirm",
                 "phone"
             ],
             "properties": {
@@ -523,14 +533,9 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_cnpythongo_goal_admin_types.ReqGetHistoryList": {
+        "types.ReqGetHistoryList": {
             "type": "object",
             "properties": {
-                "created_at_end": {
-                    "description": "数据创建时间截止",
-                    "type": "string",
-                    "example": "2023-09-01 22:59:59"
-                },
                 "created_at_start": {
                     "description": "数据创建时间起始",
                     "type": "string",
@@ -540,6 +545,11 @@ const docTemplate = `{
                     "description": "用户邮箱",
                     "type": "string",
                     "example": "abc@abc.com"
+                },
+                "last_login_at_end": {
+                    "description": "数据创建时间截止",
+                    "type": "string",
+                    "example": "2023-09-01 22:59:59"
                 },
                 "limit": {
                     "description": "每页数量",
@@ -575,14 +585,9 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_cnpythongo_goal_admin_types.ReqGetUserList": {
+        "types.ReqGetUserList": {
             "type": "object",
             "properties": {
-                "created_at_end": {
-                    "description": "数据创建时间截止",
-                    "type": "string",
-                    "example": "2023-09-01 22:59:59"
-                },
                 "created_at_start": {
                     "description": "数据创建时间起始",
                     "type": "string",
@@ -638,7 +643,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_cnpythongo_goal_admin_types.ReqUpdateUser": {
+        "types.ReqUpdateUser": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -673,7 +678,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_cnpythongo_goal_admin_types.RespAdminAuth": {
+        "types.RespAdminAuth": {
             "type": "object",
             "properties": {
                 "expire_time": {
@@ -688,13 +693,13 @@ const docTemplate = `{
                     "description": "用户基本信息",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespAdminAuthUser"
+                            "$ref": "#/definitions/types.RespAdminAuthUser"
                         }
                     ]
                 }
             }
         },
-        "github_com_cnpythongo_goal_admin_types.RespAdminAuthUser": {
+        "types.RespAdminAuthUser": {
             "type": "object",
             "properties": {
                 "last_login_at": {
@@ -712,7 +717,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_cnpythongo_goal_admin_types.RespEmptyJson": {
+        "types.RespEmptyJson": {
             "type": "object",
             "properties": {
                 "code": {
@@ -727,7 +732,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_cnpythongo_goal_admin_types.RespFailJson": {
+        "types.RespFailJson": {
             "type": "object",
             "properties": {
                 "code": {
@@ -747,7 +752,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_cnpythongo_goal_admin_types.RespUserDetail": {
+        "types.RespUserDetail": {
             "type": "object",
             "properties": {
                 "is_admin": {
@@ -785,21 +790,6 @@ const docTemplate = `{
                     "example": "826d6b1aa64d471d822d667e92218158"
                 }
             }
-        },
-        "model.UserStatusType": {
-            "type": "string",
-            "enum": [
-                "INACTIVE",
-                "ACTIVE",
-                "FREEZE",
-                "DELETE"
-            ],
-            "x-enum-varnames": [
-                "UserStatusInactive",
-                "UserStatusActive",
-                "UserStatusFreeze",
-                "UserStatusDelete"
-            ]
         }
     },
     "securityDefinitions": {
@@ -819,7 +809,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "后台管理系统接口文档",
-	Description:      "http状态码是200，code为0时表示正常返回；code不为0时表示有业务错误。返回的JSON数据结构如下：\n{\n\"code\": 0, // 0是成功，其他是失败\n\"data\": {object},  // 接口返回的成功数据\n\"msg\": \"ok\"    // ok 或其他失败信息\n}",
+	Description:      "http状态码是200，code为0时表示正常返回；code不为0时表示有业务错误。返回的JSON数据结构如下：",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

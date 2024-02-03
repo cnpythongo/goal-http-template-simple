@@ -3,18 +3,18 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/cnpythongo/goal/admin"
-	"github.com/cnpythongo/goal/model"
-	"github.com/cnpythongo/goal/model/migrate"
-	"github.com/cnpythongo/goal/model/redis"
-	"github.com/cnpythongo/goal/pkg/config"
-	"github.com/cnpythongo/goal/pkg/log"
-	"github.com/cnpythongo/goal/pkg/status"
-	"github.com/cnpythongo/goal/pkg/wrapper"
 	"github.com/gin-gonic/gin"
 	"github.com/judwhite/go-svc"
 	"github.com/robfig/cron/v3"
 	"github.com/spf13/cobra"
+	"goal-app/admin"
+	"goal-app/model"
+	"goal-app/model/migrate"
+	"goal-app/model/redis"
+	"goal-app/pkg/config"
+	"goal-app/pkg/log"
+	"goal-app/pkg/status"
+	"goal-app/pkg/wrapper"
 	"net/http"
 	"syscall"
 	"time"
@@ -97,7 +97,7 @@ func (app *Application) Start() error {
 			IdleTimeout:    cfg.IdleTimeout * time.Second,
 			MaxHeaderBytes: cfg.MaxHeaderBytes,
 		}
-		log.GetLogger().Info("Admin server started. Listen on ", cfg.AdminListenAddr)
+		log.GetLogger().Info("GoalApp server started. Listen on ", cfg.AdminListenAddr)
 		if err := app.httpServer.ListenAndServe(); err != nil {
 			fmt.Println(err)
 		}
@@ -110,7 +110,7 @@ func (app *Application) Stop() error {
 		if err := app.httpServer.Shutdown(context.Background()); err != nil {
 			log.GetLogger().Info("HttpServer shutdown error:%v\n", err)
 		}
-		log.GetLogger().Info("Admin server shutdown")
+		log.GetLogger().Info("GoalApp server shutdown")
 	}
 	app.wrapper.Wait()
 	status.Shutdown()
@@ -120,6 +120,6 @@ func (app *Application) Stop() error {
 	if config.GetConfig().Redis.Enable {
 		_ = redis.Close()
 	}
-	log.GetLogger().Info("Admin server shutdown done")
+	log.GetLogger().Info("GoalApp server shutdown done")
 	return nil
 }

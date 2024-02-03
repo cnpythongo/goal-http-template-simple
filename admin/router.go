@@ -1,12 +1,12 @@
 package admin
 
 import (
-	"github.com/cnpythongo/goal/admin/handler"
-	"github.com/cnpythongo/goal/pkg/config"
-	"github.com/cnpythongo/goal/router"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"goal-app/admin/handler"
+	"goal-app/pkg/config"
+	"goal-app/router"
 )
 
 func InitAdminRouters(cfg *config.Configuration) *gin.Engine {

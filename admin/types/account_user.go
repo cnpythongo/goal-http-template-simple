@@ -2,7 +2,7 @@ package types
 
 import (
 	"github.com/cnpythongo/goal-tools/utils"
-	"github.com/cnpythongo/goal/model"
+	"goal-app/model"
 )
 
 type (

@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"github.com/cnpythongo/goal/cmd/admin/cmd"
-	"github.com/cnpythongo/goal/test/utils"
 	"github.com/gin-gonic/gin"
+	"goal-app/cmd/admin/cmd"
+	"goal-app/test/utils"
 )
 
 var testAppInst *cmd.Application

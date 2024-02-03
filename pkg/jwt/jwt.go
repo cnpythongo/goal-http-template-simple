@@ -5,7 +5,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 
-	"github.com/cnpythongo/goal/pkg/config"
+	"goal-app/pkg/config"
 )
 
 var (

@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/cnpythongo/goal/model"
-	"github.com/cnpythongo/goal/pkg/response"
 	"github.com/gin-gonic/gin"
+	"goal-app/model"
+	"goal-app/pkg/render"
 	"gorm.io/gorm"
 )
 
@@ -24,9 +24,9 @@ func (s *userService) GetUserByPhone(phone string) (*model.User, error) {
 func (s *userService) GetUserByUUID(uuid string) (*model.User, int, error) {
 	user, err := model.GetUserByConditions(s.db, map[string]interface{}{"uuid": uuid})
 	if err != nil {
-		return nil, response.QueryError, err
+		return nil, render.QueryError, err
 	}
-	return user, response.SuccessCode, nil
+	return user, render.OK, nil
 }
 
 func (s *userService) GetUserByEmail(email string) (*model.User, error) {

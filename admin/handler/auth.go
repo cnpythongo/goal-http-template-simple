@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"github.com/cnpythongo/goal/admin/service"
-	"github.com/cnpythongo/goal/admin/types"
-	"github.com/cnpythongo/goal/pkg/log"
-	"github.com/cnpythongo/goal/pkg/response"
 	"github.com/gin-gonic/gin"
+	"goal-app/admin/service"
+	"goal-app/admin/types"
+	"goal-app/pkg/log"
+	"goal-app/pkg/render"
 )
 
 // Login 登录
@@ -21,16 +21,16 @@ import (
 func Login(c *gin.Context) {
 	var payload *types.ReqAdminAuth
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		response.FailJson(c, response.PayloadError, err)
+		render.Json(c, render.PayloadError, err)
 		return
 	}
 
-	data, code, err := service.NewAdminAuthService(c).Login(payload)
-	if code != response.SuccessCode {
-		response.FailJson(c, code, err)
+	result, code, err := service.NewAdminAuthService(c).Login(payload)
+	if code != render.OK {
+		render.Json(c, code, err)
 		return
 	}
-	response.SuccessJson(c, data, nil)
+	render.Json(c, render.OK, result)
 }
 
 // Logout 退出
@@ -50,5 +50,5 @@ func Logout(c *gin.Context) {
 			log.GetLogger().Error(err)
 		}
 	}()
-	response.EmptyJsonResp(c, response.SuccessCode)
+	render.Json(c, render.OK, "ok")
 }

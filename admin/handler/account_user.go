@@ -2,12 +2,12 @@ package handler
 
 import (
 	"errors"
-	"github.com/cnpythongo/goal/admin/service"
-	"github.com/cnpythongo/goal/admin/types"
-	"github.com/cnpythongo/goal/pkg/log"
-	"github.com/cnpythongo/goal/pkg/response"
-	"github.com/cnpythongo/goal/router/middleware"
 	"github.com/gin-gonic/gin"
+	"goal-app/admin/service"
+	"goal-app/admin/types"
+	"goal-app/pkg/log"
+	"goal-app/pkg/render"
+	"goal-app/router/middleware"
 	"gorm.io/gorm"
 )
 
@@ -48,17 +48,17 @@ func (h *AccountUserHandler) List(c *gin.Context) {
 	var req types.ReqGetUserList
 	if err := c.ShouldBindQuery(&req); err != nil {
 		log.GetLogger().Errorln(err)
-		response.FailJson(c, response.ParamsError, err)
+		render.Json(c, render.ParamsError, err)
 		return
 	}
 
 	result, code, err := h.svc.GetUserList(&req)
 	if err != nil {
 		log.GetLogger().Errorln(err)
-		response.FailJson(c, code, err)
+		render.Json(c, code, err)
 		return
 	}
-	response.SuccessJson(c, result, nil)
+	render.Json(c, render.OK, result)
 }
 
 // Detail 根据用户UUID获取用户详情
@@ -75,7 +75,7 @@ func (h *AccountUserHandler) List(c *gin.Context) {
 func (h *AccountUserHandler) Detail(c *gin.Context) {
 	uuid := c.Query("uuid")
 	if uuid == "" {
-		response.FailJson(c, response.ParamsError, nil)
+		render.Json(c, render.ParamsError, nil)
 		return
 	}
 
@@ -84,10 +84,10 @@ func (h *AccountUserHandler) Detail(c *gin.Context) {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.GetLogger().Errorln(err)
 		}
-		response.FailJson(c, code, err)
+		render.Json(c, code, err)
 		return
 	}
-	response.SuccessJson(c, result, nil)
+	render.Json(c, render.OK, result)
 }
 
 // Create 创建用户
@@ -105,16 +105,16 @@ func (h *AccountUserHandler) Create(c *gin.Context) {
 	var payload types.ReqCreateUser
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		log.GetLogger().Errorln(err)
-		response.FailJson(c, response.PayloadError, nil)
+		render.Json(c, render.PayloadError, nil)
 		return
 	}
 	user, code, err := h.svc.CreateUser(&payload)
 	if err != nil {
 		log.GetLogger().Errorln(err)
-		response.FailJson(c, code, err)
+		render.Json(c, code, err)
 		return
 	}
-	response.SuccessJson(c, user, nil)
+	render.Json(c, render.OK, user)
 }
 
 // Update 更新用户数据
@@ -132,15 +132,15 @@ func (h *AccountUserHandler) Update(c *gin.Context) {
 	uuid := c.Param("uuid")
 	var payload types.ReqUpdateUser
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		response.FailJson(c, response.ParamsError, err)
+		render.Json(c, render.ParamsError, err)
 		return
 	}
 	code, err := service.NewAccountUserService().UpdateUserByUUID(uuid, &payload)
 	if err != nil {
-		response.FailJson(c, code, err)
+		render.Json(c, code, err)
 		return
 	}
-	response.SuccessJson(c, "ok", nil)
+	render.Json(c, render.OK, "ok")
 }
 
 // Delete 删除用户
@@ -158,8 +158,8 @@ func (h *AccountUserHandler) Delete(c *gin.Context) {
 	code, err := service.NewAccountUserService().DeleteUserByUUID(uuid)
 	if err != nil {
 		log.GetLogger().Errorln(err)
-		response.FailJson(c, code, err)
+		render.Json(c, code, err)
 		return
 	}
-	response.SuccessJson(c, "ok", nil)
+	render.Json(c, render.OK, "ok")
 }

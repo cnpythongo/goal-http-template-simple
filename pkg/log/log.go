@@ -11,7 +11,7 @@ import (
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 
-	"github.com/cnpythongo/goal/pkg/config"
+	"goal-app/pkg/config"
 )
 
 var (

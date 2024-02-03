@@ -1,8 +1,8 @@
 package admin
 
 import (
-	"github.com/cnpythongo/goal/test/utils"
 	"github.com/go-playground/assert/v2"
+	"goal-app/test/utils"
 	"net/http"
 	"testing"
 )

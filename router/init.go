@@ -2,11 +2,11 @@ package router
 
 import (
 	limit "github.com/aviddiviner/gin-limit"
-	"github.com/cnpythongo/goal/pkg/config"
-	"github.com/cnpythongo/goal/pkg/liveness"
-	"github.com/cnpythongo/goal/router/middleware"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
+	"goal-app/pkg/config"
+	"goal-app/pkg/liveness"
+	"goal-app/router/middleware"
 )
 
 func InitDefaultRouter(cfg *config.Configuration) *gin.Engine {

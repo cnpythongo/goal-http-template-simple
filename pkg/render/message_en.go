@@ -1,8 +1,8 @@
-package response
+package render
 
-var MessageZHCN = map[int]string{
-	SuccessCode: "ok",
-	FailCode:    "失败",
+var MessageEn = map[int]string{
+	OK:    "ok",
+	Error: "fail",
 
 	UnknownError:           "未知错误",
 	PayloadError:           "提交表单数据不正确",

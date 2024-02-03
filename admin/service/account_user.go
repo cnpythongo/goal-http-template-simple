@@ -2,11 +2,11 @@ package service
 
 import (
 	"errors"
-	"github.com/cnpythongo/goal/admin/types"
-	"github.com/cnpythongo/goal/model"
-	"github.com/cnpythongo/goal/pkg/log"
-	"github.com/cnpythongo/goal/pkg/response"
 	"github.com/jinzhu/copier"
+	"goal-app/admin/types"
+	"goal-app/model"
+	"goal-app/pkg/log"
+	"goal-app/pkg/render"
 	"gorm.io/gorm"
 	"strings"
 )
@@ -59,7 +59,7 @@ func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.Resp
 	queryStr := strings.Join(query, " AND ")
 	rows, total, err := model.GetUserList(s.db, req.Page, req.Limit, queryStr, args)
 	if err != nil {
-		return nil, response.QueryError, err
+		return nil, render.QueryError, err
 	}
 
 	result := make([]*types.RespUserBasic, 0)
@@ -68,7 +68,7 @@ func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.Resp
 		err = copier.Copy(item, row)
 		if err != nil {
 			log.GetLogger().Error(err)
-			return nil, response.DBAttributesCopyError, err
+			return nil, render.DBAttributesCopyError, err
 		}
 		result = append(result, item)
 	}
@@ -78,17 +78,17 @@ func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.Resp
 		Total:  total,
 		Result: result,
 	}
-	return resp, response.SuccessCode, nil
+	return resp, render.OK, nil
 }
 
 func (s *accountUserService) GetUserDetail(uuid string) (*types.RespUserDetail, int, error) {
 	user, err := s.GetUserByUUID(uuid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, response.DataNotExistError, err
+			return nil, render.DataNotExistError, err
 		} else {
 			log.GetLogger().Error(err)
-			return nil, response.QueryError, err
+			return nil, render.QueryError, err
 		}
 	}
 	return s.transUserToResponseData(user)
@@ -97,22 +97,22 @@ func (s *accountUserService) GetUserDetail(uuid string) (*types.RespUserDetail, 
 func (s *accountUserService) CreateUser(payload *types.ReqCreateUser) (*types.RespUserDetail, int, error) {
 	user, err := s.GetUserByPhone(payload.Phone)
 	if user != nil {
-		return nil, response.DataExistError, errors.New(response.GetCodeMsg(response.DataExistError))
+		return nil, render.DataExistError, errors.New(render.GetCodeMsg(render.DataExistError))
 	}
 	user, err = s.GetUserByEmail(payload.Email)
 	if user != nil {
-		return nil, response.AccountEmailExistsError, errors.New(response.GetCodeMsg(response.AccountEmailExistsError))
+		return nil, render.AccountEmailExistsError, errors.New(render.GetCodeMsg(render.AccountEmailExistsError))
 	}
 	user = model.NewUser()
 	err = copier.Copy(user, payload)
 	if err != nil {
 		log.GetLogger().Error(err)
-		return nil, response.DBAttributesCopyError, err
+		return nil, render.DBAttributesCopyError, err
 	}
 	user, err = model.CreateUser(s.db, user)
 	if err != nil {
 		log.GetLogger().Error(err)
-		return nil, response.CreateError, err
+		return nil, render.CreateError, err
 	}
 	return s.transUserToResponseData(user)
 }
@@ -124,9 +124,9 @@ func (s *accountUserService) DeleteUserByUUID(uuid string) (int, error) {
 	err := model.DeleteUser(s.db, uuid)
 	if err != nil {
 		log.GetLogger().Error(err)
-		return response.QueryError, err
+		return render.QueryError, err
 	}
-	return response.SuccessCode, nil
+	return render.OK, nil
 }
 
 func (s *accountUserService) GetUserByPhone(phone string) (*model.User, error) {
@@ -150,33 +150,33 @@ func (s *accountUserService) transUserToResponseData(user *model.User) (*types.R
 	err := copier.Copy(result, user)
 	if err != nil {
 		log.GetLogger().Error(err)
-		return nil, response.DBAttributesCopyError, err
+		return nil, render.DBAttributesCopyError, err
 	}
 	result.Phone = user.PhoneMask()
-	return result, response.SuccessCode, nil
+	return result, render.OK, nil
 }
 
 func (s *accountUserService) UpdateUserByUUID(uuid string, payload *types.ReqUpdateUser) (int, error) {
 	user, err := s.GetUserByUUID(uuid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return response.DataNotExistError, err
+			return render.DataNotExistError, err
 		} else {
 			log.GetLogger().Error(err)
-			return response.QueryError, err
+			return render.QueryError, err
 		}
 	}
 	err = copier.Copy(user, payload)
 	if err != nil {
 		log.GetLogger().Error(err)
-		return response.DBAttributesCopyError, err
+		return render.DBAttributesCopyError, err
 	}
 	err = s.db.Save(&user).Error
 	if err != nil {
 		log.GetLogger().Error(err)
-		return response.DataExistError, err
+		return render.DataExistError, err
 	}
-	return response.SuccessCode, nil
+	return render.OK, nil
 }
 
 func NewAccountUserService() IAccountUserService {

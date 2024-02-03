@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"github.com/cnpythongo/goal/admin/service"
-	"github.com/cnpythongo/goal/admin/types"
-	"github.com/cnpythongo/goal/pkg/log"
-	"github.com/cnpythongo/goal/pkg/response"
-	"github.com/cnpythongo/goal/router/middleware"
 	"github.com/gin-gonic/gin"
+	"goal-app/admin/service"
+	"goal-app/admin/types"
+	"goal-app/pkg/log"
+	"goal-app/pkg/render"
+	"goal-app/router/middleware"
 )
 
 func AccountHistoryRouteRegister(route *gin.Engine) *gin.RouterGroup {
@@ -42,13 +42,13 @@ func (h *AccountHistoryHandler) List(c *gin.Context) {
 	var req types.ReqGetUserList
 	if err := c.ShouldBindQuery(&req); err != nil {
 		log.GetLogger().Error(err)
-		response.FailJson(c, response.ParamsError, err)
+		render.Json(c, render.ParamsError, err)
 		return
 	}
 	result, code, err := service.NewAccountUserService().GetUserList(&req)
 	if err != nil {
-		response.FailJson(c, code, err)
+		render.Json(c, code, err)
 		return
 	}
-	response.SuccessJson(c, result, nil)
+	render.Json(c, render.OK, result)
 }

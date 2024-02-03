@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/cnpythongo/goal/pkg/jwt"
-	"github.com/cnpythongo/goal/pkg/response"
+	"goal-app/pkg/jwt"
+	"goal-app/pkg/render"
 )
 
 func JWTAuthenticationMiddleware() gin.HandlerFunc {
@@ -17,25 +17,25 @@ func JWTAuthenticationMiddleware() gin.HandlerFunc {
 		var err error
 		var claims *jwt.Claims
 
-		code = response.SuccessCode
+		code = render.OK
 		token := c.GetHeader("Authorization")
 
 		if token == "" {
-			code = response.AuthLoginRequireError
+			code = render.AuthLoginRequireError
 		} else {
 			token = strings.TrimSpace(strings.Replace(token, "Bearer", "", 1))
 			claims, err = jwt.ParseToken(token)
 			if err != nil {
-				code = response.AuthTokenError
+				code = render.AuthTokenError
 			} else if time.Now().Unix() > claims.ExpiresAt {
-				code = response.AuthTokenError
+				code = render.AuthTokenError
 			}
 		}
 
-		if code != response.SuccessCode {
+		if code != render.OK {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code": code,
-				"msg":  response.GetCodeMsg(code),
+				"msg":  render.GetCodeMsg(code),
 			})
 
 			c.Abort()

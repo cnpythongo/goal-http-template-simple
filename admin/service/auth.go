@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/cnpythongo/goal-tools/utils"
-	"github.com/cnpythongo/goal/admin/types"
-	"github.com/cnpythongo/goal/model"
-	"github.com/cnpythongo/goal/pkg/jwt"
-	"github.com/cnpythongo/goal/pkg/response"
 	"github.com/gin-gonic/gin"
+	"goal-app/admin/types"
+	"goal-app/model"
+	"goal-app/pkg/jwt"
+	"goal-app/pkg/render"
 	"gorm.io/gorm"
 )
 
@@ -27,25 +27,25 @@ func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminA
 	user, err := a.userSvc.GetUserByPhone(payload.Phone)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, response.DataExistError, err
+			return nil, render.DataExistError, err
 		}
-		return nil, response.QueryError, err
+		return nil, render.QueryError, err
 	}
 
 	if user.Status == model.UserStatusFreeze {
-		return nil, response.AccountUserFreezeError, err
+		return nil, render.AccountUserFreezeError, err
 	}
 	if !user.IsAdmin {
-		return nil, response.AuthForbiddenError, err
+		return nil, render.AuthForbiddenError, err
 	}
 
 	if !utils.VerifyPassword(payload.Password, user.Password, user.Salt) {
-		return nil, response.AuthError, err
+		return nil, render.AuthError, err
 	}
 
 	token, expireTime, err := jwt.GenerateToken(user.ID, user.UUID, user.Phone)
 	if err != nil {
-		return nil, response.AuthTokenGenerateError, err
+		return nil, render.AuthTokenGenerateError, err
 	}
 	data := &types.RespAdminAuth{
 		Token:      token,
@@ -59,7 +59,7 @@ func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminA
 	go func() {
 		err = a.userSvc.UpdateUserLastLogin(user.UUID)
 	}()
-	return data, response.SuccessCode, nil
+	return data, render.OK, nil
 }
 
 // Logout 退出系统

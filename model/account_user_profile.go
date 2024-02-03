@@ -2,7 +2,7 @@ package model
 
 import (
 	"errors"
-	"github.com/cnpythongo/goal/pkg/log"
+	"goal-app/pkg/log"
 	"gorm.io/gorm"
 )
 

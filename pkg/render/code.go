@@ -1,12 +1,12 @@
-package response
+package render
 
 import (
-	"github.com/cnpythongo/goal/pkg/config"
+	"goal-app/pkg/config"
 )
 
 const (
-	SuccessCode = 0
-	FailCode    = 1
+	OK    = 0
+	Error = 1
 
 	UnknownError           = 1000
 	PayloadError           = 1001

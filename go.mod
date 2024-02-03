@@ -1,4 +1,4 @@
-module github.com/cnpythongo/goal
+module goal-app
 
 go 1.19
 

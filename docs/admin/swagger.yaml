@@ -1,6 +1,18 @@
 basePath: /api/v1
 definitions:
-  github_com_cnpythongo_goal_admin_types.ReqAdminAuth:
+  model.UserStatusType:
+    enum:
+    - INACTIVE
+    - ACTIVE
+    - FREEZE
+    - DELETE
+    type: string
+    x-enum-varnames:
+    - UserStatusInactive
+    - UserStatusActive
+    - UserStatusFreeze
+    - UserStatusDelete
+  types.ReqAdminAuth:
     properties:
       password:
         description: 密码
@@ -14,7 +26,7 @@ definitions:
     - password
     - phone
     type: object
-  github_com_cnpythongo_goal_admin_types.ReqCreateUser:
+  types.ReqCreateUser:
     properties:
       email:
         description: 邮箱
@@ -37,14 +49,12 @@ definitions:
         example: "13800138000"
         type: string
     required:
+    - password
+    - password_confirm
     - phone
     type: object
-  github_com_cnpythongo_goal_admin_types.ReqGetHistoryList:
+  types.ReqGetHistoryList:
     properties:
-      created_at_end:
-        description: 数据创建时间截止
-        example: "2023-09-01 22:59:59"
-        type: string
       created_at_start:
         description: 数据创建时间起始
         example: "2023-09-01 01:30:59"
@@ -52,6 +62,10 @@ definitions:
       email:
         description: 用户邮箱
         example: abc@abc.com
+        type: string
+      last_login_at_end:
+        description: 数据创建时间截止
+        example: "2023-09-01 22:59:59"
         type: string
       limit:
         default: 10
@@ -80,12 +94,8 @@ definitions:
         example: abcef123
         type: string
     type: object
-  github_com_cnpythongo_goal_admin_types.ReqGetUserList:
+  types.ReqGetUserList:
     properties:
-      created_at_end:
-        description: 数据创建时间截止
-        example: "2023-09-01 22:59:59"
-        type: string
       created_at_start:
         description: 数据创建时间起始
         example: "2023-09-01 01:30:59"
@@ -129,7 +139,7 @@ definitions:
           $ref: '#/definitions/model.UserStatusType'
         type: array
     type: object
-  github_com_cnpythongo_goal_admin_types.ReqUpdateUser:
+  types.ReqUpdateUser:
     properties:
       avatar:
         description: 用户头像URL
@@ -156,7 +166,7 @@ definitions:
         example: FREEZE
         type: string
     type: object
-  github_com_cnpythongo_goal_admin_types.RespAdminAuth:
+  types.RespAdminAuth:
     properties:
       expire_time:
         description: 过期时间
@@ -166,10 +176,10 @@ definitions:
         type: string
       user:
         allOf:
-        - $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespAdminAuthUser'
+        - $ref: '#/definitions/types.RespAdminAuthUser'
         description: 用户基本信息
     type: object
-  github_com_cnpythongo_goal_admin_types.RespAdminAuthUser:
+  types.RespAdminAuthUser:
     properties:
       last_login_at:
         description: 最近的登录时间
@@ -182,7 +192,7 @@ definitions:
         description: 用户uuid
         type: string
     type: object
-  github_com_cnpythongo_goal_admin_types.RespEmptyJson:
+  types.RespEmptyJson:
     properties:
       code:
         description: 结果码：0-成功，其它-失败
@@ -193,7 +203,7 @@ definitions:
         example: ok
         type: string
     type: object
-  github_com_cnpythongo_goal_admin_types.RespFailJson:
+  types.RespFailJson:
     properties:
       code:
         description: 结果码：0-成功，其它-失败
@@ -208,7 +218,7 @@ definitions:
         example: error
         type: string
     type: object
-  github_com_cnpythongo_goal_admin_types.RespUserDetail:
+  types.RespUserDetail:
     properties:
       is_admin:
         description: 是否管理员
@@ -236,27 +246,9 @@ definitions:
         example: 826d6b1aa64d471d822d667e92218158
         type: string
     type: object
-  model.UserStatusType:
-    enum:
-    - INACTIVE
-    - ACTIVE
-    - FREEZE
-    - DELETE
-    type: string
-    x-enum-varnames:
-    - UserStatusInactive
-    - UserStatusActive
-    - UserStatusFreeze
-    - UserStatusDelete
 info:
   contact: {}
-  description: |-
-    http状态码是200，code为0时表示正常返回；code不为0时表示有业务错误。返回的JSON数据结构如下：
-    {
-    "code": 0, // 0是成功，其他是失败
-    "data": {object},  // 接口返回的成功数据
-    "msg": "ok"    // ok 或其他失败信息
-    }
+  description: http状态码是200，code为0时表示正常返回；code不为0时表示有业务错误。返回的JSON数据结构如下：
   title: 后台管理系统接口文档
   version: "1.0"
 paths:
@@ -266,11 +258,6 @@ paths:
       - application/x-www-form-urlencoded
       description: 获取用户登录历史记录列表
       parameters:
-      - description: 数据创建时间截止
-        example: "2023-09-01 22:59:59"
-        in: query
-        name: last_login_at_end
-        type: string
       - description: 数据创建时间起始
         example: "2023-09-01 01:30:59"
         in: query
@@ -280,6 +267,11 @@ paths:
         example: abc@abc.com
         in: query
         name: email
+        type: string
+      - description: 数据创建时间截止
+        example: "2023-09-01 22:59:59"
+        in: query
+        name: last_login_at_end
         type: string
       - default: 10
         description: 每页数量
@@ -319,11 +311,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.ReqGetHistoryList'
+            $ref: '#/definitions/types.ReqGetHistoryList'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+            $ref: '#/definitions/types.RespFailJson'
       security:
       - ApiKeyAuth: []
       summary: 登录历史记录列表
@@ -340,18 +332,18 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.ReqAdminAuth'
+          $ref: '#/definitions/types.ReqAdminAuth'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespAdminAuth'
+            $ref: '#/definitions/types.RespAdminAuth'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+            $ref: '#/definitions/types.RespFailJson'
       summary: 登录
       tags:
       - 登录退出
@@ -367,7 +359,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson'
+            $ref: '#/definitions/types.RespEmptyJson'
       security:
       - ApiKeyAuth: []
       summary: 退出
@@ -384,18 +376,18 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.ReqCreateUser'
+          $ref: '#/definitions/types.ReqCreateUser'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail'
+            $ref: '#/definitions/types.RespUserDetail'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+            $ref: '#/definitions/types.RespFailJson'
       security:
       - ApiKeyAuth: []
       summary: 创建用户
@@ -412,11 +404,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson'
+            $ref: '#/definitions/types.RespEmptyJson'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+            $ref: '#/definitions/types.RespFailJson'
       security:
       - ApiKeyAuth: []
       summary: 删除用户
@@ -439,11 +431,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespUserDetail'
+            $ref: '#/definitions/types.RespUserDetail'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+            $ref: '#/definitions/types.RespFailJson'
       security:
       - ApiKeyAuth: []
       summary: 通过用户UUID获取用户详情
@@ -455,11 +447,6 @@ paths:
       - application/x-www-form-urlencoded
       description: 获取用户列表
       parameters:
-      - description: 数据创建时间截止
-        example: "2023-09-01 22:59:59"
-        in: query
-        name: last_login_at_end
-        type: string
       - description: 数据创建时间起始
         example: "2023-09-01 01:30:59"
         in: query
@@ -523,11 +510,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.ReqGetUserList'
+            $ref: '#/definitions/types.ReqGetUserList'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+            $ref: '#/definitions/types.RespFailJson'
       security:
       - ApiKeyAuth: []
       summary: 获取用户列表
@@ -544,18 +531,18 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.ReqUpdateUser'
+          $ref: '#/definitions/types.ReqUpdateUser'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespEmptyJson'
+            $ref: '#/definitions/types.RespEmptyJson'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
+            $ref: '#/definitions/types.RespFailJson'
       security:
       - ApiKeyAuth: []
       summary: 更新用户

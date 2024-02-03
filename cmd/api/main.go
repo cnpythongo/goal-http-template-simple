@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/cnpythongo/goal/cmd/api/cmd"
-	_ "github.com/cnpythongo/goal/docs/api"
+	"goal-app/cmd/api/cmd"
+	_ "goal-app/docs/api"
 )
 
 // @title 前台接口文档

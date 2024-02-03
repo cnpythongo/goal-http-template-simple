@@ -1,10 +1,10 @@
 package liveness
 
 import (
-	"github.com/cnpythongo/goal/pkg/response"
 	"github.com/gin-gonic/gin"
+	"goal-app/pkg/render"
 )
 
 func Ping(c *gin.Context) {
-	response.SuccessJson(c, "hello world", nil)
+	render.Json(c, render.OK, "hello world")
 }

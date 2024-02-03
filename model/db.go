@@ -3,8 +3,8 @@ package model
 import (
 	"fmt"
 	"github.com/cnpythongo/goal-tools/utils"
-	"github.com/cnpythongo/goal/pkg/config"
-	"github.com/cnpythongo/goal/pkg/log"
+	"goal-app/pkg/config"
+	"goal-app/pkg/log"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
