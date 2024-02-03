@@ -22,9 +22,7 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 
 	// account user api
 	_ = handler.AccountUserRouteRegister(route)
-
-	h := route.Group("/api/v1/account/history")
-	h.GET("", handler.GetHistoryList)
+	_ = handler.AccountHistoryRouteRegister(route)
 
 	return route
 }

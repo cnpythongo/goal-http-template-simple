@@ -40,7 +40,7 @@ func NewAccountUserHandler(svc service.IAccountUserService) *AccountUserHandler 
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param data query types.ReqGetUserList false "请求体"
-// @Success 200 {object} types.RespGetUserList
+// @Success 200 {object} types.ReqGetUserList
 // @Failure 400 {object} types.RespFailJson
 // @Security ApiKeyAuth
 // @Router /account/user/list [get]

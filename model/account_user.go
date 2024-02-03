@@ -85,13 +85,13 @@ func CreateUser(db *gorm.DB, user *User) (*User, error) {
 	return user, nil
 }
 
-func GetUserList(db *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*User, int, error) {
+func GetUserList(db *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*User, int64, error) {
 	qs := db.Model(NewUser()).Where("status != ?", UserStatusDelete)
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}
-	var count int64
-	err := qs.Count(&count).Error
+	var total int64
+	err := qs.Count(&total).Error
 	if err != nil {
 		log.GetLogger().Errorf("model.account_user.GetUserList Count Error ==> %v", err)
 		return nil, 0, err
@@ -106,7 +106,7 @@ func GetUserList(db *gorm.DB, page, size int, query interface{}, args []interfac
 		log.GetLogger().Errorf("model.account_user.GetUserList Query Error ==> %v", err)
 		return nil, 0, err
 	}
-	return result, int(count), nil
+	return result, total, nil
 }
 
 // UpdateUserLastLoginAt 更新用户最近登录时间

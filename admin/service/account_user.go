@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/cnpythongo/goal/admin/types"
 	"github.com/cnpythongo/goal/model"
 	"github.com/cnpythongo/goal/pkg/log"
@@ -30,8 +29,6 @@ type accountUserService struct {
 }
 
 func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.RespGetUserList, int, error) {
-	page := req.Page
-	size := req.Size
 	var query []string
 	var args []interface{}
 	if req.Email != "" {
@@ -60,7 +57,7 @@ func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.Resp
 		args = append(args, req.LastLoginAtEnd)
 	}
 	queryStr := strings.Join(query, " AND ")
-	rows, count, err := model.GetUserList(s.db, page, size, queryStr, args)
+	rows, total, err := model.GetUserList(s.db, req.Page, req.Limit, queryStr, args)
 	if err != nil {
 		return nil, response.QueryError, err
 	}
@@ -76,9 +73,9 @@ func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.Resp
 		result = append(result, item)
 	}
 	resp := &types.RespGetUserList{
-		Page:   page,
-		Total:  utils.TotalPage(size, count),
-		Count:  count,
+		Page:   req.Page,
+		Limit:  req.Limit,
+		Total:  total,
 		Result: result,
 	}
 	return resp, response.SuccessCode, nil

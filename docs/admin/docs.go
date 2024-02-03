@@ -15,16 +15,16 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/account/history": {
+        "/account/history/list": {
             "get": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "获取用户列表",
+                "description": "获取用户登录历史记录列表",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -32,7 +32,7 @@ const docTemplate = `{
                 "tags": [
                     "用户管理"
                 ],
-                "summary": "获取用户列表",
+                "summary": "登录历史记录列表",
                 "parameters": [
                     {
                         "type": "string",
@@ -53,6 +53,14 @@ const docTemplate = `{
                         "example": "abc@abc.com",
                         "description": "用户邮箱",
                         "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "每页数量",
+                        "name": "limit",
                         "in": "query"
                     },
                     {
@@ -79,14 +87,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
-                        "example": 10,
-                        "description": "每页数量",
-                        "name": "size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "example": 123,
                         "description": "用户ID",
                         "name": "user_id",
@@ -104,7 +104,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespGetUserList"
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqGetHistoryList"
                         }
                     },
                     "400": {
@@ -358,6 +358,14 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "example": "Tom",
                         "description": "昵称,模糊查询",
@@ -377,14 +385,6 @@ const docTemplate = `{
                         "example": "13800138000",
                         "description": "手机号,模糊查询",
                         "name": "phone",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "example": 10,
-                        "description": "每页数量",
-                        "name": "size",
                         "in": "query"
                     },
                     {
@@ -412,7 +412,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespGetUserList"
+                            "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.ReqGetUserList"
                         }
                     },
                     "400": {
@@ -520,6 +520,121 @@ const docTemplate = `{
                     "description": "手机号",
                     "type": "string",
                     "example": "13800138000"
+                }
+            }
+        },
+        "github_com_cnpythongo_goal_admin_types.ReqGetHistoryList": {
+            "type": "object",
+            "properties": {
+                "created_at_end": {
+                    "description": "数据创建时间截止",
+                    "type": "string",
+                    "example": "2023-09-01 22:59:59"
+                },
+                "created_at_start": {
+                    "description": "数据创建时间起始",
+                    "type": "string",
+                    "example": "2023-09-01 01:30:59"
+                },
+                "email": {
+                    "description": "用户邮箱",
+                    "type": "string",
+                    "example": "abc@abc.com"
+                },
+                "limit": {
+                    "description": "每页数量",
+                    "type": "integer",
+                    "default": 10,
+                    "example": 10
+                },
+                "nickname": {
+                    "description": "用户昵称",
+                    "type": "string",
+                    "example": "Tom"
+                },
+                "page": {
+                    "description": "页码",
+                    "type": "integer",
+                    "default": 1,
+                    "example": 1
+                },
+                "phone": {
+                    "description": "用户手机号",
+                    "type": "string",
+                    "example": "13800138000"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "integer",
+                    "example": 123
+                },
+                "user_uuid": {
+                    "description": "用户UUID",
+                    "type": "string",
+                    "example": "abcef123"
+                }
+            }
+        },
+        "github_com_cnpythongo_goal_admin_types.ReqGetUserList": {
+            "type": "object",
+            "properties": {
+                "created_at_end": {
+                    "description": "数据创建时间截止",
+                    "type": "string",
+                    "example": "2023-09-01 22:59:59"
+                },
+                "created_at_start": {
+                    "description": "数据创建时间起始",
+                    "type": "string",
+                    "example": "2023-09-01 01:30:59"
+                },
+                "email": {
+                    "description": "邮箱,模糊查旬",
+                    "type": "string",
+                    "example": "abc@abc.com"
+                },
+                "last_login_at_end": {
+                    "description": "最近登录时间截止",
+                    "type": "string",
+                    "example": "2023-09-01 22:59:59"
+                },
+                "last_login_at_start": {
+                    "description": "最近登录时间起始",
+                    "type": "string",
+                    "example": "2023-09-01 01:30:59"
+                },
+                "limit": {
+                    "description": "每页数量",
+                    "type": "integer",
+                    "default": 10,
+                    "example": 10
+                },
+                "nickname": {
+                    "description": "昵称,模糊查询",
+                    "type": "string",
+                    "example": "Tom"
+                },
+                "page": {
+                    "description": "页码",
+                    "type": "integer",
+                    "default": 1,
+                    "example": 1
+                },
+                "phone": {
+                    "description": "手机号,模糊查询",
+                    "type": "string",
+                    "example": "13800138000"
+                },
+                "status": {
+                    "description": "用户状态,多种状态过滤使用逗号分隔",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.UserStatusType"
+                    },
+                    "example": [
+                        "FREEZE",
+                        "ACTIVE"
+                    ]
                 }
             }
         },
@@ -632,69 +747,6 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_cnpythongo_goal_admin_types.RespGetUserList": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "description": "总记录数",
-                    "type": "integer"
-                },
-                "page": {
-                    "description": "当前页",
-                    "type": "integer"
-                },
-                "result": {
-                    "description": "当前结果集",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_cnpythongo_goal_admin_types.RespUserBasic"
-                    }
-                },
-                "total": {
-                    "description": "总页数",
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_cnpythongo_goal_admin_types.RespUserBasic": {
-            "type": "object",
-            "properties": {
-                "is_admin": {
-                    "description": "是否管理员",
-                    "type": "boolean",
-                    "example": false
-                },
-                "last_login_at": {
-                    "description": "最近登录时间",
-                    "type": "string",
-                    "example": "2023-09-01 13:30:59"
-                },
-                "nickname": {
-                    "description": "昵称",
-                    "type": "string",
-                    "example": "Tom"
-                },
-                "phone": {
-                    "description": "手机号",
-                    "type": "string",
-                    "example": "13800138000"
-                },
-                "status": {
-                    "description": "用户状态",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/model.UserStatusType"
-                        }
-                    ],
-                    "example": "ACTIVE"
-                },
-                "uuid": {
-                    "description": "用户UUID,32位字符串",
-                    "type": "string",
-                    "example": "826d6b1aa64d471d822d667e92218158"
-                }
-            }
-        },
         "github_com_cnpythongo_goal_admin_types.RespUserDetail": {
             "type": "object",
             "properties": {
@@ -767,7 +819,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "后台管理系统接口文档",
-	Description:      "http状态码是200，code是0时表示正常返回；code不是200时表示有业务错误。返回的JSON数据由下面的结构包裹\n{\n\"code\": 0, // 0是成功，其他是失败\n\"data\": {object},  // 接口返回的成功数据\n\"msg\": \"ok\"    // ok 或其他失败信息\n}",
+	Description:      "http状态码是200，code为0时表示正常返回；code不为0时表示有业务错误。返回的JSON数据结构如下：\n{\n\"code\": 0, // 0是成功，其他是失败\n\"data\": {object},  // 接口返回的成功数据\n\"msg\": \"ok\"    // ok 或其他失败信息\n}",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

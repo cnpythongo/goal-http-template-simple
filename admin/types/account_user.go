@@ -9,12 +9,12 @@ type (
 	// ReqGetUserList 获取用户列表的请求参数体
 	ReqGetUserList struct {
 		Pagination
-		Phone            string                 `json:"phone" form:"phone" example:"13800138000"`                                     // 手机号,模糊查询
-		Email            string                 `json:"email" form:"email" example:"abc@abc.com"`                                     // 邮箱,模糊查旬
-		Nickname         string                 `json:"nickname" form:"nickname" example:"Tom"`                                       // 昵称,模糊查询
-		Status           []model.UserStatusType `json:"status" form:"status" example:"FREEZE,ACTIVE"`                                 // 用户状态,多种状态过滤使用逗号分隔
-		LastLoginAtStart string                 `json:"last_login_at_start" form:"last_login_at_start" example:"2023-09-01 01:30:59"` // 最近登录时间起始
-		LastLoginAtEnd   string                 `json:"last_login_at_end" form:"last_login_at_end" example:"2023-09-01 22:59:59"`     // 最近登录时间截止
+		Phone            string                 `form:"phone" example:"13800138000"`                       // 手机号,模糊查询
+		Email            string                 `form:"email" example:"abc@abc.com"`                       // 邮箱,模糊查旬
+		Nickname         string                 `form:"nickname" example:"Tom"`                            // 昵称,模糊查询
+		Status           []model.UserStatusType `form:"status" example:"FREEZE,ACTIVE"`                    // 用户状态,多种状态过滤使用逗号分隔
+		LastLoginAtStart string                 `form:"last_login_at_start" example:"2023-09-01 01:30:59"` // 最近登录时间起始
+		LastLoginAtEnd   string                 `form:"last_login_at_end" example:"2023-09-01 22:59:59"`   // 最近登录时间截止
 	}
 
 	// RespUserBasic 用户基础数据结构体
@@ -28,25 +28,18 @@ type (
 	}
 
 	// RespUserDetail 用户详情数据结构体
-	RespUserDetail struct {
-		RespUserBasic
-	}
+	RespUserDetail RespUserBasic
 
 	// RespGetUserList 获取用户列表的响应数据结构
-	RespGetUserList struct {
-		Page   int              `json:"page"`   // 当前页
-		Total  int              `json:"total"`  // 总页数
-		Count  int              `json:"count"`  // 总记录数
-		Result []*RespUserBasic `json:"result"` // 当前结果集
-	}
+	RespGetUserList RespPageJson
 
 	// ReqCreateUser 创建用户的请求结构体
 	ReqCreateUser struct {
-		Phone           string `json:"phone" binding:"required" example:"13800138000"` // 手机号
-		Email           string `json:"email" example:"abc@a.com"`                      // 邮箱
-		Nickname        string `json:"nickname" example:"Tom"`                         // 昵称
-		Password        string `json:"password" example:"123456"`                      // 密码
-		PasswordConfirm string `json:"password_confirm" example:"123456"`              // 确认密码
+		Phone           string `json:"phone" binding:"required" example:"13800138000"`       // 手机号
+		Password        string `json:"password" binding:"required"  example:"123456"`        // 密码
+		PasswordConfirm string `json:"password_confirm" binding:"required" example:"123456"` // 确认密码
+		Email           string `json:"email" example:"abc@a.com"`                            // 邮箱
+		Nickname        string `json:"nickname" example:"Tom"`                               // 昵称
 	}
 
 	// ReqUpdateUser 更新用户的请求结构体

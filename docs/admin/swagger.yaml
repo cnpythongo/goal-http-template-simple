@@ -39,6 +39,96 @@ definitions:
     required:
     - phone
     type: object
+  github_com_cnpythongo_goal_admin_types.ReqGetHistoryList:
+    properties:
+      created_at_end:
+        description: 数据创建时间截止
+        example: "2023-09-01 22:59:59"
+        type: string
+      created_at_start:
+        description: 数据创建时间起始
+        example: "2023-09-01 01:30:59"
+        type: string
+      email:
+        description: 用户邮箱
+        example: abc@abc.com
+        type: string
+      limit:
+        default: 10
+        description: 每页数量
+        example: 10
+        type: integer
+      nickname:
+        description: 用户昵称
+        example: Tom
+        type: string
+      page:
+        default: 1
+        description: 页码
+        example: 1
+        type: integer
+      phone:
+        description: 用户手机号
+        example: "13800138000"
+        type: string
+      user_id:
+        description: 用户ID
+        example: 123
+        type: integer
+      user_uuid:
+        description: 用户UUID
+        example: abcef123
+        type: string
+    type: object
+  github_com_cnpythongo_goal_admin_types.ReqGetUserList:
+    properties:
+      created_at_end:
+        description: 数据创建时间截止
+        example: "2023-09-01 22:59:59"
+        type: string
+      created_at_start:
+        description: 数据创建时间起始
+        example: "2023-09-01 01:30:59"
+        type: string
+      email:
+        description: 邮箱,模糊查旬
+        example: abc@abc.com
+        type: string
+      last_login_at_end:
+        description: 最近登录时间截止
+        example: "2023-09-01 22:59:59"
+        type: string
+      last_login_at_start:
+        description: 最近登录时间起始
+        example: "2023-09-01 01:30:59"
+        type: string
+      limit:
+        default: 10
+        description: 每页数量
+        example: 10
+        type: integer
+      nickname:
+        description: 昵称,模糊查询
+        example: Tom
+        type: string
+      page:
+        default: 1
+        description: 页码
+        example: 1
+        type: integer
+      phone:
+        description: 手机号,模糊查询
+        example: "13800138000"
+        type: string
+      status:
+        description: 用户状态,多种状态过滤使用逗号分隔
+        example:
+        - FREEZE
+        - ACTIVE
+        items:
+          $ref: '#/definitions/model.UserStatusType'
+        type: array
+    type: object
   github_com_cnpythongo_goal_admin_types.ReqUpdateUser:
     properties:
       avatar:
@@ -118,51 +208,6 @@ definitions:
         example: error
         type: string
     type: object
-  github_com_cnpythongo_goal_admin_types.RespGetUserList:
-    properties:
-      count:
-        description: 总记录数
-        type: integer
-      page:
-        description: 当前页
-        type: integer
-      result:
-        description: 当前结果集
-        items:
-          $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespUserBasic'
-        type: array
-      total:
-        description: 总页数
-        type: integer
-    type: object
-  github_com_cnpythongo_goal_admin_types.RespUserBasic:
-    properties:
-      is_admin:
-        description: 是否管理员
-        example: false
-        type: boolean
-      last_login_at:
-        description: 最近登录时间
-        example: "2023-09-01 13:30:59"
-        type: string
-      nickname:
-        description: 昵称
-        example: Tom
-        type: string
-      phone:
-        description: 手机号
-        example: "13800138000"
-        type: string
-      status:
-        allOf:
-        - $ref: '#/definitions/model.UserStatusType'
-        description: 用户状态
-        example: ACTIVE
-      uuid:
-        description: 用户UUID,32位字符串
-        example: 826d6b1aa64d471d822d667e92218158
-        type: string
-    type: object
   github_com_cnpythongo_goal_admin_types.RespUserDetail:
     properties:
       is_admin:
@@ -206,7 +251,7 @@ definitions:
 info:
   contact: {}
   description: |-
-    http状态码是200，code是0时表示正常返回；code不是200时表示有业务错误。返回的JSON数据由下面的结构包裹
+    http状态码是200，code为0时表示正常返回；code不为0时表示有业务错误。返回的JSON数据结构如下：
     {
     "code": 0, // 0是成功，其他是失败
     "data": {object},  // 接口返回的成功数据
@@ -215,11 +260,11 @@ info:
   title: 后台管理系统接口文档
   version: "1.0"
 paths:
-  /account/history:
+  /account/history/list:
     get:
       consumes:
-      - application/json
-      description: 获取用户列表
+      - application/x-www-form-urlencoded
+      description: 获取用户登录历史记录列表
       parameters:
       - description: 数据创建时间截止
         example: "2023-09-01 22:59:59"
@@ -236,6 +281,12 @@ paths:
         in: query
         name: email
         type: string
+      - default: 10
+        description: 每页数量
+        example: 10
+        in: query
+        name: limit
+        type: integer
       - description: 用户昵称
         example: Tom
         in: query
@@ -252,12 +303,6 @@ paths:
         in: query
         name: phone
         type: string
-      - default: 10
-        description: 每页数量
-        example: 10
-        in: query
-        name: size
-        type: integer
       - description: 用户ID
         example: 123
         in: query
@@ -274,14 +319,14 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespGetUserList'
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.ReqGetHistoryList'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespFailJson'
       security:
       - ApiKeyAuth: []
-      summary: 获取用户列表
+      summary: 登录历史记录列表
       tags:
       - 用户管理
   /account/login:
@@ -435,6 +480,12 @@ paths:
         in: query
         name: last_login_at_start
         type: string
+      - default: 10
+        description: 每页数量
+        example: 10
+        in: query
+        name: limit
+        type: integer
       - description: 昵称,模糊查询
         example: Tom
         in: query
@@ -451,12 +502,6 @@ paths:
         in: query
         name: phone
         type: string
-      - default: 10
-        description: 每页数量
-        example: 10
-        in: query
-        name: size
-        type: integer
       - collectionFormat: multi
         description: 用户状态,多种状态过滤使用逗号分隔
         example:
@@ -478,7 +523,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.RespGetUserList'
+            $ref: '#/definitions/github_com_cnpythongo_goal_admin_types.ReqGetUserList'
         "400":
           description: Bad Request
           schema:
