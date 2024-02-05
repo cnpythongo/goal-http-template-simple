@@ -40,9 +40,9 @@ func NewAccountUserHandler(svc service.IAccountUserService) *AccountUserHandler 
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param data query types.ReqGetUserList false "请求体"
-// @Success 200 {object} types.ReqGetUserList
-// @Failure 400 {object} types.RespFailJson
-// @Security ApiKeyAuth
+// @Success 200 {object} render.RespJsonData{data=types.RespGetUserList{result=[]types.RespUserDetail}} "code不为0时表示有错误"
+// @Failure 500
+// @Security AdminAuth
 // @Router /account/user/list [get]
 func (h *AccountUserHandler) List(c *gin.Context) {
 	var req types.ReqGetUserList
@@ -69,8 +69,8 @@ func (h *AccountUserHandler) List(c *gin.Context) {
 // @Produce json
 // @Param uuid query string true "用户UUID"
 // @Success 200 {object} types.RespUserDetail
-// @Failure 400 {object} types.RespFailJson
-// @Security ApiKeyAuth
+// @Failure 400 {object} render.RespJsonData
+// @Security AdminAuth
 // @Router /account/user/detail [get]
 func (h *AccountUserHandler) Detail(c *gin.Context) {
 	uuid := c.Query("uuid")
@@ -97,9 +97,9 @@ func (h *AccountUserHandler) Detail(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param data body types.ReqCreateUser true "请求体"
-// @Success 200 {object} types.RespUserDetail
-// @Failure 400 {object} types.RespFailJson
-// @Security ApiKeyAuth
+// @Success 200 {object} render.RespJsonData{data=types.RespUserDetail} "code不为0时表示错误"
+// @Failure 500
+// @Security AdminAuth
 // @Router /account/user/create [post]
 func (h *AccountUserHandler) Create(c *gin.Context) {
 	var payload types.ReqCreateUser
@@ -125,8 +125,8 @@ func (h *AccountUserHandler) Create(c *gin.Context) {
 // @Produce json
 // @Param data body types.ReqUpdateUser true "请求体"
 // @Success 200 {object} types.RespEmptyJson
-// @Failure 400 {object} types.RespFailJson
-// @Security ApiKeyAuth
+// @Failure 400 {object} render.RespJsonData
+// @Security AdminAuth
 // @Router /account/user/update [post]
 func (h *AccountUserHandler) Update(c *gin.Context) {
 	uuid := c.Param("uuid")
@@ -150,8 +150,8 @@ func (h *AccountUserHandler) Update(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} types.RespEmptyJson
-// @Failure 400 {object} types.RespFailJson
-// @Security ApiKeyAuth
+// @Failure 400 {object} render.RespJsonData
+// @Security AdminAuth
 // @Router /account/user/delete [post]
 func (h *AccountUserHandler) Delete(c *gin.Context) {
 	uuid := c.Param("uuid")

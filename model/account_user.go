@@ -53,7 +53,7 @@ func NewUserList() []*User {
 
 func GetUserByConditions(db *gorm.DB, conditions interface{}) (*User, error) {
 	result := NewUser()
-	err := db.Where(conditions).Limit(1).First(&result).Error
+	err := db.Where(conditions).Take(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.GetLogger().Infof("model.account_user.GetUserByConditions conditions ==> %v", conditions)

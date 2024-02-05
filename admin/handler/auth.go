@@ -15,8 +15,8 @@ import (
 // @Accept json
 // @Produce json
 // @Param data body types.ReqAdminAuth true "请求体"
-// @Success 200 {object} types.RespAdminAuth
-// @Failure 400 {object} types.RespFailJson
+// @Success 200 {object} render.RespJsonData{data=types.RespAdminAuth} "code不为0时表示有错误"
+// @Failure 500
 // @Router /account/login [post]
 func Login(c *gin.Context) {
 	var payload *types.ReqAdminAuth
@@ -40,8 +40,8 @@ func Login(c *gin.Context) {
 // @Description 前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页
 // @Description 后端可以执行清理redis缓存, 设置token黑名单等操作
 // @Produce json
-// @Security ApiKeyAuth
-// @Success 200 {object} types.RespEmptyJson
+// @Security AdminAuth
+// @Success 200 {object} render.RespJsonData
 // @Router /account/logout [post]
 func Logout(c *gin.Context) {
 	go func() {

@@ -27,7 +27,7 @@ func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminA
 	user, err := a.userSvc.GetUserByPhone(payload.Phone)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, render.DataExistError, err
+			return nil, render.AccountUserOrPwdError, err
 		}
 		return nil, render.QueryError, err
 	}
@@ -54,6 +54,8 @@ func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminA
 			UUID:        user.UUID,
 			Phone:       user.PhoneMask(),
 			LastLoginAt: user.LastLoginAt,
+			Nickname:    user.Nickname,
+			Avatar:      user.Avatar,
 		},
 	}
 	go func() {
@@ -65,15 +67,15 @@ func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminA
 // Logout 退出系统
 func (a *adminAuthService) Logout() error {
 	ctx := a.ctx
-	value, ok := ctx.Get(jwt.ContextUserKey)
-	if ok {
+	if value, ok := ctx.Get(jwt.ContextUserKey); ok {
 		claims := value.(*jwt.Claims)
 		userId := claims.ID
-		token, ok2 := ctx.Get(jwt.ContextUserTokenKey)
-		if ok2 {
-			fmt.Println(userId)
-			fmt.Println(token)
-		}
+		// todo: 清理会话缓存之类的一些操作
+		fmt.Println(userId)
+	}
+	if token, ok := ctx.Get(jwt.ContextUserTokenKey); ok {
+		// todo: 清理会话缓存之类的一些操作
+		fmt.Println(token)
 	}
 	return nil
 }

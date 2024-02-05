@@ -5,17 +5,17 @@ import (
 	"net/http"
 )
 
+type RespJsonData struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
+}
+
 func Json(c *gin.Context, code int, result interface{}) {
-	data := gin.H{
-		"code": code,
-		"msg":  GetCodeMsg(code),
+	data := RespJsonData{
+		Code: code,
+		Msg:  GetCodeMsg(code),
+		Data: result,
 	}
-	httpCode := http.StatusOK
-	if code != OK {
-		data["error"] = result
-		httpCode = http.StatusBadRequest
-	} else {
-		data["data"] = result
-	}
-	c.JSON(httpCode, data)
+	c.JSON(http.StatusOK, data)
 }

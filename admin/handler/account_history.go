@@ -35,8 +35,8 @@ func NewAccountHistoryHandler(svc service.IAccountUserService) *AccountHistoryHa
 // @Produce json
 // @Param data query types.ReqGetHistoryList false "请求体"
 // @Success 200 {object} types.ReqGetHistoryList
-// @Failure 400 {object} types.RespFailJson
-// @Security ApiKeyAuth
+// @Failure 500
+// @Security AdminAuth
 // @Router /account/history/list [get]
 func (h *AccountHistoryHandler) List(c *gin.Context) {
 	var req types.ReqGetUserList

@@ -19,7 +19,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "AdminAuth": []
                     }
                 ],
                 "description": "获取用户登录历史记录列表",
@@ -104,14 +104,11 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.ReqGetHistoryList"
+                            "$ref": "#/definitions/goal-app_admin_types.ReqGetHistoryList"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/types.RespFailJson"
-                        }
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }
@@ -136,22 +133,31 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.ReqAdminAuth"
+                            "$ref": "#/definitions/goal-app_admin_types.ReqAdminAuth"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "code不为0时表示有错误",
                         "schema": {
-                            "$ref": "#/definitions/types.RespAdminAuth"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/goal-app_admin_types.RespAdminAuth"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/types.RespFailJson"
-                        }
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }
@@ -160,7 +166,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "AdminAuth": []
                     }
                 ],
                 "description": "退出后台管理系统\n前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页\n后端可以执行清理redis缓存, 设置token黑名单等操作",
@@ -175,7 +181,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.RespEmptyJson"
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
                         }
                     }
                 }
@@ -185,7 +191,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "AdminAuth": []
                     }
                 ],
                 "description": "创建新用户",
@@ -206,22 +212,31 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.ReqCreateUser"
+                            "$ref": "#/definitions/goal-app_admin_types.ReqCreateUser"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "code不为0时表示错误",
                         "schema": {
-                            "$ref": "#/definitions/types.RespUserDetail"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/goal-app_admin_types.RespUserDetail"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/types.RespFailJson"
-                        }
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }
@@ -230,7 +245,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "AdminAuth": []
                     }
                 ],
                 "description": "删除单个用户",
@@ -248,13 +263,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.RespEmptyJson"
+                            "$ref": "#/definitions/goal-app_admin_types.RespEmptyJson"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/types.RespFailJson"
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
                         }
                     }
                 }
@@ -264,7 +279,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "AdminAuth": []
                     }
                 ],
                 "description": "获取用户详情",
@@ -291,13 +306,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.RespUserDetail"
+                            "$ref": "#/definitions/goal-app_admin_types.RespUserDetail"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/types.RespFailJson"
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
                         }
                     }
                 }
@@ -307,7 +322,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "AdminAuth": []
                     }
                 ],
                 "description": "获取用户列表",
@@ -334,6 +349,13 @@ const docTemplate = `{
                         "example": "abc@abc.com",
                         "description": "邮箱,模糊查旬",
                         "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "example": true,
+                        "description": "是否admin",
+                        "name": "is_admin",
                         "in": "query"
                     },
                     {
@@ -403,16 +425,40 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "code不为0时表示有错误",
                         "schema": {
-                            "$ref": "#/definitions/types.ReqGetUserList"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/goal-app_admin_types.RespGetUserList"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "result": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/goal-app_admin_types.RespUserDetail"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/types.RespFailJson"
-                        }
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }
@@ -421,7 +467,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "AdminAuth": []
                     }
                 ],
                 "description": "更新用户数据",
@@ -442,7 +488,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.ReqUpdateUser"
+                            "$ref": "#/definitions/goal-app_admin_types.ReqUpdateUser"
                         }
                     }
                 ],
@@ -450,36 +496,166 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.RespEmptyJson"
+                            "$ref": "#/definitions/goal-app_admin_types.RespEmptyJson"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/types.RespFailJson"
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
                         }
+                    }
+                }
+            }
+        },
+        "/system/user/list": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "获取系统用户列表",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统管理"
+                ],
+                "summary": "获取系统用户列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "2023-09-01 01:30:59",
+                        "description": "数据创建时间起始",
+                        "name": "created_at_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "abc@abc.com",
+                        "description": "邮箱,模糊查旬",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "example": true,
+                        "description": "是否admin",
+                        "name": "is_admin",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2023-09-01 22:59:59",
+                        "description": "最近登录时间截止",
+                        "name": "last_login_at_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2023-09-01 01:30:59",
+                        "description": "最近登录时间起始",
+                        "name": "last_login_at_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "Tom",
+                        "description": "昵称,模糊查询",
+                        "name": "nickname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "example": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "13800138000",
+                        "description": "手机号,模糊查询",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "enum": [
+                                "INACTIVE",
+                                "ACTIVE",
+                                "FREEZE",
+                                "DELETE"
+                            ],
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "example": [
+                            "FREEZE",
+                            "ACTIVE"
+                        ],
+                        "description": "用户状态,多种状态过滤使用逗号分隔",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/goal-app_admin_types.RespGetUserList"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "result": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/goal-app_admin_types.RespUserDetail"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }
         }
     },
     "definitions": {
-        "model.UserStatusType": {
-            "type": "string",
-            "enum": [
-                "INACTIVE",
-                "ACTIVE",
-                "FREEZE",
-                "DELETE"
-            ],
-            "x-enum-varnames": [
-                "UserStatusInactive",
-                "UserStatusActive",
-                "UserStatusFreeze",
-                "UserStatusDelete"
-            ]
-        },
-        "types.ReqAdminAuth": {
+        "goal-app_admin_types.ReqAdminAuth": {
             "type": "object",
             "required": [
                 "password",
@@ -498,7 +674,7 @@ const docTemplate = `{
                 }
             }
         },
-        "types.ReqCreateUser": {
+        "goal-app_admin_types.ReqCreateUser": {
             "type": "object",
             "required": [
                 "password",
@@ -533,7 +709,7 @@ const docTemplate = `{
                 }
             }
         },
-        "types.ReqGetHistoryList": {
+        "goal-app_admin_types.ReqGetHistoryList": {
             "type": "object",
             "properties": {
                 "created_at_start": {
@@ -585,65 +761,7 @@ const docTemplate = `{
                 }
             }
         },
-        "types.ReqGetUserList": {
-            "type": "object",
-            "properties": {
-                "created_at_start": {
-                    "description": "数据创建时间起始",
-                    "type": "string",
-                    "example": "2023-09-01 01:30:59"
-                },
-                "email": {
-                    "description": "邮箱,模糊查旬",
-                    "type": "string",
-                    "example": "abc@abc.com"
-                },
-                "last_login_at_end": {
-                    "description": "最近登录时间截止",
-                    "type": "string",
-                    "example": "2023-09-01 22:59:59"
-                },
-                "last_login_at_start": {
-                    "description": "最近登录时间起始",
-                    "type": "string",
-                    "example": "2023-09-01 01:30:59"
-                },
-                "limit": {
-                    "description": "每页数量",
-                    "type": "integer",
-                    "default": 10,
-                    "example": 10
-                },
-                "nickname": {
-                    "description": "昵称,模糊查询",
-                    "type": "string",
-                    "example": "Tom"
-                },
-                "page": {
-                    "description": "页码",
-                    "type": "integer",
-                    "default": 1,
-                    "example": 1
-                },
-                "phone": {
-                    "description": "手机号,模糊查询",
-                    "type": "string",
-                    "example": "13800138000"
-                },
-                "status": {
-                    "description": "用户状态,多种状态过滤使用逗号分隔",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.UserStatusType"
-                    },
-                    "example": [
-                        "FREEZE",
-                        "ACTIVE"
-                    ]
-                }
-            }
-        },
-        "types.ReqUpdateUser": {
+        "goal-app_admin_types.ReqUpdateUser": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -678,7 +796,7 @@ const docTemplate = `{
                 }
             }
         },
-        "types.RespAdminAuth": {
+        "goal-app_admin_types.RespAdminAuth": {
             "type": "object",
             "properties": {
                 "expire_time": {
@@ -693,17 +811,25 @@ const docTemplate = `{
                     "description": "用户基本信息",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.RespAdminAuthUser"
+                            "$ref": "#/definitions/goal-app_admin_types.RespAdminAuthUser"
                         }
                     ]
                 }
             }
         },
-        "types.RespAdminAuthUser": {
+        "goal-app_admin_types.RespAdminAuthUser": {
             "type": "object",
             "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
                 "last_login_at": {
                     "description": "最近的登录时间",
+                    "type": "string"
+                },
+                "nickname": {
+                    "description": "昵称",
                     "type": "string"
                 },
                 "phone": {
@@ -717,7 +843,7 @@ const docTemplate = `{
                 }
             }
         },
-        "types.RespEmptyJson": {
+        "goal-app_admin_types.RespEmptyJson": {
             "type": "object",
             "properties": {
                 "code": {
@@ -732,27 +858,22 @@ const docTemplate = `{
                 }
             }
         },
-        "types.RespFailJson": {
+        "goal-app_admin_types.RespGetUserList": {
             "type": "object",
             "properties": {
-                "code": {
-                    "description": "结果码：0-成功，其它-失败",
-                    "type": "integer",
-                    "example": 1000
+                "limit": {
+                    "type": "integer"
                 },
-                "error": {
-                    "description": "具体的错误信息",
-                    "type": "string",
-                    "example": "not found"
+                "page": {
+                    "type": "integer"
                 },
-                "msg": {
-                    "description": "消息, code不为0时，返回简单的错误描述",
-                    "type": "string",
-                    "example": "error"
+                "result": {},
+                "total": {
+                    "type": "integer"
                 }
             }
         },
-        "types.RespUserDetail": {
+        "goal-app_admin_types.RespUserDetail": {
             "type": "object",
             "properties": {
                 "is_admin": {
@@ -790,10 +911,37 @@ const docTemplate = `{
                     "example": "826d6b1aa64d471d822d667e92218158"
                 }
             }
+        },
+        "goal-app_pkg_render.RespJsonData": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserStatusType": {
+            "type": "string",
+            "enum": [
+                "INACTIVE",
+                "ACTIVE",
+                "FREEZE",
+                "DELETE"
+            ],
+            "x-enum-varnames": [
+                "UserStatusInactive",
+                "UserStatusActive",
+                "UserStatusFreeze",
+                "UserStatusDelete"
+            ]
         }
     },
     "securityDefinitions": {
-        "ApiKeyAuth": {
+        "AdminAuth": {
             "description": "Type \"Bearer\" followed by a space and JWT token.",
             "type": "apiKey",
             "name": "Authorization",
@@ -809,7 +957,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "后台管理系统接口文档",
-	Description:      "http状态码是200，code为0时表示正常返回；code不为0时表示有业务错误。返回的JSON数据结构如下：",
+	Description:      "http状态码是200，code为0时表示正常返回；code不为0时表示有业务错误。",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
