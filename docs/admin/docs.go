@@ -35,10 +35,13 @@ const docTemplate = `{
                 "summary": "登录历史记录列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "example": "2023-09-01 01:30:59",
-                        "description": "数据创建时间起始",
-                        "name": "created_at_start",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "数据创建时间起止区间",
+                        "name": "created_at[]",
                         "in": "query"
                     },
                     {
@@ -46,13 +49,6 @@ const docTemplate = `{
                         "example": "abc@abc.com",
                         "description": "用户邮箱",
                         "name": "email",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "2023-09-01 22:59:59",
-                        "description": "数据创建时间截止",
-                        "name": "last_login_at_end",
                         "in": "query"
                     },
                     {
@@ -338,16 +334,19 @@ const docTemplate = `{
                 "summary": "获取用户列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "example": "2023-09-01 01:30:59",
-                        "description": "数据创建时间起始",
-                        "name": "created_at_start",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "数据创建时间起止区间",
+                        "name": "created_at[]",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "example": "abc@abc.com",
-                        "description": "邮箱,模糊查旬",
+                        "description": "邮箱,模糊查询",
                         "name": "email",
                         "in": "query"
                     },
@@ -359,17 +358,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "example": "2023-09-01 22:59:59",
-                        "description": "最近登录时间截止",
-                        "name": "last_login_at_end",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "2023-09-01 01:30:59",
-                        "description": "最近登录时间起始",
-                        "name": "last_login_at_start",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "最近登录时间起止区间",
+                        "name": "last_login_at[]",
                         "in": "query"
                     },
                     {
@@ -418,8 +413,15 @@ const docTemplate = `{
                             "FREEZE",
                             "ACTIVE"
                         ],
-                        "description": "用户状态,多种状态过滤使用逗号分隔",
-                        "name": "status",
+                        "description": "用户状态",
+                        "name": "status[]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "826d6b1aa64d471d822d667e92218158",
+                        "description": "用户UUID,精确匹配",
+                        "name": "uuid",
                         "in": "query"
                     }
                 ],
@@ -528,16 +530,19 @@ const docTemplate = `{
                 "summary": "获取系统用户列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "example": "2023-09-01 01:30:59",
-                        "description": "数据创建时间起始",
-                        "name": "created_at_start",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "数据创建时间起止区间",
+                        "name": "created_at[]",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "example": "abc@abc.com",
-                        "description": "邮箱,模糊查旬",
+                        "description": "邮箱,模糊查询",
                         "name": "email",
                         "in": "query"
                     },
@@ -549,17 +554,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "example": "2023-09-01 22:59:59",
-                        "description": "最近登录时间截止",
-                        "name": "last_login_at_end",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "2023-09-01 01:30:59",
-                        "description": "最近登录时间起始",
-                        "name": "last_login_at_start",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "最近登录时间起止区间",
+                        "name": "last_login_at[]",
                         "in": "query"
                     },
                     {
@@ -608,8 +609,15 @@ const docTemplate = `{
                             "FREEZE",
                             "ACTIVE"
                         ],
-                        "description": "用户状态,多种状态过滤使用逗号分隔",
-                        "name": "status",
+                        "description": "用户状态",
+                        "name": "status[]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "826d6b1aa64d471d822d667e92218158",
+                        "description": "用户UUID,精确匹配",
+                        "name": "uuid",
                         "in": "query"
                     }
                 ],
@@ -712,20 +720,17 @@ const docTemplate = `{
         "goal-app_admin_types.ReqGetHistoryList": {
             "type": "object",
             "properties": {
-                "created_at_start": {
-                    "description": "数据创建时间起始",
-                    "type": "string",
-                    "example": "2023-09-01 01:30:59"
+                "created_at[]": {
+                    "description": "数据创建时间起止区间",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "email": {
                     "description": "用户邮箱",
                     "type": "string",
                     "example": "abc@abc.com"
-                },
-                "last_login_at_end": {
-                    "description": "数据创建时间截止",
-                    "type": "string",
-                    "example": "2023-09-01 22:59:59"
                 },
                 "limit": {
                     "description": "每页数量",

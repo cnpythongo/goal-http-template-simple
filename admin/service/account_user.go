@@ -44,21 +44,32 @@ func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.Resp
 		args = append(args, req.Nickname)
 	}
 	if len(req.Status) > 0 {
-		status := strings.Split(string(req.Status[0]), ",")
 		query = append(query, "status IN ?")
-		args = append(args, status)
-	}
-	if req.LastLoginAtStart != "" {
-		query = append(query, "last_login_at >= ?")
-		args = append(args, req.LastLoginAtStart)
-	}
-	if req.LastLoginAtEnd != "" {
-		query = append(query, "last_login_at <= ?")
-		args = append(args, req.LastLoginAtEnd)
+		args = append(args, req.Status)
 	}
 	if req.IsAdmin {
 		query = append(query, "is_admin = ?")
 		args = append(args, 1)
+	}
+	if req.UUID != "" {
+		query = append(query, "uuid = ?")
+		args = append(args, req.UUID)
+	}
+	if len(req.CreatedAt) > 0 {
+		query = append(query, "created_at >= ?")
+		args = append(args, req.CreatedAt[0])
+		if len(req.CreatedAt) == 2 {
+			query = append(query, "created_at <= ?")
+			args = append(args, req.CreatedAt[1])
+		}
+	}
+	if len(req.LastLoginAt) > 0 {
+		query = append(query, "last_login_at >= ?")
+		args = append(args, req.LastLoginAt[0])
+		if len(req.LastLoginAt) == 2 {
+			query = append(query, "last_login_at <= ?")
+			args = append(args, req.LastLoginAt[1])
+		}
 	}
 	queryStr := strings.Join(query, " AND ")
 	rows, total, err := model.GetUserList(s.db, req.Page, req.Limit, queryStr, args)

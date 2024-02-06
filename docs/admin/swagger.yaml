@@ -43,17 +43,14 @@ definitions:
     type: object
   goal-app_admin_types.ReqGetHistoryList:
     properties:
-      created_at_start:
-        description: 数据创建时间起始
-        example: "2023-09-01 01:30:59"
-        type: string
+      created_at[]:
+        description: 数据创建时间起止区间
+        items:
+          type: string
+        type: array
       email:
         description: 用户邮箱
         example: abc@abc.com
-        type: string
-      last_login_at_end:
-        description: 数据创建时间截止
-        example: "2023-09-01 22:59:59"
         type: string
       limit:
         default: 10
@@ -226,20 +223,17 @@ paths:
       - application/x-www-form-urlencoded
       description: 获取用户登录历史记录列表
       parameters:
-      - description: 数据创建时间起始
-        example: "2023-09-01 01:30:59"
+      - collectionFormat: multi
+        description: 数据创建时间起止区间
         in: query
-        name: created_at_start
-        type: string
+        items:
+          type: string
+        name: created_at[]
+        type: array
       - description: 用户邮箱
         example: abc@abc.com
         in: query
         name: email
-        type: string
-      - description: 数据创建时间截止
-        example: "2023-09-01 22:59:59"
-        in: query
-        name: last_login_at_end
         type: string
       - default: 10
         description: 每页数量
@@ -419,12 +413,14 @@ paths:
       - application/x-www-form-urlencoded
       description: 获取用户列表
       parameters:
-      - description: 数据创建时间起始
-        example: "2023-09-01 01:30:59"
+      - collectionFormat: multi
+        description: 数据创建时间起止区间
         in: query
-        name: created_at_start
-        type: string
-      - description: 邮箱,模糊查旬
+        items:
+          type: string
+        name: created_at[]
+        type: array
+      - description: 邮箱,模糊查询
         example: abc@abc.com
         in: query
         name: email
@@ -434,16 +430,13 @@ paths:
         in: query
         name: is_admin
         type: boolean
-      - description: 最近登录时间截止
-        example: "2023-09-01 22:59:59"
+      - collectionFormat: multi
+        description: 最近登录时间起止区间
         in: query
-        name: last_login_at_end
-        type: string
-      - description: 最近登录时间起始
-        example: "2023-09-01 01:30:59"
-        in: query
-        name: last_login_at_start
-        type: string
+        items:
+          type: string
+        name: last_login_at[]
+        type: array
       - default: 10
         description: 每页数量
         example: 10
@@ -467,7 +460,7 @@ paths:
         name: phone
         type: string
       - collectionFormat: multi
-        description: 用户状态,多种状态过滤使用逗号分隔
+        description: 用户状态
         example:
         - FREEZE
         - ACTIVE
@@ -479,8 +472,13 @@ paths:
           - FREEZE
           - DELETE
           type: string
-        name: status
+        name: status[]
         type: array
+      - description: 用户UUID,精确匹配
+        example: 826d6b1aa64d471d822d667e92218158
+        in: query
+        name: uuid
+        type: string
       produces:
       - application/json
       responses:
@@ -541,12 +539,14 @@ paths:
       - application/x-www-form-urlencoded
       description: 获取系统用户列表，与 /account/user/list API相同，调用时总是传 is_admin=true 即可
       parameters:
-      - description: 数据创建时间起始
-        example: "2023-09-01 01:30:59"
+      - collectionFormat: multi
+        description: 数据创建时间起止区间
         in: query
-        name: created_at_start
-        type: string
-      - description: 邮箱,模糊查旬
+        items:
+          type: string
+        name: created_at[]
+        type: array
+      - description: 邮箱,模糊查询
         example: abc@abc.com
         in: query
         name: email
@@ -556,16 +556,13 @@ paths:
         in: query
         name: is_admin
         type: boolean
-      - description: 最近登录时间截止
-        example: "2023-09-01 22:59:59"
+      - collectionFormat: multi
+        description: 最近登录时间起止区间
         in: query
-        name: last_login_at_end
-        type: string
-      - description: 最近登录时间起始
-        example: "2023-09-01 01:30:59"
-        in: query
-        name: last_login_at_start
-        type: string
+        items:
+          type: string
+        name: last_login_at[]
+        type: array
       - default: 10
         description: 每页数量
         example: 10
@@ -589,7 +586,7 @@ paths:
         name: phone
         type: string
       - collectionFormat: multi
-        description: 用户状态,多种状态过滤使用逗号分隔
+        description: 用户状态
         example:
         - FREEZE
         - ACTIVE
@@ -601,8 +598,13 @@ paths:
           - FREEZE
           - DELETE
           type: string
-        name: status
+        name: status[]
         type: array
+      - description: 用户UUID,精确匹配
+        example: 826d6b1aa64d471d822d667e92218158
+        in: query
+        name: uuid
+        type: string
       produces:
       - application/json
       responses:

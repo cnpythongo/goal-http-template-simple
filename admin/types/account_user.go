@@ -9,13 +9,13 @@ type (
 	// ReqGetUserList 获取用户列表的请求参数体
 	ReqGetUserList struct {
 		Pagination
-		Phone            string                 `form:"phone" example:"13800138000"`                       // 手机号,模糊查询
-		Email            string                 `form:"email" example:"abc@abc.com"`                       // 邮箱,模糊查旬
-		Nickname         string                 `form:"nickname" example:"Tom"`                            // 昵称,模糊查询
-		Status           []model.UserStatusType `form:"status" example:"FREEZE,ACTIVE"`                    // 用户状态,多种状态过滤使用逗号分隔
-		LastLoginAtStart string                 `form:"last_login_at_start" example:"2023-09-01 01:30:59"` // 最近登录时间起始
-		LastLoginAtEnd   string                 `form:"last_login_at_end" example:"2023-09-01 22:59:59"`   // 最近登录时间截止
-		IsAdmin          bool                   `form:"is_admin" example:"true"`                           // 是否admin, true or false
+		UUID        string                 `form:"uuid" example:"826d6b1aa64d471d822d667e92218158"` // 用户UUID,精确匹配
+		Phone       string                 `form:"phone" example:"13800138000"`                     // 手机号,模糊查询
+		Email       string                 `form:"email" example:"abc@abc.com"`                     // 邮箱,模糊查询
+		Nickname    string                 `form:"nickname" example:"Tom"`                          // 昵称,模糊查询
+		Status      []model.UserStatusType `form:"status[]" example:"FREEZE,ACTIVE"`                // 用户状态
+		LastLoginAt []string               `form:"last_login_at[]"`                                 // 最近登录时间起止区间
+		IsAdmin     bool                   `form:"is_admin" example:"true"`                         // 是否admin, true or false
 	}
 
 	// RespUserBasic 用户基础数据结构体
