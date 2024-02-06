@@ -15,7 +15,7 @@ type (
 		Status           []model.UserStatusType `form:"status" example:"FREEZE,ACTIVE"`                    // 用户状态,多种状态过滤使用逗号分隔
 		LastLoginAtStart string                 `form:"last_login_at_start" example:"2023-09-01 01:30:59"` // 最近登录时间起始
 		LastLoginAtEnd   string                 `form:"last_login_at_end" example:"2023-09-01 22:59:59"`   // 最近登录时间截止
-		IsAdmin          bool                   `form:"is_admin" example:"true"`                           // 是否admin
+		IsAdmin          bool                   `form:"is_admin" example:"true"`                           // 是否admin, true or false
 	}
 
 	// RespUserBasic 用户基础数据结构体
@@ -26,6 +26,7 @@ type (
 		LastLoginAt *utils.LocalTime     `json:"last_login_at" example:"2023-09-01 13:30:59"`     // 最近登录时间
 		Status      model.UserStatusType `json:"status" example:"ACTIVE"`                         // 用户状态
 		IsAdmin     bool                 `json:"is_admin" example:"false"`                        // 是否管理员
+		CreatedAt   *utils.LocalTime     `json:"created_at" example:"2023-09-01 13:30:59"`        // 账号创建时间
 	}
 
 	// RespUserDetail 用户详情数据结构体

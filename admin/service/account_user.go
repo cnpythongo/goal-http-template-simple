@@ -32,15 +32,15 @@ func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.Resp
 	var query []string
 	var args []interface{}
 	if req.Email != "" {
-		query = append(query, "email like concat('%', ?, '%s')")
+		query = append(query, "email like concat('%', ?, '%')")
 		args = append(args, req.Email)
 	}
 	if req.Phone != "" {
-		query = append(query, "phone like concat('%', ?, '%s')")
+		query = append(query, "phone like concat('%', ?, '%')")
 		args = append(args, req.Phone)
 	}
 	if req.Nickname != "" {
-		query = append(query, "nickname like concat('%s', ?, '%s')")
+		query = append(query, "nickname like concat('%s', ?, '%')")
 		args = append(args, req.Nickname)
 	}
 	if len(req.Status) > 0 {
@@ -55,6 +55,10 @@ func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.Resp
 	if req.LastLoginAtEnd != "" {
 		query = append(query, "last_login_at <= ?")
 		args = append(args, req.LastLoginAtEnd)
+	}
+	if req.IsAdmin {
+		query = append(query, "is_admin = ?")
+		args = append(args, 1)
 	}
 	queryStr := strings.Join(query, " AND ")
 	rows, total, err := model.GetUserList(s.db, req.Page, req.Limit, queryStr, args)

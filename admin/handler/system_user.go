@@ -33,7 +33,7 @@ func NewSystemUserHandler(svc service.IAccountUserService) *SystemUserHandler {
 // List 获取系统用户列表
 // @Tags 系统管理
 // @Summary 获取系统用户列表
-// @Description 获取系统用户列表
+// @Description 获取系统用户列表，与 /account/user/list API相同，调用时总是传 is_admin=true 即可
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param data query types.ReqGetUserList false "请求体"

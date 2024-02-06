@@ -354,7 +354,7 @@ const docTemplate = `{
                     {
                         "type": "boolean",
                         "example": true,
-                        "description": "是否admin",
+                        "description": "是否admin, true or false",
                         "name": "is_admin",
                         "in": "query"
                     },
@@ -515,7 +515,7 @@ const docTemplate = `{
                         "AdminAuth": []
                     }
                 ],
-                "description": "获取系统用户列表",
+                "description": "获取系统用户列表，与 /account/user/list API相同，调用时总是传 is_admin=true 即可",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -544,7 +544,7 @@ const docTemplate = `{
                     {
                         "type": "boolean",
                         "example": true,
-                        "description": "是否admin",
+                        "description": "是否admin, true or false",
                         "name": "is_admin",
                         "in": "query"
                     },
@@ -876,6 +876,11 @@ const docTemplate = `{
         "goal-app_admin_types.RespUserDetail": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "description": "账号创建时间",
+                    "type": "string",
+                    "example": "2023-09-01 13:30:59"
+                },
                 "is_admin": {
                     "description": "是否管理员",
                     "type": "boolean",

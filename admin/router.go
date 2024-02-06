@@ -25,7 +25,7 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 	_ = handler.AccountHistoryRouteRegister(route)
 
 	// system api
-	//_ = handler.SystemUserRouteRegister(route)
+	_ = handler.SystemUserRouteRegister(route)
 
 	return route
 }
