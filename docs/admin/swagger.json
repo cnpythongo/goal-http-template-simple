@@ -252,7 +252,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_admin_types.RespEmptyJson"
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
                         }
                     },
                     "400": {
@@ -491,7 +491,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_admin_types.RespEmptyJson"
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
                         }
                     },
                     "400": {
@@ -499,157 +499,6 @@
                         "schema": {
                             "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
                         }
-                    }
-                }
-            }
-        },
-        "/system/user/list": {
-            "get": {
-                "security": [
-                    {
-                        "AdminAuth": []
-                    }
-                ],
-                "description": "获取系统用户列表，与 /account/user/list API相同，调用时总是传 is_admin=true 即可",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "系统管理"
-                ],
-                "summary": "获取系统用户列表",
-                "parameters": [
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "description": "数据创建时间起止区间",
-                        "name": "created_at[]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "abc@abc.com",
-                        "description": "邮箱,模糊查询",
-                        "name": "email",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "example": true,
-                        "description": "是否admin, true or false",
-                        "name": "is_admin",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "description": "最近登录时间起止区间",
-                        "name": "last_login_at[]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "example": 10,
-                        "description": "每页数量",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "Tom",
-                        "description": "昵称,模糊查询",
-                        "name": "nickname",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "example": 1,
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "13800138000",
-                        "description": "手机号,模糊查询",
-                        "name": "phone",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "enum": [
-                                "INACTIVE",
-                                "ACTIVE",
-                                "FREEZE",
-                                "DELETE"
-                            ],
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "example": [
-                            "FREEZE",
-                            "ACTIVE"
-                        ],
-                        "description": "用户状态",
-                        "name": "status[]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "826d6b1aa64d471d822d667e92218158",
-                        "description": "用户UUID,精确匹配",
-                        "name": "uuid",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "code不为0时表示有错误",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/goal-app_admin_types.RespGetUserList"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "result": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/goal-app_admin_types.RespUserDetail"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
                     }
                 }
             }
@@ -687,6 +536,11 @@
                     "description": "邮箱",
                     "type": "string",
                     "example": "abc@a.com"
+                },
+                "is_admin": {
+                    "description": "是否属于管理员账号",
+                    "type": "boolean",
+                    "example": true
                 },
                 "nickname": {
                     "description": "昵称",
@@ -838,21 +692,6 @@
                 "uuid": {
                     "description": "用户uuid",
                     "type": "string"
-                }
-            }
-        },
-        "goal-app_admin_types.RespEmptyJson": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "结果码：0-成功，其它-失败",
-                    "type": "integer",
-                    "example": 0
-                },
-                "msg": {
-                    "description": "消息, code不为0时，返回简单的错误描述",
-                    "type": "string",
-                    "example": "ok"
                 }
             }
         },

@@ -20,6 +20,10 @@ definitions:
         description: 邮箱
         example: abc@a.com
         type: string
+      is_admin:
+        description: 是否属于管理员账号
+        example: true
+        type: boolean
       nickname:
         description: 昵称
         example: Tom
@@ -136,17 +140,6 @@ definitions:
         type: string
       uuid:
         description: 用户uuid
-        type: string
-    type: object
-  goal-app_admin_types.RespEmptyJson:
-    properties:
-      code:
-        description: 结果码：0-成功，其它-失败
-        example: 0
-        type: integer
-      msg:
-        description: 消息, code不为0时，返回简单的错误描述
-        example: ok
         type: string
     type: object
   goal-app_admin_types.RespGetUserList:
@@ -370,7 +363,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_admin_types.RespEmptyJson'
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
         "400":
           description: Bad Request
           schema:
@@ -523,7 +516,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_admin_types.RespEmptyJson'
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
         "400":
           description: Bad Request
           schema:
@@ -533,104 +526,6 @@ paths:
       summary: 更新用户
       tags:
       - 用户管理
-  /system/user/list:
-    get:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: 获取系统用户列表，与 /account/user/list API相同，调用时总是传 is_admin=true 即可
-      parameters:
-      - collectionFormat: multi
-        description: 数据创建时间起止区间
-        in: query
-        items:
-          type: string
-        name: created_at[]
-        type: array
-      - description: 邮箱,模糊查询
-        example: abc@abc.com
-        in: query
-        name: email
-        type: string
-      - description: 是否admin, true or false
-        example: true
-        in: query
-        name: is_admin
-        type: boolean
-      - collectionFormat: multi
-        description: 最近登录时间起止区间
-        in: query
-        items:
-          type: string
-        name: last_login_at[]
-        type: array
-      - default: 10
-        description: 每页数量
-        example: 10
-        in: query
-        name: limit
-        type: integer
-      - description: 昵称,模糊查询
-        example: Tom
-        in: query
-        name: nickname
-        type: string
-      - default: 1
-        description: 页码
-        example: 1
-        in: query
-        name: page
-        type: integer
-      - description: 手机号,模糊查询
-        example: "13800138000"
-        in: query
-        name: phone
-        type: string
-      - collectionFormat: multi
-        description: 用户状态
-        example:
-        - FREEZE
-        - ACTIVE
-        in: query
-        items:
-          enum:
-          - INACTIVE
-          - ACTIVE
-          - FREEZE
-          - DELETE
-          type: string
-        name: status[]
-        type: array
-      - description: 用户UUID,精确匹配
-        example: 826d6b1aa64d471d822d667e92218158
-        in: query
-        name: uuid
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: code不为0时表示有错误
-          schema:
-            allOf:
-            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
-            - properties:
-                data:
-                  allOf:
-                  - $ref: '#/definitions/goal-app_admin_types.RespGetUserList'
-                  - properties:
-                      result:
-                        items:
-                          $ref: '#/definitions/goal-app_admin_types.RespUserDetail'
-                        type: array
-                    type: object
-              type: object
-        "500":
-          description: Internal Server Error
-      security:
-      - AdminAuth: []
-      summary: 获取系统用户列表
-      tags:
-      - 系统管理
 securityDefinitions:
   AdminAuth:
     description: Type "Bearer" followed by a space and JWT token.

@@ -42,6 +42,7 @@ type (
 		PasswordConfirm string `json:"password_confirm" binding:"required" example:"123456"` // 确认密码
 		Email           string `json:"email" example:"abc@a.com"`                            // 邮箱
 		Nickname        string `json:"nickname" example:"Tom"`                               // 昵称
+		IsAdmin         bool   `json:"is_admin" example:"true"`                              // 是否属于管理员账号
 	}
 
 	// ReqUpdateUser 更新用户的请求结构体

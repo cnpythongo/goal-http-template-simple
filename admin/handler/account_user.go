@@ -108,6 +108,10 @@ func (h *AccountUserHandler) Create(c *gin.Context) {
 		render.Json(c, render.PayloadError, nil)
 		return
 	}
+	if payload.Password != payload.PasswordConfirm {
+		render.Json(c, render.ParamsError, nil)
+		return
+	}
 	user, code, err := h.svc.CreateUser(&payload)
 	if err != nil {
 		log.GetLogger().Errorln(err)
@@ -124,7 +128,7 @@ func (h *AccountUserHandler) Create(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param data body types.ReqUpdateUser true "请求体"
-// @Success 200 {object} types.RespEmptyJson
+// @Success 200 {object} render.RespJsonData
 // @Failure 400 {object} render.RespJsonData
 // @Security AdminAuth
 // @Router /account/user/update [post]
@@ -149,7 +153,7 @@ func (h *AccountUserHandler) Update(c *gin.Context) {
 // @Description 删除单个用户
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.RespEmptyJson
+// @Success 200 {object} render.RespJsonData
 // @Failure 400 {object} render.RespJsonData
 // @Security AdminAuth
 // @Router /account/user/delete [post]
