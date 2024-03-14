@@ -1,29 +1,29 @@
-package service
+package auth
 
 import (
 	"errors"
 	"fmt"
 	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/gin-gonic/gin"
-	"goal-app/admin/types"
+	"goal-app/admin/accountuser"
 	"goal-app/model"
 	"goal-app/pkg/jwt"
 	"goal-app/pkg/render"
 	"gorm.io/gorm"
 )
 
-type IAdminAuthService interface {
-	Login(payload *types.ReqAdminAuth) (*types.RespAdminAuth, int, error)
-	Logout() error
+type IAuthService interface {
+	Login(c *gin.Context, payload *ReqAdminAuth) (*RespAdminAuth, int, error)
+	Logout(c *gin.Context) error
 }
 
-type adminAuthService struct {
-	ctx     *gin.Context
-	userSvc IAccountUserService
+type authService struct {
+	db      *gorm.DB
+	userSvc accountuser.IUserService
 }
 
 // Login 登录
-func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminAuth, int, error) {
+func (a *authService) Login(c *gin.Context, payload *ReqAdminAuth) (*RespAdminAuth, int, error) {
 	user, err := a.userSvc.GetUserByPhone(payload.Phone)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -47,10 +47,10 @@ func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminA
 	if err != nil {
 		return nil, render.AuthTokenGenerateError, err
 	}
-	data := &types.RespAdminAuth{
+	data := &RespAdminAuth{
 		Token:      token,
 		ExpireTime: expireTime.Format(utils.DateTimeLayout),
-		User: types.RespAdminAuthUser{
+		User: RespAdminAuthUser{
 			UUID:        user.UUID,
 			Phone:       user.PhoneMask(),
 			LastLoginAt: user.LastLoginAt,
@@ -65,8 +65,7 @@ func (a *adminAuthService) Login(payload *types.ReqAdminAuth) (*types.RespAdminA
 }
 
 // Logout 退出系统
-func (a *adminAuthService) Logout() error {
-	ctx := a.ctx
+func (a *authService) Logout(ctx *gin.Context) error {
 	if value, ok := ctx.Get(jwt.ContextUserKey); ok {
 		claims := value.(*jwt.Claims)
 		userId := claims.ID
@@ -80,9 +79,10 @@ func (a *adminAuthService) Logout() error {
 	return nil
 }
 
-func NewAdminAuthService(ctx *gin.Context) IAdminAuthService {
-	return &adminAuthService{
-		ctx:     ctx,
-		userSvc: NewAccountUserService(),
+func NewAuthService() IAuthService {
+	db := model.GetDB()
+	return &authService{
+		db:      db,
+		userSvc: accountuser.NewUserService(),
 	}
 }

@@ -1,4 +1,4 @@
-package service
+package systemconfig
 
 import (
 	"goal-app/model"

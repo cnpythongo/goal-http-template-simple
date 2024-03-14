@@ -1,12 +1,23 @@
-package handler
+package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"goal-app/admin/service"
-	"goal-app/admin/types"
 	"goal-app/pkg/log"
 	"goal-app/pkg/render"
 )
+
+type IAuthHandler interface {
+	Login(c *gin.Context)
+	Logout(c *gin.Context)
+}
+
+type authHandler struct {
+	svc IAuthService
+}
+
+func NewAuthHandler(svc IAuthService) IAuthHandler {
+	return &authHandler{svc: svc}
+}
 
 // Login 登录
 // @Tags 登录退出
@@ -14,18 +25,18 @@ import (
 // @Description 后台管理系统登录接口
 // @Accept json
 // @Produce json
-// @Param data body types.ReqAdminAuth true "请求体"
-// @Success 200 {object} render.RespJsonData{data=types.RespAdminAuth} "code不为0时表示有错误"
+// @Param data body ReqAdminAuth true "请求体"
+// @Success 200 {object} render.RespJsonData{data=RespAdminAuth} "code不为0时表示有错误"
 // @Failure 500
 // @Router /account/login [post]
-func Login(c *gin.Context) {
-	var payload *types.ReqAdminAuth
+func (h *authHandler) Login(c *gin.Context) {
+	var payload *ReqAdminAuth
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		render.Json(c, render.PayloadError, err)
 		return
 	}
 
-	result, code, err := service.NewAdminAuthService(c).Login(payload)
+	result, code, err := h.svc.Login(c, payload)
 	if code != render.OK {
 		render.Json(c, code, err)
 		return
@@ -43,9 +54,9 @@ func Login(c *gin.Context) {
 // @Security AdminAuth
 // @Success 200 {object} render.RespJsonData
 // @Router /account/logout [post]
-func Logout(c *gin.Context) {
+func (h *authHandler) Logout(c *gin.Context) {
 	go func() {
-		err := service.NewAdminAuthService(c).Logout()
+		err := h.svc.Logout(c)
 		if err != nil {
 			log.GetLogger().Error(err)
 		}

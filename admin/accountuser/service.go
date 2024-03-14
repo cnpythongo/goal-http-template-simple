@@ -1,9 +1,8 @@
-package service
+package accountuser
 
 import (
 	"errors"
 	"github.com/jinzhu/copier"
-	"goal-app/admin/types"
 	"goal-app/model"
 	"goal-app/pkg/log"
 	"goal-app/pkg/render"
@@ -11,12 +10,12 @@ import (
 	"strings"
 )
 
-type IAccountUserService interface {
-	GetUserList(req *types.ReqGetUserList) (*types.RespGetUserList, int, error)
-	GetUserDetail(uuid string) (*types.RespUserDetail, int, error)
-	CreateUser(payload *types.ReqCreateUser) (*types.RespUserDetail, int, error)
+type IUserService interface {
+	GetUserList(req *ReqGetUserList) (*RespGetUserList, int, error)
+	GetUserDetail(uuid string) (*RespUserDetail, int, error)
+	CreateUser(payload *ReqCreateUser) (*RespUserDetail, int, error)
 	DeleteUserByUUID(uuid string) (int, error)
-	UpdateUserByUUID(uuid string, payload *types.ReqUpdateUser) (int, error)
+	UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int, error)
 
 	GetUserByPhone(phone string) (*model.User, error)
 	GetUserByUUID(uuid string) (*model.User, error)
@@ -24,11 +23,11 @@ type IAccountUserService interface {
 	UpdateUserLastLogin(uuid string) error
 }
 
-type accountUserService struct {
+type userService struct {
 	db *gorm.DB
 }
 
-func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.RespGetUserList, int, error) {
+func (s *userService) GetUserList(req *ReqGetUserList) (*RespGetUserList, int, error) {
 	var query []string
 	var args []interface{}
 	if req.Email != "" {
@@ -77,9 +76,9 @@ func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.Resp
 		return nil, render.QueryError, err
 	}
 
-	result := make([]*types.RespUserBasic, 0)
+	result := make([]*RespUserBasic, 0)
 	for _, row := range rows {
-		item := new(types.RespUserBasic)
+		item := new(RespUserBasic)
 		err = copier.Copy(item, row)
 		if err != nil {
 			log.GetLogger().Error(err)
@@ -87,7 +86,7 @@ func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.Resp
 		}
 		result = append(result, item)
 	}
-	resp := &types.RespGetUserList{
+	resp := &RespGetUserList{
 		Page:   req.Page,
 		Limit:  req.Limit,
 		Total:  total,
@@ -96,7 +95,7 @@ func (s *accountUserService) GetUserList(req *types.ReqGetUserList) (*types.Resp
 	return resp, render.OK, nil
 }
 
-func (s *accountUserService) GetUserDetail(uuid string) (*types.RespUserDetail, int, error) {
+func (s *userService) GetUserDetail(uuid string) (*RespUserDetail, int, error) {
 	user, err := s.GetUserByUUID(uuid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -109,7 +108,7 @@ func (s *accountUserService) GetUserDetail(uuid string) (*types.RespUserDetail, 
 	return s.transUserToResponseData(user)
 }
 
-func (s *accountUserService) CreateUser(payload *types.ReqCreateUser) (*types.RespUserDetail, int, error) {
+func (s *userService) CreateUser(payload *ReqCreateUser) (*RespUserDetail, int, error) {
 	user, err := s.GetUserByPhone(payload.Phone)
 	if user != nil {
 		return nil, render.DataExistError, errors.New(render.GetCodeMsg(render.DataExistError))
@@ -132,7 +131,7 @@ func (s *accountUserService) CreateUser(payload *types.ReqCreateUser) (*types.Re
 	return s.transUserToResponseData(user)
 }
 
-func (s *accountUserService) DeleteUserByUUID(uuid string) (int, error) {
+func (s *userService) DeleteUserByUUID(uuid string) (int, error) {
 	go func() {
 		// todo 异步清理用户的其他数据
 	}()
@@ -144,24 +143,24 @@ func (s *accountUserService) DeleteUserByUUID(uuid string) (int, error) {
 	return render.OK, nil
 }
 
-func (s *accountUserService) GetUserByPhone(phone string) (*model.User, error) {
+func (s *userService) GetUserByPhone(phone string) (*model.User, error) {
 	return model.GetUserByPhone(s.db, phone)
 }
 
-func (s *accountUserService) GetUserByUUID(uuid string) (*model.User, error) {
+func (s *userService) GetUserByUUID(uuid string) (*model.User, error) {
 	return model.GetUserByUUID(s.db, uuid)
 }
 
-func (s *accountUserService) GetUserByEmail(email string) (*model.User, error) {
+func (s *userService) GetUserByEmail(email string) (*model.User, error) {
 	return model.GetUserByEmail(s.db, email)
 }
 
-func (s *accountUserService) UpdateUserLastLogin(uuid string) error {
+func (s *userService) UpdateUserLastLogin(uuid string) error {
 	return model.UpdateUserLastLoginAt(s.db, uuid)
 }
 
-func (s *accountUserService) transUserToResponseData(user *model.User) (*types.RespUserDetail, int, error) {
-	result := new(types.RespUserDetail)
+func (s *userService) transUserToResponseData(user *model.User) (*RespUserDetail, int, error) {
+	result := new(RespUserDetail)
 	err := copier.Copy(result, user)
 	if err != nil {
 		log.GetLogger().Error(err)
@@ -171,7 +170,7 @@ func (s *accountUserService) transUserToResponseData(user *model.User) (*types.R
 	return result, render.OK, nil
 }
 
-func (s *accountUserService) UpdateUserByUUID(uuid string, payload *types.ReqUpdateUser) (int, error) {
+func (s *userService) UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int, error) {
 	user, err := s.GetUserByUUID(uuid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -194,9 +193,9 @@ func (s *accountUserService) UpdateUserByUUID(uuid string, payload *types.ReqUpd
 	return render.OK, nil
 }
 
-func NewAccountUserService() IAccountUserService {
+func NewUserService() IUserService {
 	db := model.GetDB()
-	return &accountUserService{
+	return &userService{
 		db: db,
 	}
 }

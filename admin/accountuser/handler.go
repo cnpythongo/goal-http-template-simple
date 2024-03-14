@@ -1,36 +1,19 @@
-package handler
+package accountuser
 
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"goal-app/admin/service"
-	"goal-app/admin/types"
 	"goal-app/pkg/log"
 	"goal-app/pkg/render"
-	"goal-app/router/middleware"
 	"gorm.io/gorm"
 )
 
-func AccountUserRouteRegister(route *gin.Engine) *gin.RouterGroup {
-	svc := service.NewAccountUserService()
-	handler := NewAccountUserHandler(svc)
-
-	r := route.Group("/api/v1/account/user")
-	r.Use(middleware.JWTAuthenticationMiddleware())
-	r.GET("/list", handler.List)
-	r.GET("/detail", handler.Detail)
-	r.POST("/create", handler.Create)
-	r.POST("/update", handler.Update)
-	r.POST("/delete", handler.Delete)
-	return r
+type UserHandler struct {
+	svc IUserService
 }
 
-type AccountUserHandler struct {
-	svc service.IAccountUserService
-}
-
-func NewAccountUserHandler(svc service.IAccountUserService) *AccountUserHandler {
-	return &AccountUserHandler{svc: svc}
+func NewHandler(svc IUserService) *UserHandler {
+	return &UserHandler{svc: svc}
 }
 
 // List 获取用户列表
@@ -39,13 +22,13 @@ func NewAccountUserHandler(svc service.IAccountUserService) *AccountUserHandler 
 // @Description 获取用户列表
 // @Accept x-www-form-urlencoded
 // @Produce json
-// @Param data query types.ReqGetUserList false "请求体"
-// @Success 200 {object} render.RespJsonData{data=types.RespGetUserList{result=[]types.RespUserDetail}} "code不为0时表示有错误"
+// @Param data query ReqGetUserList false "请求体"
+// @Success 200 {object} render.RespJsonData{data=RespGetUserList{result=[]RespUserDetail}} "code不为0时表示有错误"
 // @Failure 500
 // @Security AdminAuth
 // @Router /account/user/list [get]
-func (h *AccountUserHandler) List(c *gin.Context) {
-	var req types.ReqGetUserList
+func (h *UserHandler) List(c *gin.Context) {
+	var req ReqGetUserList
 	if err := c.ShouldBindQuery(&req); err != nil {
 		log.GetLogger().Errorln(err)
 		render.Json(c, render.ParamsError, err)
@@ -68,11 +51,11 @@ func (h *AccountUserHandler) List(c *gin.Context) {
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param uuid query string true "用户UUID"
-// @Success 200 {object} types.RespUserDetail
+// @Success 200 {object} RespUserDetail
 // @Failure 400 {object} render.RespJsonData
 // @Security AdminAuth
 // @Router /account/user/detail [get]
-func (h *AccountUserHandler) Detail(c *gin.Context) {
+func (h *UserHandler) Detail(c *gin.Context) {
 	uuid := c.Query("uuid")
 	if uuid == "" {
 		render.Json(c, render.ParamsError, nil)
@@ -96,13 +79,13 @@ func (h *AccountUserHandler) Detail(c *gin.Context) {
 // @Description 创建新用户
 // @Accept json
 // @Produce json
-// @Param data body types.ReqCreateUser true "请求体"
-// @Success 200 {object} render.RespJsonData{data=types.RespUserDetail} "code不为0时表示错误"
+// @Param data body ReqCreateUser true "请求体"
+// @Success 200 {object} render.RespJsonData{data=RespUserDetail} "code不为0时表示错误"
 // @Failure 500
 // @Security AdminAuth
 // @Router /account/user/create [post]
-func (h *AccountUserHandler) Create(c *gin.Context) {
-	var payload types.ReqCreateUser
+func (h *UserHandler) Create(c *gin.Context) {
+	var payload ReqCreateUser
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		log.GetLogger().Errorln(err)
 		render.Json(c, render.PayloadError, nil)
@@ -127,19 +110,19 @@ func (h *AccountUserHandler) Create(c *gin.Context) {
 // @Description 更新用户数据
 // @Accept json
 // @Produce json
-// @Param data body types.ReqUpdateUser true "请求体"
+// @Param data body ReqUpdateUser true "请求体"
 // @Success 200 {object} render.RespJsonData
 // @Failure 400 {object} render.RespJsonData
 // @Security AdminAuth
 // @Router /account/user/update [post]
-func (h *AccountUserHandler) Update(c *gin.Context) {
+func (h *UserHandler) Update(c *gin.Context) {
 	uuid := c.Param("uuid")
-	var payload types.ReqUpdateUser
+	var payload ReqUpdateUser
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		render.Json(c, render.ParamsError, err)
 		return
 	}
-	code, err := service.NewAccountUserService().UpdateUserByUUID(uuid, &payload)
+	code, err := h.svc.UpdateUserByUUID(uuid, &payload)
 	if err != nil {
 		render.Json(c, code, err)
 		return
@@ -157,9 +140,9 @@ func (h *AccountUserHandler) Update(c *gin.Context) {
 // @Failure 400 {object} render.RespJsonData
 // @Security AdminAuth
 // @Router /account/user/delete [post]
-func (h *AccountUserHandler) Delete(c *gin.Context) {
+func (h *UserHandler) Delete(c *gin.Context) {
 	uuid := c.Param("uuid")
-	code, err := service.NewAccountUserService().DeleteUserByUUID(uuid)
+	code, err := h.svc.DeleteUserByUUID(uuid)
 	if err != nil {
 		log.GetLogger().Errorln(err)
 		render.Json(c, code, err)

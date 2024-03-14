@@ -1,14 +1,15 @@
-package types
+package accountuser
 
 import (
 	"github.com/cnpythongo/goal-tools/utils"
 	"goal-app/model"
+	"goal-app/pkg/render"
 )
 
 type (
 	// ReqGetUserList 获取用户列表的请求参数体
 	ReqGetUserList struct {
-		Pagination
+		render.Pagination
 		UUID        string                 `form:"uuid" example:"826d6b1aa64d471d822d667e92218158"` // 用户UUID,精确匹配
 		Phone       string                 `form:"phone" example:"13800138000"`                     // 手机号,模糊查询
 		Email       string                 `form:"email" example:"abc@abc.com"`                     // 邮箱,模糊查询
@@ -33,7 +34,7 @@ type (
 	RespUserDetail RespUserBasic
 
 	// RespGetUserList 获取用户列表的响应数据结构
-	RespGetUserList RespPageJson
+	RespGetUserList render.RespPageJson
 
 	// ReqCreateUser 创建用户的请求结构体
 	ReqCreateUser struct {

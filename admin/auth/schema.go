@@ -1,4 +1,4 @@
-package types
+package auth
 
 import "github.com/cnpythongo/goal-tools/utils"
 
