@@ -21,7 +21,7 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 	// auth
 	_ = auth.RegisterRoute(route)
 
-	// account user api
+	// account api
 	_ = accountuser.RegisterRoute(route)
 	_ = accounhistory.RegisterRoute(route)
 

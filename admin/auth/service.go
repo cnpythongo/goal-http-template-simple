@@ -22,6 +22,14 @@ type authService struct {
 	userSvc accountuser.IUserService
 }
 
+func NewAuthService() IAuthService {
+	db := model.GetDB()
+	return &authService{
+		db:      db,
+		userSvc: accountuser.NewUserService(),
+	}
+}
+
 // Login 登录
 func (a *authService) Login(c *gin.Context, payload *ReqAdminAuth) (*RespAdminAuth, int, error) {
 	user, err := a.userSvc.GetUserByPhone(payload.Phone)
@@ -77,12 +85,4 @@ func (a *authService) Logout(ctx *gin.Context) error {
 		fmt.Println(token)
 	}
 	return nil
-}
-
-func NewAuthService() IAuthService {
-	db := model.GetDB()
-	return &authService{
-		db:      db,
-		userSvc: accountuser.NewUserService(),
-	}
 }

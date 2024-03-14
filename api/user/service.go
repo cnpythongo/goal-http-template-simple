@@ -1,4 +1,4 @@
-package service
+package user
 
 import (
 	"github.com/gin-gonic/gin"
@@ -17,6 +17,13 @@ type userService struct {
 	db  *gorm.DB
 }
 
+func NewUserService() IUserService {
+	db := model.GetDB()
+	return &userService{
+		db: db,
+	}
+}
+
 func (s *userService) GetUserByPhone(phone string) (*model.User, error) {
 	return model.GetUserByPhone(s.db, phone)
 }
@@ -32,12 +39,4 @@ func (s *userService) GetUserByUUID(uuid string) (*model.User, int, error) {
 func (s *userService) GetUserByEmail(email string) (*model.User, error) {
 	//TODO implement me
 	panic("implement me")
-}
-
-func NewUserService(ctx *gin.Context) IUserService {
-	db := model.GetDB()
-	return &userService{
-		ctx: ctx,
-		db:  db,
-	}
 }

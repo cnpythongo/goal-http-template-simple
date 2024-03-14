@@ -4,7 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"goal-app/api/handler"
+	"goal-app/api/auth"
+	"goal-app/api/user"
 	"goal-app/pkg/config"
 	"goal-app/router"
 )
@@ -15,12 +16,11 @@ func InitAPIRouters(cfg *config.Configuration) *gin.Engine {
 		route.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
-	g := route.Group("/api/v1/account")
 	// account login
-	g.POST("/login", handler.Login)
+	_ = auth.RegisterRoute(route)
+
 	// user api
-	g.GET("/me", handler.GetUserByUuid)
-	g.GET("/users/:uuid", handler.GetUserByUuid)
+	_ = user.RegisterRoute(route)
 
 	return route
 }

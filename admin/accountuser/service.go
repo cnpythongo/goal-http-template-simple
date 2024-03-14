@@ -27,6 +27,13 @@ type userService struct {
 	db *gorm.DB
 }
 
+func NewUserService() IUserService {
+	db := model.GetDB()
+	return &userService{
+		db: db,
+	}
+}
+
 func (s *userService) GetUserList(req *ReqGetUserList) (*RespGetUserList, int, error) {
 	var query []string
 	var args []interface{}
@@ -191,11 +198,4 @@ func (s *userService) UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int
 		return render.DataExistError, err
 	}
 	return render.OK, nil
-}
-
-func NewUserService() IUserService {
-	db := model.GetDB()
-	return &userService{
-		db: db,
-	}
 }
