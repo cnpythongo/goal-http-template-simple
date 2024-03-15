@@ -16,11 +16,9 @@ type IUserService interface {
 	CreateUser(payload *ReqCreateUser) (*RespUserDetail, int, error)
 	DeleteUserByUUID(uuid string) (int, error)
 	UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int, error)
-
 	GetUserByPhone(phone string) (*model.User, error)
 	GetUserByUUID(uuid string) (*model.User, error)
 	GetUserByEmail(email string) (*model.User, error)
-	UpdateUserLastLogin(uuid string) error
 }
 
 type userService struct {
@@ -160,10 +158,6 @@ func (s *userService) GetUserByUUID(uuid string) (*model.User, error) {
 
 func (s *userService) GetUserByEmail(email string) (*model.User, error) {
 	return model.GetUserByEmail(s.db, email)
-}
-
-func (s *userService) UpdateUserLastLogin(uuid string) error {
-	return model.UpdateUserLastLoginAt(s.db, uuid)
 }
 
 func (s *userService) transUserToResponseData(user *model.User) (*RespUserDetail, int, error) {
