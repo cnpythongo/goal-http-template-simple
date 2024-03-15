@@ -15,9 +15,9 @@ var (
 )
 
 type Claims struct {
-	ID    int64  `json:"id"`
-	UUID  string `json:"uuid"`
-	Phone string `json:"phone"`
+	ID   int64  `json:"id"`
+	UUID string `json:"uuid"`
+	// Phone string `json:"phone"`
 	jwt.StandardClaims
 }
 
@@ -28,7 +28,7 @@ func GenerateToken(id int64, uid, phone string) (string, time.Time, error) {
 	claims := Claims{
 		id,
 		uid,
-		phone,
+		// phone,
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    "goal-app",

@@ -1,23 +1,185 @@
 basePath: /api/v1
-host: localhost
+definitions:
+  api_auth.ReqUserAuth:
+    properties:
+      password:
+        description: 密码
+        example: "123456"
+        type: string
+      phone:
+        description: 手机号
+        example: "13800138000"
+        type: string
+    required:
+    - password
+    - phone
+    type: object
+  api_auth.RespUserAuth:
+    properties:
+      expire_time:
+        description: 过期时间
+        type: string
+      token:
+        description: 令牌
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/api_auth.RespUserInfo'
+        description: 用户基本信息
+    type: object
+  api_auth.RespUserInfo:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      last_login_at:
+        description: 最近的登录时间
+        type: string
+      nickname:
+        description: 昵称
+        type: string
+      phone:
+        description: 带掩码的手机号
+        example: 138****8000
+        type: string
+      uuid:
+        description: 用户uuid
+        type: string
+    type: object
+  api_user.RespUserInfo:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      last_login_at:
+        description: 最近的登录时间
+        type: string
+      nickname:
+        description: 昵称
+        type: string
+      phone:
+        description: 带掩码的手机号
+        example: 138****8000
+        type: string
+      uuid:
+        description: 用户uuid
+        type: string
+    type: object
+  goal-app_pkg_render.RespJsonData:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
 info:
   contact: {}
-  title: 前端应用接口文档
+  description: http状态码是200，code为0时表示正常返回；code不为0时表示有业务错误。
+  title: 前台接口文档
   version: "1.0"
 paths:
-  /account/login:
+  /login:
     post:
       consumes:
       - application/json
-      description: 前端应用的用户登录接口
+      description: 前台用户登录接口
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api_auth.ReqUserAuth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - properties:
+                data:
+                  $ref: '#/definitions/api_auth.RespUserAuth'
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 登录
+      tags:
+      - 登录退出
+  /logout:
+    post:
+      description: |-
+        前台用户退出
+        前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页
+        后端可以执行清理redis缓存, 设置token黑名单等操作
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: json
-      summary: 用户登录
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+      security:
+      - APIAuth: []
+      summary: 退出
       tags:
-      - 登录
+      - 登录退出
+  /users/{uuid}:
+    get:
+      description: 通过用户UUID获取用户的信息
+      parameters:
+      - description: 用户UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - properties:
+                data:
+                  $ref: '#/definitions/api_user.RespUserInfo'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - APIAuth: []
+      summary: 获取用户的信息
+      tags:
+      - 用户
+  /users/me:
+    get:
+      description: 获取当前登录用户的信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - properties:
+                data:
+                  $ref: '#/definitions/api_user.RespUserInfo'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - APIAuth: []
+      summary: 获取当前登录用户的信息
+      tags:
+      - 用户
+securityDefinitions:
+  APIAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

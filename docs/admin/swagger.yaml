@@ -1,51 +1,6 @@
 basePath: /api/v1
 definitions:
-  goal-app_admin_types.ReqAdminAuth:
-    properties:
-      password:
-        description: 密码
-        example: "123456"
-        type: string
-      phone:
-        description: 手机号
-        example: "13800138000"
-        type: string
-    required:
-    - password
-    - phone
-    type: object
-  goal-app_admin_types.ReqCreateUser:
-    properties:
-      email:
-        description: 邮箱
-        example: abc@a.com
-        type: string
-      is_admin:
-        description: 是否属于管理员账号
-        example: true
-        type: boolean
-      nickname:
-        description: 昵称
-        example: Tom
-        type: string
-      password:
-        description: 密码
-        example: "123456"
-        type: string
-      password_confirm:
-        description: 确认密码
-        example: "123456"
-        type: string
-      phone:
-        description: 手机号
-        example: "13800138000"
-        type: string
-    required:
-    - password
-    - password_confirm
-    - phone
-    type: object
-  goal-app_admin_types.ReqGetHistoryList:
+  admin_accounhistory.ReqGetHistoryList:
     properties:
       created_at[]:
         description: 数据创建时间起止区间
@@ -83,7 +38,38 @@ definitions:
         example: abcef123
         type: string
     type: object
-  goal-app_admin_types.ReqUpdateUser:
+  admin_accountuser.ReqCreateUser:
+    properties:
+      email:
+        description: 邮箱
+        example: abc@a.com
+        type: string
+      is_admin:
+        description: 是否属于管理员账号
+        example: true
+        type: boolean
+      nickname:
+        description: 昵称
+        example: Tom
+        type: string
+      password:
+        description: 密码
+        example: "123456"
+        type: string
+      password_confirm:
+        description: 确认密码
+        example: "123456"
+        type: string
+      phone:
+        description: 手机号
+        example: "13800138000"
+        type: string
+    required:
+    - password
+    - password_confirm
+    - phone
+    type: object
+  admin_accountuser.ReqUpdateUser:
     properties:
       avatar:
         description: 用户头像URL
@@ -110,39 +96,7 @@ definitions:
         example: FREEZE
         type: string
     type: object
-  goal-app_admin_types.RespAdminAuth:
-    properties:
-      expire_time:
-        description: 过期时间
-        type: string
-      token:
-        description: 令牌
-        type: string
-      user:
-        allOf:
-        - $ref: '#/definitions/goal-app_admin_types.RespAdminAuthUser'
-        description: 用户基本信息
-    type: object
-  goal-app_admin_types.RespAdminAuthUser:
-    properties:
-      avatar:
-        description: 头像
-        type: string
-      last_login_at:
-        description: 最近的登录时间
-        type: string
-      nickname:
-        description: 昵称
-        type: string
-      phone:
-        description: 带掩码的手机号
-        example: 138****8000
-        type: string
-      uuid:
-        description: 用户uuid
-        type: string
-    type: object
-  goal-app_admin_types.RespGetUserList:
+  admin_accountuser.RespGetUserList:
     properties:
       limit:
         type: integer
@@ -152,7 +106,7 @@ definitions:
       total:
         type: integer
     type: object
-  goal-app_admin_types.RespUserDetail:
+  admin_accountuser.RespUserDetail:
     properties:
       created_at:
         description: 账号创建时间
@@ -182,6 +136,52 @@ definitions:
       uuid:
         description: 用户UUID,32位字符串
         example: 826d6b1aa64d471d822d667e92218158
+        type: string
+    type: object
+  admin_auth.ReqAdminAuth:
+    properties:
+      password:
+        description: 密码
+        example: "123456"
+        type: string
+      phone:
+        description: 手机号
+        example: "13800138000"
+        type: string
+    required:
+    - password
+    - phone
+    type: object
+  admin_auth.RespAdminAuth:
+    properties:
+      expire_time:
+        description: 过期时间
+        type: string
+      token:
+        description: 令牌
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/admin_auth.RespAdminAuthUser'
+        description: 用户基本信息
+    type: object
+  admin_auth.RespAdminAuthUser:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      last_login_at:
+        description: 最近的登录时间
+        type: string
+      nickname:
+        description: 昵称
+        type: string
+      phone:
+        description: 带掩码的手机号
+        example: 138****8000
+        type: string
+      uuid:
+        description: 用户uuid
         type: string
     type: object
   goal-app_pkg_render.RespJsonData:
@@ -266,7 +266,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_admin_types.ReqGetHistoryList'
+            $ref: '#/definitions/admin_accounhistory.ReqGetHistoryList'
         "500":
           description: Internal Server Error
       security:
@@ -285,7 +285,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/goal-app_admin_types.ReqAdminAuth'
+          $ref: '#/definitions/admin_auth.ReqAdminAuth'
       produces:
       - application/json
       responses:
@@ -296,7 +296,7 @@ paths:
             - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
             - properties:
                 data:
-                  $ref: '#/definitions/goal-app_admin_types.RespAdminAuth'
+                  $ref: '#/definitions/admin_auth.RespAdminAuth'
               type: object
         "500":
           description: Internal Server Error
@@ -332,7 +332,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/goal-app_admin_types.ReqCreateUser'
+          $ref: '#/definitions/admin_accountuser.ReqCreateUser'
       produces:
       - application/json
       responses:
@@ -343,7 +343,7 @@ paths:
             - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
             - properties:
                 data:
-                  $ref: '#/definitions/goal-app_admin_types.RespUserDetail'
+                  $ref: '#/definitions/admin_accountuser.RespUserDetail'
               type: object
         "500":
           description: Internal Server Error
@@ -390,7 +390,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_admin_types.RespUserDetail'
+            $ref: '#/definitions/admin_accountuser.RespUserDetail'
         "400":
           description: Bad Request
           schema:
@@ -483,11 +483,11 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/goal-app_admin_types.RespGetUserList'
+                  - $ref: '#/definitions/admin_accountuser.RespGetUserList'
                   - properties:
                       result:
                         items:
-                          $ref: '#/definitions/goal-app_admin_types.RespUserDetail'
+                          $ref: '#/definitions/admin_accountuser.RespUserDetail'
                         type: array
                     type: object
               type: object
@@ -509,7 +509,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/goal-app_admin_types.ReqUpdateUser'
+          $ref: '#/definitions/admin_accountuser.ReqUpdateUser'
       produces:
       - application/json
       responses:

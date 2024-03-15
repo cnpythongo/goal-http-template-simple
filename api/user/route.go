@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"goal-app/router/middleware"
 )
 
 func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
@@ -9,7 +10,8 @@ func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
 	handler := NewUserHandler(svc)
 
 	r := route.Group("/api/v1/users")
-	r.GET("me", handler.Me)
-	r.GET("/:uuid", handler.GetUserByUUID)
+	r.Use(middleware.JWTAuthenticationMiddleware())
+	r.GET("/me", handler.Me)
+	r.GET("/:uuid", handler.GetUserInfoByUUID)
 	return r
 }

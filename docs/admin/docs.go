@@ -100,7 +100,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_admin_types.ReqGetHistoryList"
+                            "$ref": "#/definitions/admin_accounhistory.ReqGetHistoryList"
                         }
                     },
                     "500": {
@@ -129,7 +129,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/goal-app_admin_types.ReqAdminAuth"
+                            "$ref": "#/definitions/admin_auth.ReqAdminAuth"
                         }
                     }
                 ],
@@ -145,7 +145,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/goal-app_admin_types.RespAdminAuth"
+                                            "$ref": "#/definitions/admin_auth.RespAdminAuth"
                                         }
                                     }
                                 }
@@ -208,7 +208,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/goal-app_admin_types.ReqCreateUser"
+                            "$ref": "#/definitions/admin_accountuser.ReqCreateUser"
                         }
                     }
                 ],
@@ -224,7 +224,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/goal-app_admin_types.RespUserDetail"
+                                            "$ref": "#/definitions/admin_accountuser.RespUserDetail"
                                         }
                                     }
                                 }
@@ -302,7 +302,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_admin_types.RespUserDetail"
+                            "$ref": "#/definitions/admin_accountuser.RespUserDetail"
                         }
                     },
                     "400": {
@@ -439,7 +439,7 @@ const docTemplate = `{
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/goal-app_admin_types.RespGetUserList"
+                                                    "$ref": "#/definitions/admin_accountuser.RespGetUserList"
                                                 },
                                                 {
                                                     "type": "object",
@@ -447,7 +447,7 @@ const docTemplate = `{
                                                         "result": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/goal-app_admin_types.RespUserDetail"
+                                                                "$ref": "#/definitions/admin_accountuser.RespUserDetail"
                                                             }
                                                         }
                                                     }
@@ -490,7 +490,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/goal-app_admin_types.ReqUpdateUser"
+                            "$ref": "#/definitions/admin_accountuser.ReqUpdateUser"
                         }
                     }
                 ],
@@ -512,66 +512,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "goal-app_admin_types.ReqAdminAuth": {
-            "type": "object",
-            "required": [
-                "password",
-                "phone"
-            ],
-            "properties": {
-                "password": {
-                    "description": "密码",
-                    "type": "string",
-                    "example": "123456"
-                },
-                "phone": {
-                    "description": "手机号",
-                    "type": "string",
-                    "example": "13800138000"
-                }
-            }
-        },
-        "goal-app_admin_types.ReqCreateUser": {
-            "type": "object",
-            "required": [
-                "password",
-                "password_confirm",
-                "phone"
-            ],
-            "properties": {
-                "email": {
-                    "description": "邮箱",
-                    "type": "string",
-                    "example": "abc@a.com"
-                },
-                "is_admin": {
-                    "description": "是否属于管理员账号",
-                    "type": "boolean",
-                    "example": true
-                },
-                "nickname": {
-                    "description": "昵称",
-                    "type": "string",
-                    "example": "Tom"
-                },
-                "password": {
-                    "description": "密码",
-                    "type": "string",
-                    "example": "123456"
-                },
-                "password_confirm": {
-                    "description": "确认密码",
-                    "type": "string",
-                    "example": "123456"
-                },
-                "phone": {
-                    "description": "手机号",
-                    "type": "string",
-                    "example": "13800138000"
-                }
-            }
-        },
-        "goal-app_admin_types.ReqGetHistoryList": {
+        "admin_accounhistory.ReqGetHistoryList": {
             "type": "object",
             "properties": {
                 "created_at[]": {
@@ -620,7 +561,47 @@ const docTemplate = `{
                 }
             }
         },
-        "goal-app_admin_types.ReqUpdateUser": {
+        "admin_accountuser.ReqCreateUser": {
+            "type": "object",
+            "required": [
+                "password",
+                "password_confirm",
+                "phone"
+            ],
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string",
+                    "example": "abc@a.com"
+                },
+                "is_admin": {
+                    "description": "是否属于管理员账号",
+                    "type": "boolean",
+                    "example": true
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string",
+                    "example": "Tom"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string",
+                    "example": "123456"
+                },
+                "password_confirm": {
+                    "description": "确认密码",
+                    "type": "string",
+                    "example": "123456"
+                },
+                "phone": {
+                    "description": "手机号",
+                    "type": "string",
+                    "example": "13800138000"
+                }
+            }
+        },
+        "admin_accountuser.ReqUpdateUser": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -655,54 +636,7 @@ const docTemplate = `{
                 }
             }
         },
-        "goal-app_admin_types.RespAdminAuth": {
-            "type": "object",
-            "properties": {
-                "expire_time": {
-                    "description": "过期时间",
-                    "type": "string"
-                },
-                "token": {
-                    "description": "令牌",
-                    "type": "string"
-                },
-                "user": {
-                    "description": "用户基本信息",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/goal-app_admin_types.RespAdminAuthUser"
-                        }
-                    ]
-                }
-            }
-        },
-        "goal-app_admin_types.RespAdminAuthUser": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "description": "头像",
-                    "type": "string"
-                },
-                "last_login_at": {
-                    "description": "最近的登录时间",
-                    "type": "string"
-                },
-                "nickname": {
-                    "description": "昵称",
-                    "type": "string"
-                },
-                "phone": {
-                    "description": "带掩码的手机号",
-                    "type": "string",
-                    "example": "138****8000"
-                },
-                "uuid": {
-                    "description": "用户uuid",
-                    "type": "string"
-                }
-            }
-        },
-        "goal-app_admin_types.RespGetUserList": {
+        "admin_accountuser.RespGetUserList": {
             "type": "object",
             "properties": {
                 "limit": {
@@ -717,7 +651,7 @@ const docTemplate = `{
                 }
             }
         },
-        "goal-app_admin_types.RespUserDetail": {
+        "admin_accountuser.RespUserDetail": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -758,6 +692,72 @@ const docTemplate = `{
                     "description": "用户UUID,32位字符串",
                     "type": "string",
                     "example": "826d6b1aa64d471d822d667e92218158"
+                }
+            }
+        },
+        "admin_auth.ReqAdminAuth": {
+            "type": "object",
+            "required": [
+                "password",
+                "phone"
+            ],
+            "properties": {
+                "password": {
+                    "description": "密码",
+                    "type": "string",
+                    "example": "123456"
+                },
+                "phone": {
+                    "description": "手机号",
+                    "type": "string",
+                    "example": "13800138000"
+                }
+            }
+        },
+        "admin_auth.RespAdminAuth": {
+            "type": "object",
+            "properties": {
+                "expire_time": {
+                    "description": "过期时间",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "令牌",
+                    "type": "string"
+                },
+                "user": {
+                    "description": "用户基本信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/admin_auth.RespAdminAuthUser"
+                        }
+                    ]
+                }
+            }
+        },
+        "admin_auth.RespAdminAuthUser": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "last_login_at": {
+                    "description": "最近的登录时间",
+                    "type": "string"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "带掩码的手机号",
+                    "type": "string",
+                    "example": "138****8000"
+                },
+                "uuid": {
+                    "description": "用户uuid",
+                    "type": "string"
                 }
             }
         },

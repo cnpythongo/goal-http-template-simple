@@ -10,6 +10,8 @@ import (
 type IUserService interface {
 	GetUserByPhone(phone string) (*model.User, error)
 	GetUserByUUID(uuid string) (*model.User, int, error)
+	GetUserByEmail(email string) (*model.User, int, error)
+	GetUserByID(id int64) (*model.User, int, error)
 }
 
 type userService struct {
@@ -36,7 +38,18 @@ func (s *userService) GetUserByUUID(uuid string) (*model.User, int, error) {
 	return user, render.OK, nil
 }
 
-func (s *userService) GetUserByEmail(email string) (*model.User, error) {
-	//TODO implement me
-	panic("implement me")
+func (s *userService) GetUserByEmail(email string) (*model.User, int, error) {
+	user, err := model.GetUserByConditions(s.db, map[string]interface{}{"email": email})
+	if err != nil {
+		return nil, render.QueryError, err
+	}
+	return user, render.OK, nil
+}
+
+func (s *userService) GetUserByID(id int64) (*model.User, int, error) {
+	user, err := model.GetUserByConditions(s.db, map[string]interface{}{"id": id})
+	if err != nil {
+		return nil, render.QueryError, err
+	}
+	return user, render.OK, nil
 }
