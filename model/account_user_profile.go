@@ -1,7 +1,6 @@
 package model
 
 import (
-	"errors"
 	"goal-app/pkg/log"
 	"gorm.io/gorm"
 )
@@ -11,8 +10,6 @@ type UserProfile struct {
 	UserID   int64  `json:"user_id" gorm:"index:idx_account_user_profile_user_id;column:user_id;type:int(11);not null;comment:用户ID"`
 	RealName string `json:"real_name" gorm:"column:real_name;type:varchar(50);not null;comment:真实姓名"`
 	IDNumber string `json:"id_number" gorm:"column:id_number;type:varchar(50);not null;comment:身份证号"`
-
-	User *User `json:"user"`
 }
 
 func (p *UserProfile) TableName() string {
@@ -53,16 +50,10 @@ func NewUserProfileList() []*UserProfile {
 }
 
 // GetUserProfileByUserId 获取单个用户的个人资料
-func GetUserProfileByUserId(db *gorm.DB, userId int) (*UserProfile, error) {
+func GetUserProfileByUserId(db *gorm.DB, userId int64) (*UserProfile, error) {
 	pf := NewUserProfile()
 	err := db.Model(NewUserProfile()).Where("user_id = ?", userId).Limit(1).First(&pf).Error
-	if err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			log.GetLogger().Errorf("model.account_user_profile.GetUserProfileByUserId Error ==> %v", err)
-		}
-		return nil, err
-	}
-	return pf, nil
+	return pf, err
 }
 
 // GetUserProfileList 获取个人资料列表
@@ -107,12 +98,9 @@ func UpdateUserProfileByUserId(db *gorm.DB, userId int, data map[string]interfac
 	return err
 }
 
-// UpdateUserProfileInstance 更新用户资料
-func UpdateUserProfileInstance(db *gorm.DB, pf *UserProfile) (*UserProfile, error) {
+// UpdateUserProfile 更新用户资料
+func UpdateUserProfile(db *gorm.DB, pf *UserProfile) (*UserProfile, error) {
 	err := db.Updates(&pf).Error
-	if err != nil {
-		log.GetLogger().Errorf("model.account_user_profile.UpdateUserProfile Error ==> %v", err)
-	}
 	return pf, err
 }
 

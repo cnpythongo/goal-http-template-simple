@@ -16,5 +16,9 @@ func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
 	r.POST("/create", handler.Create)
 	r.POST("/update", handler.Update)
 	r.POST("/delete", handler.Delete)
+
+	// profile
+	r.GET("/:uuid/profile", handler.Profile)
+	r.GET("/:uuid/profile/update", handler.UpdateProfile)
 	return r
 }

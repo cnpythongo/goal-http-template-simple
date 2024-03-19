@@ -55,4 +55,10 @@ type (
 		Signature string `json:"signature,omitempty" example:"haha"`    // 个性化签名
 		Status    string `json:"status,omitempty" example:"FREEZE"`     // 用户状态
 	}
+
+	ReqUpdateUserProfile struct {
+		UserId   int64  `json:"user_id"`   // 用户ID
+		RealName string `json:"real_name"` // 真实姓名
+		IDNumber string `json:"id_number"` // 身份证号
+	}
 )

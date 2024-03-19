@@ -8,12 +8,22 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserHandler struct {
+type IUserHandler interface {
+	List(c *gin.Context)
+	Detail(c *gin.Context)
+	Create(c *gin.Context)
+	Update(c *gin.Context)
+	Delete(c *gin.Context)
+	Profile(c *gin.Context)
+	UpdateProfile(c *gin.Context)
+}
+
+type userHandler struct {
 	svc IUserService
 }
 
-func NewHandler(svc IUserService) *UserHandler {
-	return &UserHandler{svc: svc}
+func NewHandler(svc IUserService) IUserHandler {
+	return &userHandler{svc: svc}
 }
 
 // List 获取用户列表
@@ -27,7 +37,7 @@ func NewHandler(svc IUserService) *UserHandler {
 // @Failure 500
 // @Security AdminAuth
 // @Router /account/user/list [get]
-func (h *UserHandler) List(c *gin.Context) {
+func (h *userHandler) List(c *gin.Context) {
 	var req ReqGetUserList
 	if err := c.ShouldBindQuery(&req); err != nil {
 		log.GetLogger().Errorln(err)
@@ -55,7 +65,7 @@ func (h *UserHandler) List(c *gin.Context) {
 // @Failure 400 {object} render.RespJsonData
 // @Security AdminAuth
 // @Router /account/user/detail [get]
-func (h *UserHandler) Detail(c *gin.Context) {
+func (h *userHandler) Detail(c *gin.Context) {
 	uuid := c.Query("uuid")
 	if uuid == "" {
 		render.Json(c, render.ParamsError, nil)
@@ -84,7 +94,7 @@ func (h *UserHandler) Detail(c *gin.Context) {
 // @Failure 500
 // @Security AdminAuth
 // @Router /account/user/create [post]
-func (h *UserHandler) Create(c *gin.Context) {
+func (h *userHandler) Create(c *gin.Context) {
 	var payload ReqCreateUser
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		log.GetLogger().Errorln(err)
@@ -115,7 +125,7 @@ func (h *UserHandler) Create(c *gin.Context) {
 // @Failure 400 {object} render.RespJsonData
 // @Security AdminAuth
 // @Router /account/user/update [post]
-func (h *UserHandler) Update(c *gin.Context) {
+func (h *userHandler) Update(c *gin.Context) {
 	uuid := c.Param("uuid")
 	var payload ReqUpdateUser
 	if err := c.ShouldBindJSON(&payload); err != nil {
@@ -140,7 +150,7 @@ func (h *UserHandler) Update(c *gin.Context) {
 // @Failure 400 {object} render.RespJsonData
 // @Security AdminAuth
 // @Router /account/user/delete [post]
-func (h *UserHandler) Delete(c *gin.Context) {
+func (h *userHandler) Delete(c *gin.Context) {
 	uuid := c.Param("uuid")
 	code, err := h.svc.DeleteUserByUUID(uuid)
 	if err != nil {
@@ -148,5 +158,66 @@ func (h *UserHandler) Delete(c *gin.Context) {
 		render.Json(c, code, err)
 		return
 	}
+	render.Json(c, render.OK, "ok")
+}
+
+// Profile 用户个人资料
+// @Tags 用户管理
+// @Summary 用户个人资料
+// @Description 用户个人资料
+// @Produce json
+// @Param uuid path string true "用户UUID"
+// @Success 200 {object} render.RespJsonData
+// @Failure 400 {object} render.RespJsonData
+// @Security AdminAuth
+// @Router /account/user/{uuid}/profile [get]
+func (h *userHandler) Profile(c *gin.Context) {
+	uuid := c.Param("uuid")
+	user, code, err := h.svc.GetUserByUUID(uuid)
+	if err != nil {
+		render.Json(c, code, err)
+		return
+	}
+
+	pf, code, err := h.svc.GetUserProfile(user.ID)
+	if err != nil {
+		render.Json(c, code, err)
+		return
+	}
+
+	render.Json(c, render.OK, pf)
+}
+
+// UpdateProfile 更新用户个人资料
+// @Tags 用户管理
+// @Summary 删除用户
+// @Description 更新用户个人资料
+// @Accept json
+// @Produce json
+// @Param uuid path string true "用户UUID"
+// @Success 200 {object} render.RespJsonData
+// @Failure 400 {object} render.RespJsonData
+// @Security AdminAuth
+// @Router /account/users/{uuid}/profile/update [post]
+func (h *userHandler) UpdateProfile(c *gin.Context) {
+	var req ReqUpdateUserProfile
+	if err := c.ShouldBindJSON(&req); err != nil {
+		render.Json(c, render.ParamsError, err)
+	}
+
+	uuid := c.Param("uuid")
+	user, code, err := h.svc.GetUserByUUID(uuid)
+	if err != nil {
+		render.Json(c, code, err)
+		return
+	}
+
+	req.UserId = user.ID
+	code, err = h.svc.UpdateUserProfile(&req)
+	if err != nil {
+		render.Json(c, code, err)
+		return
+	}
+
 	render.Json(c, render.OK, "ok")
 }

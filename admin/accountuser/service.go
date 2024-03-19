@@ -2,6 +2,7 @@ package accountuser
 
 import (
 	"errors"
+	"fmt"
 	"github.com/jinzhu/copier"
 	"goal-app/model"
 	"goal-app/pkg/log"
@@ -16,9 +17,11 @@ type IUserService interface {
 	CreateUser(payload *ReqCreateUser) (*RespUserDetail, int, error)
 	DeleteUserByUUID(uuid string) (int, error)
 	UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int, error)
-	GetUserByPhone(phone string) (*model.User, error)
-	GetUserByUUID(uuid string) (*model.User, error)
-	GetUserByEmail(email string) (*model.User, error)
+	GetUserByPhone(phone string) (*model.User, int, error)
+	GetUserByUUID(uuid string) (*model.User, int, error)
+	GetUserByEmail(email string) (*model.User, int, error)
+	GetUserProfile(userId int64) (*model.UserProfile, int, error)
+	UpdateUserProfile(payload *ReqUpdateUserProfile) (int, error)
 }
 
 type userService struct {
@@ -101,24 +104,25 @@ func (s *userService) GetUserList(req *ReqGetUserList) (*RespGetUserList, int, e
 }
 
 func (s *userService) GetUserDetail(uuid string) (*RespUserDetail, int, error) {
-	user, err := s.GetUserByUUID(uuid)
+	user, code, err := s.GetUserByUUID(uuid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, render.DataNotExistError, err
 		} else {
 			log.GetLogger().Error(err)
-			return nil, render.QueryError, err
+			return nil, code, err
 		}
 	}
 	return s.transUserToResponseData(user)
 }
 
 func (s *userService) CreateUser(payload *ReqCreateUser) (*RespUserDetail, int, error) {
-	user, err := s.GetUserByPhone(payload.Phone)
+	user, _, err := s.GetUserByPhone(payload.Phone)
 	if user != nil {
 		return nil, render.DataExistError, errors.New(render.GetCodeMsg(render.DataExistError))
 	}
-	user, err = s.GetUserByEmail(payload.Email)
+
+	user, _, err = s.GetUserByEmail(payload.Email)
 	if user != nil {
 		return nil, render.AccountEmailExistsError, errors.New(render.GetCodeMsg(render.AccountEmailExistsError))
 	}
@@ -128,11 +132,13 @@ func (s *userService) CreateUser(payload *ReqCreateUser) (*RespUserDetail, int, 
 		log.GetLogger().Error(err)
 		return nil, render.DBAttributesCopyError, err
 	}
+
 	user, err = model.CreateUser(s.db, user)
 	if err != nil {
-		log.GetLogger().Error(err)
+		log.GetLogger().Error(fmt.Sprintf("model.CreateUser ==> %v", err))
 		return nil, render.CreateError, err
 	}
+
 	return s.transUserToResponseData(user)
 }
 
@@ -143,21 +149,45 @@ func (s *userService) DeleteUserByUUID(uuid string) (int, error) {
 	err := model.DeleteUser(s.db, uuid)
 	if err != nil {
 		log.GetLogger().Error(err)
-		return render.QueryError, err
+		return render.UpdateError, err
 	}
 	return render.OK, nil
 }
 
-func (s *userService) GetUserByPhone(phone string) (*model.User, error) {
-	return model.GetUserByPhone(s.db, phone)
+func (s *userService) GetUserByPhone(phone string) (*model.User, int, error) {
+	user, err := model.GetUserByPhone(s.db, phone)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, render.DataNotExistError, err
+		}
+		log.GetLogger().Error(err)
+		return nil, render.QueryError, err
+	}
+	return user, render.OK, nil
 }
 
-func (s *userService) GetUserByUUID(uuid string) (*model.User, error) {
-	return model.GetUserByUUID(s.db, uuid)
+func (s *userService) GetUserByUUID(uuid string) (*model.User, int, error) {
+	user, err := model.GetUserByUUID(s.db, uuid)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, render.DataNotExistError, err
+		}
+		log.GetLogger().Error(err)
+		return nil, render.QueryError, err
+	}
+	return user, render.OK, nil
 }
 
-func (s *userService) GetUserByEmail(email string) (*model.User, error) {
-	return model.GetUserByEmail(s.db, email)
+func (s *userService) GetUserByEmail(email string) (*model.User, int, error) {
+	user, err := model.GetUserByEmail(s.db, email)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, render.DataNotExistError, err
+		}
+		log.GetLogger().Error(err)
+		return nil, render.QueryError, err
+	}
+	return user, render.OK, nil
 }
 
 func (s *userService) transUserToResponseData(user *model.User) (*RespUserDetail, int, error) {
@@ -172,14 +202,9 @@ func (s *userService) transUserToResponseData(user *model.User) (*RespUserDetail
 }
 
 func (s *userService) UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int, error) {
-	user, err := s.GetUserByUUID(uuid)
+	user, code, err := s.GetUserByUUID(uuid)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return render.DataNotExistError, err
-		} else {
-			log.GetLogger().Error(err)
-			return render.QueryError, err
-		}
+		return code, err
 	}
 	err = copier.Copy(user, payload)
 	if err != nil {
@@ -190,6 +215,32 @@ func (s *userService) UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int
 	if err != nil {
 		log.GetLogger().Error(err)
 		return render.DataExistError, err
+	}
+	return render.OK, nil
+}
+
+func (s *userService) GetUserProfile(userId int64) (*model.UserProfile, int, error) {
+	pf, err := model.GetUserProfileByUserId(s.db, userId)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, render.DataNotExistError, err
+		}
+		log.GetLogger().Errorf("model.GetUserProfileByUserId Error ==> %v", err)
+		return nil, render.QueryError, err
+	}
+	return pf, render.OK, nil
+}
+
+func (s *userService) UpdateUserProfile(payload *ReqUpdateUserProfile) (int, error) {
+	pf, code, err := s.GetUserProfile(payload.UserId)
+	if err != nil {
+		return code, err
+	}
+
+	_, err = model.UpdateUserProfile(s.db, pf)
+	if err != nil {
+		log.GetLogger().Errorf("model.UpdateUserProfile Error ==> %v", err)
+		return render.UpdateError, err
 	}
 	return render.OK, nil
 }
