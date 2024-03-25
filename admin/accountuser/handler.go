@@ -203,6 +203,7 @@ func (h *userHandler) UpdateProfile(c *gin.Context) {
 	var req ReqUpdateUserProfile
 	if err := c.ShouldBindJSON(&req); err != nil {
 		render.Json(c, render.ParamsError, err)
+		return
 	}
 
 	uuid := c.Param("uuid")
