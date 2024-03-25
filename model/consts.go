@@ -3,12 +3,17 @@ package model
 import "database/sql/driver"
 
 type UserStatusType string
+type UserGender int64
 
 const (
 	UserStatusInactive UserStatusType = "INACTIVE"
 	UserStatusActive   UserStatusType = "ACTIVE"
 	UserStatusFreeze   UserStatusType = "FREEZE"
 	UserStatusDelete   UserStatusType = "DELETE"
+
+	UserGenderMale    UserGender = 1
+	UserGenderFemale  UserGender = 2
+	UserGenderUnknown UserGender = 3
 )
 
 func (st *UserStatusType) Scan(value interface{}) error {

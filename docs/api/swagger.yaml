@@ -2,17 +2,37 @@ basePath: /api/v1
 definitions:
   api_auth.ReqUserAuth:
     properties:
+      email:
+        description: Phone    string `json:"phone" binding:"required" example:"13800138000"`
+          // 手机号
+        example: foo@bar.com
+        type: string
       password:
         description: 密码
         example: "123456"
         type: string
-      phone:
-        description: 手机号
-        example: "13800138000"
+    required:
+    - email
+    - password
+    type: object
+  api_auth.ReqUserSignup:
+    properties:
+      confirm_password:
+        description: 确认密码
+        example: "123456"
+        type: string
+      email:
+        description: Phone    string `json:"phone" binding:"required" example:"13800138000"`
+          // 手机号
+        example: foo@bar.com
+        type: string
+      password:
+        description: 密码
+        example: "123456"
         type: string
     required:
+    - confirm_password
     - password
-    - phone
     type: object
   api_auth.RespUserAuth:
     properties:
@@ -32,6 +52,10 @@ definitions:
       avatar:
         description: 头像
         type: string
+      email:
+        description: 邮箱
+        example: foo@bar.com
+        type: string
       last_login_at:
         description: 最近的登录时间
         type: string
@@ -49,13 +73,21 @@ definitions:
   api_user.ReqUpdateUser:
     properties:
       avatar:
-        description: 头像
+        description: 用户头像URL
+        example: a/b/c.jpg
         type: string
-      email:
-        description: 邮箱
-        type: string
+      gender:
+        allOf:
+        - $ref: '#/definitions/model.UserGender'
+        description: 性别:3-保密,1-男,2-女
+        example: 3
       nickname:
         description: 昵称
+        example: Tom
+        type: string
+      signature:
+        description: 个性化签名
+        example: haha
         type: string
       uuid:
         description: 用户UUID
@@ -112,13 +144,43 @@ definitions:
       msg:
         type: string
     type: object
+  model.UserGender:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - UserGenderMale
+    - UserGenderFemale
+    - UserGenderUnknown
 info:
   contact: {}
   description: http状态码是200，code为0时表示正常返回；code不为0时表示有业务错误。
   title: 前台接口文档
   version: "1.0"
 paths:
-  /login:
+  /logout:
+    post:
+      description: |-
+        前台用户退出
+        前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页
+        后端可以执行清理redis缓存, 设置token黑名单等操作
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+        "500":
+          description: Internal Server Error
+      security:
+      - APIAuth: []
+      summary: 退出
+      tags:
+      - 登录认证
+  /signin:
     post:
       consumes:
       - application/json
@@ -146,13 +208,19 @@ paths:
           description: Internal Server Error
       summary: 登录
       tags:
-      - 登录退出
-  /logout:
+      - 登录认证
+  /signup:
     post:
-      description: |-
-        前台用户退出
-        前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页
-        后端可以执行清理redis缓存, 设置token黑名单等操作
+      consumes:
+      - application/json
+      description: 前台用户注册接口
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api_auth.ReqUserSignup'
       produces:
       - application/json
       responses:
@@ -160,11 +228,11 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
-      security:
-      - APIAuth: []
-      summary: 退出
+        "500":
+          description: Internal Server Error
+      summary: 注册
       tags:
-      - 登录退出
+      - 登录认证
   /users/{uuid}:
     get:
       description: 通过用户UUID获取用户的信息

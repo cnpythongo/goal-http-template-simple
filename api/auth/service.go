@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
 	"goal-app/model"
 	"goal-app/pkg/jwt"
 	"goal-app/pkg/render"
@@ -14,6 +15,7 @@ import (
 type IAuthService interface {
 	Login(c *gin.Context, payload *ReqUserAuth) (*RespUserAuth, int, error)
 	Logout(c *gin.Context) error
+	Signup(payload *ReqUserSignup) (int, error)
 }
 
 type authService struct {
@@ -29,7 +31,7 @@ func NewAuthService() IAuthService {
 
 // Login 登录
 func (s *authService) Login(c *gin.Context, payload *ReqUserAuth) (*RespUserAuth, int, error) {
-	user, err := model.GetUserByPhone(s.db, payload.Phone)
+	user, err := model.GetUserByEmail(s.db, payload.Email)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, render.AccountUserOrPwdError, err
@@ -40,28 +42,25 @@ func (s *authService) Login(c *gin.Context, payload *ReqUserAuth) (*RespUserAuth
 	if user.Status == model.UserStatusFreeze {
 		return nil, render.AccountUserFreezeError, err
 	}
-	if !user.IsAdmin {
-		return nil, render.AuthForbiddenError, err
-	}
 
 	if !utils.VerifyPassword(payload.Password, user.Password, user.Salt) {
 		return nil, render.AuthError, err
 	}
 
-	token, expireTime, err := jwt.GenerateToken(user.ID, user.UUID, user.Phone)
+	token, expireTime, err := jwt.GenerateToken(user.ID, user.UUID, "")
 	if err != nil {
 		return nil, render.AuthTokenGenerateError, err
 	}
+	result := RespUserInfo{}
+	err = copier.Copy(&result, &user)
+	if err != nil {
+		return nil, render.DBAttributesCopyError, err
+	}
+
 	data := &RespUserAuth{
 		Token:      token,
 		ExpireTime: expireTime.Format(utils.DateTimeLayout),
-		User: RespUserInfo{
-			UUID:        user.UUID,
-			Phone:       user.PhoneMask(),
-			LastLoginAt: user.LastLoginAt,
-			Nickname:    user.Nickname,
-			Avatar:      user.Avatar,
-		},
+		User:       result,
 	}
 	go func() {
 		err = model.UpdateUserLastLoginAt(s.db, user.UUID)
@@ -82,4 +81,30 @@ func (s *authService) Logout(c *gin.Context) error {
 		fmt.Println(token)
 	}
 	return nil
+}
+
+func (s *authService) Signup(payload *ReqUserSignup) (int, error) {
+	user, err := model.GetUserByEmail(s.db, payload.Email)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return render.QueryError, err
+	}
+
+	if user != nil {
+		return render.DataExistError, err
+	}
+
+	_, err = model.CreateUser(s.db, &model.User{
+		UUID:     utils.UUID(),
+		Password: payload.Password,
+		Email:    payload.Email,
+		Status:   model.UserStatusInactive,
+		IsAdmin:  false,
+		Gender:   model.UserGenderUnknown,
+	})
+	if err != nil {
+		return render.CreateError, err
+	}
+
+	// todo: 如果是邮箱注册，还需要发送激活邮件
+	return render.OK, nil
 }

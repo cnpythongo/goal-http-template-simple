@@ -17,7 +17,7 @@ type User struct {
 	Nickname    string           `json:"nickname" gorm:"column:nickname;type:varchar(128);not null;comment:用户昵称"`
 	Email       string           `json:"email" gorm:"column:email;type:varchar(128);not null;default:'';comment:邮箱"`
 	Avatar      string           `json:"avatar" gorm:"column:avatar;type:varchar(255);not null;default:'';comment:用户头像"`
-	Gender      int64            `json:"gender" gorm:"column:gender;type:int(11);not null;default:3;comment:性别:3-保密,1-男,2-女"`
+	Gender      UserGender       `json:"gender" gorm:"column:gender;type:int(11);not null;default:3;comment:性别:3-保密,1-男,2-女"`
 	Signature   string           `json:"signature" gorm:"column:signature;type:varchar(255);not null;default:'';comment:个性化签名"`
 	Status      UserStatusType   `json:"status" gorm:"column:status;type:varchar(20);not null;default:'INACTIVE';comment:用户状态"`
 	IsAdmin     bool             `json:"is_admin" gorm:"column:is_admin;type:tinyint(1);not null;default:0;comment:是否admin账号,默认否"`

@@ -9,7 +9,9 @@ func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
 	handler := NewAuthHandler(svc)
 
 	r := route.Group("/api/v1")
-	r.POST("/login", handler.Login)
+	r.POST("/signup", handler.Signup)
+	r.POST("/signin", handler.Signin)
+	// r.POST("/login", handler.Signin)
 	r.POST("/logout", handler.Logout)
 	return r
 }

@@ -23,11 +23,12 @@ type (
 	RespUserBasic struct {
 		UUID        string               `json:"uuid" example:"826d6b1aa64d471d822d667e92218158"` // 用户UUID,32位字符串
 		Phone       string               `json:"phone" example:"13800138000"`                     // 手机号
+		Email       string               `json:"email" example:"abc@abc.com"`                     // 邮箱
 		Nickname    string               `json:"nickname" example:"Tom"`                          // 昵称
-		LastLoginAt *utils.LocalTime     `json:"last_login_at" example:"2023-09-01 13:30:59"`     // 最近登录时间
 		Status      model.UserStatusType `json:"status" example:"ACTIVE"`                         // 用户状态
 		IsAdmin     bool                 `json:"is_admin" example:"false"`                        // 是否管理员
 		CreatedAt   *utils.LocalTime     `json:"created_at" example:"2023-09-01 13:30:59"`        // 账号创建时间
+		LastLoginAt *utils.LocalTime     `json:"last_login_at" example:"2023-09-01 13:30:59"`     // 最近登录时间
 	}
 
 	// RespUserDetail 用户详情数据结构体
@@ -48,12 +49,12 @@ type (
 
 	// ReqUpdateUser 更新用户的请求结构体
 	ReqUpdateUser struct {
-		Email     string `json:"email,omitempty" example:"abc@abc.com"` // 邮箱
-		Nickname  string `json:"nickname,omitempty" example:"Tom"`      // 昵称
-		Avatar    string `json:"avatar,omitempty" example:"a/b/c.jpg"`  // 用户头像URL
-		Gender    int64  `json:"gender,omitempty" example:"3"`          // 性别:3-保密,1-男,2-女
-		Signature string `json:"signature,omitempty" example:"haha"`    // 个性化签名
-		Status    string `json:"status,omitempty" example:"FREEZE"`     // 用户状态
+		Email     string           `json:"email,omitempty" example:"abc@abc.com"` // 邮箱
+		Nickname  string           `json:"nickname,omitempty" example:"Tom"`      // 昵称
+		Avatar    string           `json:"avatar,omitempty" example:"a/b/c.jpg"`  // 用户头像URL
+		Gender    model.UserGender `json:"gender,omitempty" example:"3"`          // 性别:3-保密,1-男,2-女
+		Signature string           `json:"signature,omitempty" example:"haha"`    // 个性化签名
+		Status    string           `json:"status,omitempty" example:"FREEZE"`     // 用户状态
 	}
 
 	ReqUpdateUserProfile struct {

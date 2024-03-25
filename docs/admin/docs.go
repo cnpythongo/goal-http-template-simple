@@ -699,7 +699,11 @@ const docTemplate = `{
                 },
                 "gender": {
                     "description": "性别:3-保密,1-男,2-女",
-                    "type": "integer",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.UserGender"
+                        }
+                    ],
                     "example": 3
                 },
                 "nickname": {
@@ -741,6 +745,11 @@ const docTemplate = `{
                     "description": "账号创建时间",
                     "type": "string",
                     "example": "2023-09-01 13:30:59"
+                },
+                "email": {
+                    "description": "邮箱",
+                    "type": "string",
+                    "example": "abc@abc.com"
                 },
                 "is_admin": {
                     "description": "是否管理员",
@@ -855,6 +864,19 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "model.UserGender": {
+            "type": "integer",
+            "enum": [
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "UserGenderMale",
+                "UserGenderFemale",
+                "UserGenderUnknown"
+            ]
         },
         "model.UserStatusType": {
             "type": "string",

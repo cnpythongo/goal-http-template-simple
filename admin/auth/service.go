@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
 	"goal-app/model"
 	"goal-app/pkg/jwt"
 	"goal-app/pkg/render"
@@ -53,17 +54,20 @@ func (s *authService) Login(c *gin.Context, payload *ReqAdminAuth) (*RespAdminAu
 	if err != nil {
 		return nil, render.AuthTokenGenerateError, err
 	}
+
+	result := RespAdminAuthUser{}
+	err = copier.Copy(&result, &user)
+	if err != nil {
+		return nil, render.DBAttributesCopyError, err
+	}
+	result.Phone = user.PhoneMask()
+
 	data := &RespAdminAuth{
 		Token:      token,
 		ExpireTime: expireTime.Format(utils.DateTimeLayout),
-		User: RespAdminAuthUser{
-			UUID:        user.UUID,
-			Phone:       user.PhoneMask(),
-			LastLoginAt: user.LastLoginAt,
-			Nickname:    user.Nickname,
-			Avatar:      user.Avatar,
-		},
+		User:       result,
 	}
+
 	go func() {
 		err = s.UpdateUserLastLogin(user.UUID)
 	}()

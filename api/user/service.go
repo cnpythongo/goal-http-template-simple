@@ -93,10 +93,13 @@ func (s *userService) UpdateUser(payload *ReqUpdateUser) (int, error) {
 		data["nickname"] = payload.Nickname
 	}
 	if payload.Avatar != "" {
-		data["avatar"] = payload.Nickname
+		data["avatar"] = payload.Avatar
 	}
-	if payload.Nickname != "" {
-		data["email"] = payload.Email
+	if payload.Gender != 0 {
+		data["gender"] = payload.Gender
+	}
+	if payload.Signature != "" {
+		data["signature"] = payload.Signature
 	}
 	if len(data) > 0 {
 		err := model.UpdateUser(s.db, payload.UUID, data)

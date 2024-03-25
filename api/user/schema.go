@@ -1,6 +1,9 @@
 package user
 
-import "github.com/cnpythongo/goal-tools/utils"
+import (
+	"github.com/cnpythongo/goal-tools/utils"
+	"goal-app/model"
+)
 
 type (
 	ReqGetUserInfo struct {
@@ -23,10 +26,11 @@ type (
 	}
 
 	ReqUpdateUser struct {
-		UUID     string `json:"uuid"`     // 用户UUID
-		Nickname string `json:"nickname"` // 昵称
-		Avatar   string `json:"avatar"`   // 头像
-		Email    string `json:"email"`    // 邮箱
+		UUID      string           `json:"uuid"`                                 // 用户UUID
+		Nickname  string           `json:"nickname,omitempty" example:"Tom"`     // 昵称
+		Avatar    string           `json:"avatar,omitempty" example:"a/b/c.jpg"` // 用户头像URL
+		Gender    model.UserGender `json:"gender,omitempty" example:"3"`         // 性别:3-保密,1-男,2-女
+		Signature string           `json:"signature,omitempty" example:"haha"`   // 个性化签名
 	}
 
 	ReqUpdateUserPassword struct {

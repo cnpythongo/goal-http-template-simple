@@ -15,7 +15,35 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/login": {
+        "/logout": {
+            "post": {
+                "security": [
+                    {
+                        "APIAuth": []
+                    }
+                ],
+                "description": "前台用户退出\n前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页\n后端可以执行清理redis缓存, 设置token黑名单等操作",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "登录认证"
+                ],
+                "summary": "退出",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/signin": {
             "post": {
                 "description": "前台用户登录接口",
                 "consumes": [
@@ -25,7 +53,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "登录退出"
+                    "登录认证"
                 ],
                 "summary": "登录",
                 "parameters": [
@@ -64,27 +92,39 @@ const docTemplate = `{
                 }
             }
         },
-        "/logout": {
+        "/signup": {
             "post": {
-                "security": [
-                    {
-                        "APIAuth": []
-                    }
+                "description": "前台用户注册接口",
+                "consumes": [
+                    "application/json"
                 ],
-                "description": "前台用户退出\n前端调用该接口，无需关注结果，自行清理掉请求头的 Authorization，页面跳转至首页\n后端可以执行清理redis缓存, 设置token黑名单等操作",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "登录退出"
+                    "登录认证"
                 ],
-                "summary": "退出",
+                "summary": "注册",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_auth.ReqUserSignup"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }
@@ -349,19 +389,43 @@ const docTemplate = `{
         "api_auth.ReqUserAuth": {
             "type": "object",
             "required": [
-                "password",
-                "phone"
+                "email",
+                "password"
             ],
             "properties": {
+                "email": {
+                    "description": "Phone    string ` + "`" + `json:\"phone\" binding:\"required\" example:\"13800138000\"` + "`" + ` // 手机号",
+                    "type": "string",
+                    "example": "foo@bar.com"
+                },
                 "password": {
                     "description": "密码",
                     "type": "string",
                     "example": "123456"
-                },
-                "phone": {
-                    "description": "手机号",
+                }
+            }
+        },
+        "api_auth.ReqUserSignup": {
+            "type": "object",
+            "required": [
+                "confirm_password",
+                "password"
+            ],
+            "properties": {
+                "confirm_password": {
+                    "description": "确认密码",
                     "type": "string",
-                    "example": "13800138000"
+                    "example": "123456"
+                },
+                "email": {
+                    "description": "Phone    string ` + "`" + `json:\"phone\" binding:\"required\" example:\"13800138000\"` + "`" + ` // 手机号",
+                    "type": "string",
+                    "example": "foo@bar.com"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string",
+                    "example": "123456"
                 }
             }
         },
@@ -393,6 +457,11 @@ const docTemplate = `{
                     "description": "头像",
                     "type": "string"
                 },
+                "email": {
+                    "description": "邮箱",
+                    "type": "string",
+                    "example": "foo@bar.com"
+                },
                 "last_login_at": {
                     "description": "最近的登录时间",
                     "type": "string"
@@ -416,16 +485,28 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "avatar": {
-                    "description": "头像",
-                    "type": "string"
+                    "description": "用户头像URL",
+                    "type": "string",
+                    "example": "a/b/c.jpg"
                 },
-                "email": {
-                    "description": "邮箱",
-                    "type": "string"
+                "gender": {
+                    "description": "性别:3-保密,1-男,2-女",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.UserGender"
+                        }
+                    ],
+                    "example": 3
                 },
                 "nickname": {
                     "description": "昵称",
-                    "type": "string"
+                    "type": "string",
+                    "example": "Tom"
+                },
+                "signature": {
+                    "description": "个性化签名",
+                    "type": "string",
+                    "example": "haha"
                 },
                 "uuid": {
                     "description": "用户UUID",
@@ -504,6 +585,19 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "model.UserGender": {
+            "type": "integer",
+            "enum": [
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "UserGenderMale",
+                "UserGenderFemale",
+                "UserGenderUnknown"
+            ]
         }
     },
     "securityDefinitions": {
