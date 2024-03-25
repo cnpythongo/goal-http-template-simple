@@ -12,6 +12,7 @@ var MessageZHCN = map[int]string{
 	AuthTokenGenerateError: "生成会话令牌失败",
 	AuthForbiddenError:     "无权访问",
 	AuthLoginRequireError:  "请登录后再执行操作",
+	AuthCaptchaError:       "验证码不正确",
 
 	QueryError:            "查询失败",
 	DBAttributesCopyError: "属性操作失败",

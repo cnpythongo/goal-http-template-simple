@@ -13,6 +13,8 @@ type IAuthHandler interface {
 	Signin(c *gin.Context)
 	// Logout 退出
 	Logout(c *gin.Context)
+	// Captcha 生成验证码
+	Captcha(c *gin.Context)
 }
 
 type authHandler struct {
@@ -32,16 +34,22 @@ func NewAuthHandler(svc IAuthService) IAuthHandler {
 // @Param data body ReqUserAuth true "请求体"
 // @Success 200 {object} render.RespJsonData{data=RespUserAuth} "code不为0时表示有错误"
 // @Failure 500
-// @Router /signin [post]
+// @Router /auth/signin [post]
 func (h *authHandler) Signin(c *gin.Context) {
-	var payload *ReqUserAuth
-	if err := c.ShouldBindJSON(&payload); err != nil {
+	var req *ReqUserAuth
+	if err := c.ShouldBindJSON(&req); err != nil {
 		render.Json(c, render.PayloadError, err)
 		return
 	}
 
-	result, code, err := h.svc.Login(c, payload)
-	if code != render.OK {
+	match, err := h.svc.CaptchaVerify(req.CaptchaId, req.CaptchaAnswer)
+	if !match {
+		render.Json(c, render.AuthCaptchaError, nil)
+		return
+	}
+
+	result, code, err := h.svc.Login(c, req)
+	if err != nil {
 		render.Json(c, code, err)
 		return
 	}
@@ -58,7 +66,7 @@ func (h *authHandler) Signin(c *gin.Context) {
 // @Security APIAuth
 // @Success 200 {object} render.RespJsonData
 // @Failure 500
-// @Router /logout [post]
+// @Router /auth/logout [post]
 func (h *authHandler) Logout(c *gin.Context) {
 	go func() {
 		err := h.svc.Logout(c)
@@ -75,12 +83,12 @@ func (h *authHandler) Logout(c *gin.Context) {
 // @Description 前台用户注册接口
 // @Accept json
 // @Produce json
-// @Param data body ReqUserSignup true "请求体"
+// @Param data body ReqAuthSignup true "请求体"
 // @Success 200 {object} render.RespJsonData
 // @Failure 500
-// @Router /signup [post]
+// @Router /auth/signup [post]
 func (h *authHandler) Signup(c *gin.Context) {
-	var req ReqUserSignup
+	var req ReqAuthSignup
 	if err := c.ShouldBindJSON(&req); err != nil {
 		render.Json(c, render.PayloadError, err)
 		return
@@ -91,11 +99,41 @@ func (h *authHandler) Signup(c *gin.Context) {
 		return
 	}
 
+	match, err := h.svc.CaptchaVerify(req.CaptchaId, req.CaptchaAnswer)
+	if !match {
+		render.Json(c, render.AuthCaptchaError, nil)
+		return
+	}
+
 	code, err := h.svc.Signup(&req)
-	if code != render.OK {
+	if err != nil {
 		render.Json(c, code, err)
 		return
 	}
 
 	render.Json(c, render.OK, nil)
+}
+
+// Captcha 获取验证码ID和图片base64
+// @Tags 通用
+// @Summary 获取验证码ID和图片base64
+// @Description 获取验证码ID和图片base64
+// @Produce json
+// @Param data query ReqAuthCaptcha true "请求参数"
+// @Success 200 {object} render.RespJsonData{data=RespAuthCaptcha}
+// @Failure 500
+// @Router /auth/captcha [get]
+func (h *authHandler) Captcha(c *gin.Context) {
+	var req ReqAuthCaptcha
+	if err := c.ShouldBindQuery(&req); err != nil {
+		render.Json(c, render.PayloadError, err)
+		return
+	}
+	resp, code, err := h.svc.Captcha(&req)
+	if err != nil {
+		render.Json(c, code, err)
+		return
+	}
+
+	render.Json(c, render.OK, resp)
 }

@@ -15,7 +15,50 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/logout": {
+        "/auth/captcha": {
+            "get": {
+                "description": "获取验证码ID和图片base64",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "通用"
+                ],
+                "summary": "获取验证码ID和图片base64",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "时间戳字符串，避免缓存",
+                        "name": "ts",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api_auth.RespAuthCaptcha"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
             "post": {
                 "security": [
                     {
@@ -43,7 +86,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/signin": {
+        "/auth/signin": {
             "post": {
                 "description": "前台用户登录接口",
                 "consumes": [
@@ -92,7 +135,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/signup": {
+        "/auth/signup": {
             "post": {
                 "description": "前台用户注册接口",
                 "consumes": [
@@ -112,7 +155,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api_auth.ReqUserSignup"
+                            "$ref": "#/definitions/api_auth.ReqAuthSignup"
                         }
                     }
                 ],
@@ -386,32 +429,25 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api_auth.ReqUserAuth": {
+        "api_auth.ReqAuthSignup": {
             "type": "object",
             "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "description": "Phone    string ` + "`" + `json:\"phone\" binding:\"required\" example:\"13800138000\"` + "`" + ` // 手机号",
-                    "type": "string",
-                    "example": "foo@bar.com"
-                },
-                "password": {
-                    "description": "密码",
-                    "type": "string",
-                    "example": "123456"
-                }
-            }
-        },
-        "api_auth.ReqUserSignup": {
-            "type": "object",
-            "required": [
+                "captcha_answer",
+                "captcha_id",
                 "confirm_password",
                 "password"
             ],
             "properties": {
+                "captcha_answer": {
+                    "description": "验证码,4位",
+                    "type": "string",
+                    "maxLength": 6,
+                    "minLength": 6
+                },
+                "captcha_id": {
+                    "description": "验证码ID",
+                    "type": "string"
+                },
                 "confirm_password": {
                     "description": "确认密码",
                     "type": "string",
@@ -426,6 +462,50 @@ const docTemplate = `{
                     "description": "密码",
                     "type": "string",
                     "example": "123456"
+                }
+            }
+        },
+        "api_auth.ReqUserAuth": {
+            "type": "object",
+            "required": [
+                "captcha_answer",
+                "captcha_id",
+                "email",
+                "password"
+            ],
+            "properties": {
+                "captcha_answer": {
+                    "description": "验证码,4位",
+                    "type": "string",
+                    "maxLength": 6,
+                    "minLength": 6
+                },
+                "captcha_id": {
+                    "description": "验证码ID",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "Phone    string ` + "`" + `json:\"phone\" binding:\"required\" example:\"13800138000\"` + "`" + ` // 手机号",
+                    "type": "string",
+                    "example": "foo@bar.com"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string",
+                    "example": "123456"
+                }
+            }
+        },
+        "api_auth.RespAuthCaptcha": {
+            "type": "object",
+            "properties": {
+                "captcha_id": {
+                    "description": "验证码ID",
+                    "type": "string"
+                },
+                "captcha_img": {
+                    "description": "base64编码的验证码图片",
+                    "type": "string"
                 }
             }
         },

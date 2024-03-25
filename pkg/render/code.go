@@ -16,6 +16,7 @@ const (
 	AuthTokenGenerateError = 1005
 	AuthForbiddenError     = 1006
 	AuthLoginRequireError  = 1007
+	AuthCaptchaError       = 1008
 
 	QueryError            = 1100
 	DBAttributesCopyError = 1101

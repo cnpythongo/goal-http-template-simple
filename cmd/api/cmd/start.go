@@ -66,7 +66,8 @@ func (app *Application) Init(_ svc.Environment) error {
 		return err
 	}
 	if config.GetConfig().Redis.Enable {
-		if err = redis.Init(&cfg.Redis); err != nil {
+		client := redis.Init()
+		if client == nil {
 			logger.Error("Init Redis Err:", err.Error())
 			return err
 		}
@@ -117,8 +118,8 @@ func (app *Application) Stop() error {
 	status.WaitGroup()
 
 	_ = model.Close()
-	if config.GetConfig().Redis.Enable {
-		_ = redis.Close()
+	if config.GetConfig().Redis.Enable && redis.GetRedis() != nil {
+		_ = redis.GetRedis().Close()
 	}
 	fmt.Println("Shutdown end")
 	return nil

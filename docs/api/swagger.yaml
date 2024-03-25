@@ -1,22 +1,15 @@
 basePath: /api/v1
 definitions:
-  api_auth.ReqUserAuth:
+  api_auth.ReqAuthSignup:
     properties:
-      email:
-        description: Phone    string `json:"phone" binding:"required" example:"13800138000"`
-          // 手机号
-        example: foo@bar.com
+      captcha_answer:
+        description: 验证码,4位
+        maxLength: 6
+        minLength: 6
         type: string
-      password:
-        description: 密码
-        example: "123456"
+      captcha_id:
+        description: 验证码ID
         type: string
-    required:
-    - email
-    - password
-    type: object
-  api_auth.ReqUserSignup:
-    properties:
       confirm_password:
         description: 确认密码
         example: "123456"
@@ -31,8 +24,44 @@ definitions:
         example: "123456"
         type: string
     required:
+    - captcha_answer
+    - captcha_id
     - confirm_password
     - password
+    type: object
+  api_auth.ReqUserAuth:
+    properties:
+      captcha_answer:
+        description: 验证码,4位
+        maxLength: 6
+        minLength: 6
+        type: string
+      captcha_id:
+        description: 验证码ID
+        type: string
+      email:
+        description: Phone    string `json:"phone" binding:"required" example:"13800138000"`
+          // 手机号
+        example: foo@bar.com
+        type: string
+      password:
+        description: 密码
+        example: "123456"
+        type: string
+    required:
+    - captcha_answer
+    - captcha_id
+    - email
+    - password
+    type: object
+  api_auth.RespAuthCaptcha:
+    properties:
+      captcha_id:
+        description: 验证码ID
+        type: string
+      captcha_img:
+        description: base64编码的验证码图片
+        type: string
     type: object
   api_auth.RespUserAuth:
     properties:
@@ -160,7 +189,32 @@ info:
   title: 前台接口文档
   version: "1.0"
 paths:
-  /logout:
+  /auth/captcha:
+    get:
+      description: 获取验证码ID和图片base64
+      parameters:
+      - description: 时间戳字符串，避免缓存
+        in: query
+        name: ts
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - properties:
+                data:
+                  $ref: '#/definitions/api_auth.RespAuthCaptcha'
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 获取验证码ID和图片base64
+      tags:
+      - 通用
+  /auth/logout:
     post:
       description: |-
         前台用户退出
@@ -180,7 +234,7 @@ paths:
       summary: 退出
       tags:
       - 登录认证
-  /signin:
+  /auth/signin:
     post:
       consumes:
       - application/json
@@ -209,7 +263,7 @@ paths:
       summary: 登录
       tags:
       - 登录认证
-  /signup:
+  /auth/signup:
     post:
       consumes:
       - application/json
@@ -220,7 +274,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api_auth.ReqUserSignup'
+          $ref: '#/definitions/api_auth.ReqAuthSignup'
       produces:
       - application/json
       responses:

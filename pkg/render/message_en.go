@@ -12,6 +12,7 @@ var MessageEn = map[int]string{
 	AuthTokenGenerateError: "生成会话令牌失败",
 	AuthForbiddenError:     "无权访问",
 	AuthLoginRequireError:  "请登录后再执行操作",
+	AuthCaptchaError:       "验证码不正确",
 
 	QueryError:            "查询失败",
 	DBAttributesCopyError: "属性操作失败",
@@ -25,4 +26,5 @@ var MessageEn = map[int]string{
 	AccountUserOrPwdError:    "用户名或密码不正确",
 	AccountUserInactiveError: "用户账号未激活",
 	AccountUserFreezeError:   "用户账号被冻结",
+	AccountOldPasswordError:  "旧密码不正确",
 }

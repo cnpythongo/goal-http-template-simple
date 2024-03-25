@@ -34,8 +34,9 @@ func getDatabaseDsn(cfg *config.MysqlConfig) string {
 }
 
 func initDatabase(cfg *config.MysqlConfig) {
+	var err error
 	dsn := fmt.Sprintf("%s/", getDatabaseDsn(cfg))
-	db, err := gorm.Open(mysql.Open(dsn), nil)
+	db, err = gorm.Open(mysql.Open(dsn), nil)
 
 	if err != nil {
 		panic("Connect Database error >>> " + err.Error())
@@ -72,7 +73,7 @@ func Init(conf *config.MysqlConfig) error {
 	idb.SetConnMaxLifetime(7200 * time.Second)
 	idb.SetMaxOpenConns(200)
 	idb.SetMaxIdleConns(10)
-	if err := idb.Ping(); err != nil {
+	if err = idb.Ping(); err != nil {
 		return err
 	}
 	return nil

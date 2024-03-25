@@ -7,7 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"goal-app/model"
+	"goal-app/model/redis"
 	"goal-app/pkg/jwt"
+	"goal-app/pkg/log"
 	"goal-app/pkg/render"
 	"gorm.io/gorm"
 )
@@ -15,17 +17,22 @@ import (
 type IAuthService interface {
 	Login(c *gin.Context, payload *ReqUserAuth) (*RespUserAuth, int, error)
 	Logout(c *gin.Context) error
-	Signup(payload *ReqUserSignup) (int, error)
+	Signup(payload *ReqAuthSignup) (int, error)
+	Captcha(payload *ReqAuthCaptcha) (RespAuthCaptcha, int, error)
+	CaptchaVerify(id, answer string) (bool, error)
 }
 
 type authService struct {
-	db *gorm.DB
+	db           *gorm.DB
+	captchaStore *utils.CaptchaRedisStore // 验证码存储器
 }
 
 func NewAuthService() IAuthService {
 	db := model.GetDB()
+	store := utils.NewCaptchaRedisStore(redis.GetRedis(), fmt.Sprintf("%sCaptcha:", redis.RedisPrefix))
 	return &authService{
-		db: db,
+		db:           db,
+		captchaStore: store,
 	}
 }
 
@@ -83,7 +90,7 @@ func (s *authService) Logout(c *gin.Context) error {
 	return nil
 }
 
-func (s *authService) Signup(payload *ReqUserSignup) (int, error) {
+func (s *authService) Signup(payload *ReqAuthSignup) (int, error) {
 	user, err := model.GetUserByEmail(s.db, payload.Email)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return render.QueryError, err
@@ -107,4 +114,25 @@ func (s *authService) Signup(payload *ReqUserSignup) (int, error) {
 
 	// todo: 如果是邮箱注册，还需要发送激活邮件
 	return render.OK, nil
+}
+
+func (s *authService) Captcha(payload *ReqAuthCaptcha) (RespAuthCaptcha, int, error) {
+	var res RespAuthCaptcha
+	cp := utils.NewCaptcha(100, 60, 6)
+	cp.SetStore(s.captchaStore)
+
+	id, img, err := cp.GenerateNumberImage()
+	if err != nil {
+		log.GetLogger().Error(err)
+		return res, render.Error, err
+	}
+
+	res.CaptchaId = id
+	res.CaptchaImg = img
+	return res, render.OK, nil
+}
+
+func (s *authService) CaptchaVerify(id, answer string) (bool, error) {
+	match := s.captchaStore.Verify(id, answer, true)
+	return match, nil
 }
