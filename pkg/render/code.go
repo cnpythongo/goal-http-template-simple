@@ -30,6 +30,7 @@ const (
 	AccountUserNotExistError = 1202
 	AccountUserInactiveError = 1203
 	AccountUserFreezeError   = 1204
+	AccountOldPasswordError  = 1205
 )
 
 var MsgMapping = map[string]map[int]string{

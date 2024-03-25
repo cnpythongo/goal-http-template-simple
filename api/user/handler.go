@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"goal-app/pkg/jwt"
@@ -10,6 +11,8 @@ import (
 
 type IUserHandler interface {
 	Me(c *gin.Context)
+	UpdateUser(c *gin.Context)
+	UpdateUserPassword(c *gin.Context)
 	GetUserInfoByUUID(c *gin.Context)
 	Profile(c *gin.Context)
 	UpdateProfile(c *gin.Context)
@@ -144,6 +147,7 @@ func (h *userHandler) Profile(c *gin.Context) {
 // @Description 更新当前登录用户的个人资料
 // @Accept json
 // @Produce json
+// @Param data body ReqUpdateUserProfile true "请求体"
 // @Success 200 {object} render.RespJsonData
 // @Failure 400 {object} render.RespJsonData
 // @Security APIAuth
@@ -163,6 +167,86 @@ func (h *userHandler) UpdateProfile(c *gin.Context) {
 
 	req.UserId = user.ID
 	code, err := h.svc.UpdateUserProfile(&req)
+	if err != nil {
+		render.Json(c, code, err)
+		return
+	}
+
+	render.Json(c, render.OK, "ok")
+}
+
+// UpdateUser 更新用户基本信息
+// @Tags 用户
+// @Summary 更新用户基本信息
+// @Description 更新当前登录用户的基本信息
+// @Accept json
+// @Produce json
+// @Param data body ReqUpdateUser true "请求体"
+// @Success 200 {object} render.RespJsonData
+// @Failure 400 {object} render.RespJsonData
+// @Security APIAuth
+// @Router /users/me/update [post]
+func (h *userHandler) UpdateUser(c *gin.Context) {
+	var req ReqUpdateUser
+	if err := c.ShouldBindJSON(&req); err != nil {
+		render.Json(c, render.ParamsError, err)
+		return
+	}
+
+	user, errCode := h.getLoginCtxUser(c)
+	if errCode != render.OK {
+		render.Json(c, errCode, nil)
+		return
+	}
+	req.UUID = user.UUID
+
+	code, err := h.svc.UpdateUser(&req)
+	if err != nil {
+		render.Json(c, code, err)
+		return
+	}
+
+	render.Json(c, render.OK, "ok")
+}
+
+// UpdateUserPassword 修改用户密码
+// @Tags 用户
+// @Summary 修改用户密码
+// @Description 修改当前登录用户的登录密码
+// @Accept json
+// @Produce json
+// @Param data body ReqUpdateUserPassword true "请求体"
+// @Success 200 {object} render.RespJsonData
+// @Failure 400 {object} render.RespJsonData
+// @Security APIAuth
+// @Router /users/me/password/update [post]
+func (h *userHandler) UpdateUserPassword(c *gin.Context) {
+	var req ReqUpdateUserPassword
+	if err := c.ShouldBindJSON(&req); err != nil {
+		render.Json(c, render.ParamsError, err)
+		return
+	}
+
+	ctxUser, errCode := h.getLoginCtxUser(c)
+	if errCode != render.OK {
+		render.Json(c, errCode, nil)
+		return
+	}
+	req.UUID = ctxUser.UUID
+
+	user, code, err := h.svc.GetUserByUUID(ctxUser.UUID)
+	if err != nil {
+		render.Json(c, code, err)
+		return
+	}
+
+	verify := utils.VerifyPassword(req.OldPassword, user.Password, user.Salt)
+	if !verify {
+		render.Json(c, render.AccountOldPasswordError, err)
+		return
+	}
+
+	code, err = h.svc.UpdateUserPassword(&req)
 	if err != nil {
 		render.Json(c, code, err)
 		return

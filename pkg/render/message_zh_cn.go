@@ -25,4 +25,5 @@ var MessageZHCN = map[int]string{
 	AccountUserOrPwdError:    "用户名或密码不正确",
 	AccountUserInactiveError: "用户账号未激活",
 	AccountUserFreezeError:   "用户账号被冻结",
+	AccountOldPasswordError:  "旧密码不正确",
 }

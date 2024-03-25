@@ -21,4 +21,17 @@ type (
 		RealName string `json:"real_name"` // 真实姓名
 		IDNumber string `json:"id_number"` // 身份证号
 	}
+
+	ReqUpdateUser struct {
+		UUID     string `json:"uuid"`     // 用户UUID
+		Nickname string `json:"nickname"` // 昵称
+		Avatar   string `json:"avatar"`   // 头像
+		Email    string `json:"email"`    // 邮箱
+	}
+
+	ReqUpdateUserPassword struct {
+		UUID        string `json:"uuid"`         // 用户UUID
+		OldPassword string `json:"old_password"` // 旧密码
+		NewPassword string `json:"new_password"` // 新密码
+	}
 )

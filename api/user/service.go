@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/gin-gonic/gin"
 	"goal-app/model"
 	"goal-app/pkg/log"
@@ -16,6 +17,8 @@ type IUserService interface {
 	GetUserByID(id int64) (*model.User, int, error)
 	GetUserProfile(userId int64) (*model.UserProfile, int, error)
 	UpdateUserProfile(payload *ReqUpdateUserProfile) (int, error)
+	UpdateUser(payload *ReqUpdateUser) (int, error)
+	UpdateUserPassword(payload *ReqUpdateUserPassword) (int, error)
 }
 
 type userService struct {
@@ -79,6 +82,40 @@ func (s *userService) UpdateUserProfile(payload *ReqUpdateUserProfile) (int, err
 	_, err = model.UpdateUserProfile(s.db, pf)
 	if err != nil {
 		log.GetLogger().Errorf("model.UpdateUserProfile Error ==> %v", err)
+		return render.UpdateError, err
+	}
+	return render.OK, nil
+}
+
+func (s *userService) UpdateUser(payload *ReqUpdateUser) (int, error) {
+	data := map[string]interface{}{}
+	if payload.Nickname != "" {
+		data["nickname"] = payload.Nickname
+	}
+	if payload.Avatar != "" {
+		data["avatar"] = payload.Nickname
+	}
+	if payload.Nickname != "" {
+		data["email"] = payload.Email
+	}
+	if len(data) > 0 {
+		err := model.UpdateUser(s.db, payload.UUID, data)
+		if err != nil {
+			log.GetLogger().Errorf("model.UpdateUser Error ==> %v", err)
+			return render.UpdateError, err
+		}
+	}
+	return render.OK, nil
+}
+
+func (s *userService) UpdateUserPassword(payload *ReqUpdateUserPassword) (int, error) {
+	password, salt := utils.GeneratePassword(payload.NewPassword)
+	err := model.UpdateUser(s.db, payload.UUID, map[string]interface{}{
+		"password": password,
+		"salt":     salt,
+	})
+	if err != nil {
+		log.GetLogger().Errorf("model.UpdateUser Error ==> %v", err)
 		return render.UpdateError, err
 	}
 	return render.OK, nil
