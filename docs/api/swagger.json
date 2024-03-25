@@ -122,6 +122,71 @@
                 }
             }
         },
+        "/users/me/profile": {
+            "get": {
+                "security": [
+                    {
+                        "APIAuth": []
+                    }
+                ],
+                "description": "当前登录用户的个人资料",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户"
+                ],
+                "summary": "用户个人资料",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/me/profile/update": {
+            "post": {
+                "security": [
+                    {
+                        "APIAuth": []
+                    }
+                ],
+                "description": "更新当前登录用户的个人资料",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户"
+                ],
+                "summary": "更新用户个人资料",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                        }
+                    }
+                }
+            }
+        },
         "/users/{uuid}": {
             "get": {
                 "security": [

@@ -321,6 +321,31 @@ paths:
       summary: 退出
       tags:
       - 登录退出
+  /account/user/{uuid}/profile:
+    get:
+      description: 用户个人资料
+      parameters:
+      - description: 用户UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+      security:
+      - AdminAuth: []
+      summary: 用户个人资料
+      tags:
+      - 用户管理
   /account/user/create:
     post:
       consumes:
@@ -524,6 +549,33 @@ paths:
       security:
       - AdminAuth: []
       summary: 更新用户
+      tags:
+      - 用户管理
+  /account/users/{uuid}/profile/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新用户个人资料
+      parameters:
+      - description: 用户UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+      security:
+      - AdminAuth: []
+      summary: 删除用户
       tags:
       - 用户管理
 securityDefinitions:

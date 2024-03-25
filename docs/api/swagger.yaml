@@ -176,6 +176,46 @@ paths:
       summary: 获取当前登录用户的信息
       tags:
       - 用户
+  /users/me/profile:
+    get:
+      description: 当前登录用户的个人资料
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+      security:
+      - APIAuth: []
+      summary: 用户个人资料
+      tags:
+      - 用户
+  /users/me/profile/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新当前登录用户的个人资料
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+      security:
+      - APIAuth: []
+      summary: 更新用户个人资料
+      tags:
+      - 用户
 securityDefinitions:
   APIAuth:
     description: Type "Bearer" followed by a space and JWT token.
