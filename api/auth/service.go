@@ -118,7 +118,7 @@ func (s *authService) Signup(payload *ReqAuthSignup) (int, error) {
 
 func (s *authService) Captcha(payload *ReqAuthCaptcha) (RespAuthCaptcha, int, error) {
 	var res RespAuthCaptcha
-	cp := utils.NewCaptcha(100, 60, 6)
+	cp := utils.NewCaptcha(payload.W, payload.H, 6)
 	cp.SetStore(s.captchaStore)
 
 	id, img, err := cp.GenerateNumberImage()

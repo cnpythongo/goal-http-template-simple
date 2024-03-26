@@ -27,9 +27,25 @@ const docTemplate = `{
                 "summary": "获取验证码ID和图片base64",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "default": 32,
+                        "example": 32,
+                        "description": "高",
+                        "name": "h",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "时间戳字符串，避免缓存",
                         "name": "ts",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 128,
+                        "example": 128,
+                        "description": "宽",
+                        "name": "w",
                         "in": "query"
                     }
                 ],

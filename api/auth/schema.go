@@ -44,7 +44,9 @@ type (
 
 	// ReqAuthCaptcha 验证码接口请求参数
 	ReqAuthCaptcha struct {
-		TS string `form:"ts"` // 时间戳字符串，避免缓存
+		TS string `form:"ts"`                            // 时间戳字符串，避免缓存
+		W  int    `form:"w" default:"128" example:"128"` // 宽
+		H  int    `form:"h" default:"32" example:"32"`   // 高
 	}
 
 	// RespAuthCaptcha 验证码接口返回的数据结构

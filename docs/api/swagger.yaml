@@ -193,10 +193,22 @@ paths:
     get:
       description: 获取验证码ID和图片base64
       parameters:
+      - default: 32
+        description: 高
+        example: 32
+        in: query
+        name: h
+        type: integer
       - description: 时间戳字符串，避免缓存
         in: query
         name: ts
         type: string
+      - default: 128
+        description: 宽
+        example: 128
+        in: query
+        name: w
+        type: integer
       produces:
       - application/json
       responses:
