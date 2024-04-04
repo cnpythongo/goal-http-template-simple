@@ -28,7 +28,7 @@ type RespJsonData struct {
 func Json(c *gin.Context, code int, result interface{}) {
 	data := RespJsonData{
 		Code: code,
-		Msg:  GetCodeMsg(code),
+		Msg:  GetCodeMsg(code, result),
 		Data: result,
 	}
 	c.JSON(http.StatusOK, data)

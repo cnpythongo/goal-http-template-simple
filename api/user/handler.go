@@ -26,7 +26,7 @@ func NewUserHandler(svc IUserService) IUserHandler {
 	return &userHandler{svc: svc}
 }
 
-func (h *userHandler) getLoginCtxUser(c *gin.Context) (*jwt.Claims, int) {
+func GetLoginCtxUser(c *gin.Context) (*jwt.Claims, int) {
 	var user *jwt.Claims
 	var code int
 
@@ -57,7 +57,7 @@ func (h *userHandler) getLoginCtxUser(c *gin.Context) (*jwt.Claims, int) {
 // @Security APIAuth
 // @Router /users/me [get]
 func (h *userHandler) Me(c *gin.Context) {
-	ctxUser, errCode := h.getLoginCtxUser(c)
+	ctxUser, errCode := GetLoginCtxUser(c)
 	if errCode != render.OK {
 		render.Json(c, errCode, nil)
 		return
@@ -159,7 +159,7 @@ func (h *userHandler) UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	user, errCode := h.getLoginCtxUser(c)
+	user, errCode := GetLoginCtxUser(c)
 	if errCode != render.OK {
 		render.Json(c, errCode, nil)
 		return
@@ -193,7 +193,7 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	user, errCode := h.getLoginCtxUser(c)
+	user, errCode := GetLoginCtxUser(c)
 	if errCode != render.OK {
 		render.Json(c, errCode, nil)
 		return
@@ -227,7 +227,7 @@ func (h *userHandler) UpdateUserPassword(c *gin.Context) {
 		return
 	}
 
-	ctxUser, errCode := h.getLoginCtxUser(c)
+	ctxUser, errCode := GetLoginCtxUser(c)
 	if errCode != render.OK {
 		render.Json(c, errCode, nil)
 		return

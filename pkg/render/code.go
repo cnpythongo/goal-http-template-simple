@@ -32,6 +32,9 @@ const (
 	AccountUserInactiveError = 1203
 	AccountUserFreezeError   = 1204
 	AccountOldPasswordError  = 1205
+
+	FlixCreditBalanceError       = 1206
+	FlixCreditBalanceReduceError = 1207
 )
 
 var MsgMapping = map[string]map[int]string{
@@ -39,15 +42,19 @@ var MsgMapping = map[string]map[int]string{
 	"zh_cn": MessageZHCN,
 }
 
-func GetCodeMsg(code int) string {
+func GetCodeMsg(code int, other interface{}) string {
 	lang := config.GetConfig().App.Language
 	mapping, ok := MsgMapping[lang]
 	if !ok {
-		return "unsupport language"
+		return "language key not exists"
 	}
 	msg, ok := mapping[code]
 	if !ok {
-		return "unknown error"
+		if other == nil {
+			return "unknown error"
+		} else {
+			return other.(string)
+		}
 	}
 	return msg
 }

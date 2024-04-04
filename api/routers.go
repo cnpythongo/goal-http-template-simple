@@ -5,6 +5,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"goal-app/api/auth"
+	"goal-app/api/imageflix"
 	"goal-app/api/user"
 	"goal-app/pkg/config"
 	"goal-app/router"
@@ -22,5 +23,7 @@ func InitAPIRouters(cfg *config.Configuration) *gin.Engine {
 	// user api
 	_ = user.RegisterRoute(route)
 
+	// imageflix credit api
+	_ = imageflix.RegisterRoute(route)
 	return route
 }

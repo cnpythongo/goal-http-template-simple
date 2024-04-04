@@ -27,4 +27,7 @@ var MessageZHCN = map[int]string{
 	AccountUserInactiveError: "用户账号未激活",
 	AccountUserFreezeError:   "用户账号被冻结",
 	AccountOldPasswordError:  "旧密码不正确",
+
+	FlixCreditBalanceError:       "余额不足",
+	FlixCreditBalanceReduceError: "余额扣减失败",
 }

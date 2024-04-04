@@ -32,5 +32,14 @@ func MigrateTables(conf *config.Configuration) {
 		panic(err)
 	}
 
+	err = db.AutoMigrate(
+		model.NewImageFlixPackage(),
+		model.NewImageFlixCreditOrder(),
+		model.NewImageFlixCredit(),
+	)
+	if err != nil {
+		panic(err)
+	}
+
 	log.GetLogger().Infoln("Migrate tables success .....")
 }

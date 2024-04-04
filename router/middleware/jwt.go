@@ -35,7 +35,7 @@ func JWTAuthenticationMiddleware() gin.HandlerFunc {
 		if code != render.OK {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code": code,
-				"msg":  render.GetCodeMsg(code),
+				"msg":  render.GetCodeMsg(code, nil),
 			})
 
 			c.Abort()
