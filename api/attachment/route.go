@@ -2,6 +2,7 @@ package attachment
 
 import (
 	"github.com/gin-gonic/gin"
+	"goal-app/router/middleware"
 )
 
 func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
@@ -9,7 +10,7 @@ func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
 	handler := NewAttachmentHandler(svc)
 
 	r := route.Group("/api/v1/attachments")
-	// r.Use(middleware.JWTAuthenticationMiddleware())
+	r.Use(middleware.JWTAuthenticationMiddleware())
 	r.POST("", handler.Add)
 	return r
 }

@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/attachments": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "用户上传附件",
                 "consumes": [
                     "multipart/form-data"

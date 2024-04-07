@@ -2,6 +2,7 @@ package attachment
 
 import (
 	"github.com/gin-gonic/gin"
+	"goal-app/api/user"
 	"goal-app/pkg/log"
 	"goal-app/pkg/render"
 )
@@ -26,7 +27,7 @@ func NewAttachmentHandler(svc IAttachmentService) IAttachmentHandler {
 // @Produce json
 // @Param file formData file true "文件流"
 // @Success 200 {object} AttachmentResp "http状态码是200，并且code是200, 表示正常返回；code不是200时表示有业务错误"
-// // @Security ApiKeyAuth
+// @Security ApiKeyAuth
 // @Router /attachments [post]
 func (h *attachmentHandler) Add(c *gin.Context) {
 	file, err := c.FormFile("file")
@@ -35,15 +36,15 @@ func (h *attachmentHandler) Add(c *gin.Context) {
 		return
 	}
 
-	//ctxUser, errCode := user.GetLoginCtxUser(c)
-	//if errCode != render.OK {
-	//	render.Json(c, errCode, nil)
-	//	return
-	//}
+	ctxUser, errCode := user.GetLoginCtxUser(c)
+	if errCode != render.OK {
+		render.Json(c, errCode, nil)
+		return
+	}
 
 	var payload AttachmentAddReq
-	//payload.UserUuid = ctxUser.UUID
-	//payload.UserId = ctxUser.ID
+	payload.UserUuid = ctxUser.UUID
+	payload.UserId = ctxUser.ID
 	payload.IP = c.ClientIP()
 
 	res, _, err := h.svc.Add(payload, file)

@@ -244,6 +244,8 @@ paths:
           description: http状态码是200，并且code是200, 表示正常返回；code不是200时表示有业务错误
           schema:
             $ref: '#/definitions/api_attachment.AttachmentResp'
+      security:
+      - ApiKeyAuth: []
       summary: 新增附件
       tags:
       - 通用
