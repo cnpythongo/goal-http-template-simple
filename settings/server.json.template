@@ -43,5 +43,9 @@
     "max_idle": 20,
     "max_active": 100,
     "db": 0
+  },
+  "storage": {
+    "upload_directory": "/tmp/goal-upload-files",
+    "upload_image_size": 10485760
   }
 }

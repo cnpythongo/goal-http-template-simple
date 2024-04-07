@@ -64,12 +64,19 @@ type (
 		Db        int    `json:"db"`
 	}
 
+	StorageConfig struct {
+		UploadDirectory string `json:"upload_directory"`  // 文件上传根目录
+		UploadImageSize int64  `json:"upload_image_size"` // 1024 * 1024 * 10  = 10m
+		PublicPrefix    string `json:"public_prefix"`     // 文件访问路径前缀
+	}
+
 	Configuration struct {
-		App    AppConfig    `json:"app"`
-		Http   HttpConfig   `json:"http"`
-		Mysql  MysqlConfig  `json:"mysql"`
-		Logger LoggerConfig `json:"logger"`
-		Redis  RedisConfig  `json:"redis"`
+		App     AppConfig     `json:"app"`
+		Http    HttpConfig    `json:"http"`
+		Mysql   MysqlConfig   `json:"mysql"`
+		Logger  LoggerConfig  `json:"logger"`
+		Redis   RedisConfig   `json:"redis"`
+		Storage StorageConfig `json:"storage"`
 	}
 )
 

@@ -33,8 +33,10 @@ const (
 	AccountUserFreezeError   = 1204
 	AccountOldPasswordError  = 1205
 
-	FlixCreditBalanceError       = 1206
-	FlixCreditBalanceReduceError = 1207
+	FlixCreditBalanceError       = 2206
+	FlixCreditBalanceReduceError = 2207
+
+	UploadFileError = 3000
 )
 
 var MsgMapping = map[string]map[int]string{

@@ -27,3 +27,4 @@ main
 settings/*.json
 test/admin/runtime/
 test/api/runtime/
+tmp/
