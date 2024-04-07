@@ -1,5 +1,20 @@
 basePath: /api/v1
 definitions:
+  api_attachment.AttachmentResp:
+    properties:
+      created_at:
+        description: 上传时间
+        type: string
+      name:
+        description: 文件名
+        type: string
+      size:
+        description: '文件大小, 单位: 字节'
+        type: integer
+      uuid:
+        description: 文件UUID
+        type: string
+    type: object
   api_auth.ReqAuthSignup:
     properties:
       captcha_answer:
@@ -99,6 +114,28 @@ definitions:
         description: 用户uuid
         type: string
     type: object
+  api_imageflix.CreditReduceReq:
+    properties:
+      point:
+        description: 使用点数
+        type: integer
+    required:
+    - point
+    type: object
+  api_imageflix.JobStartReq:
+    properties:
+      job_id:
+        description: 任务ID
+        type: integer
+    required:
+    - job_id
+    type: object
+  api_imageflix.UserCreditResp:
+    properties:
+      usable:
+        description: 可用点数
+        type: integer
+    type: object
   api_user.ReqUpdateUser:
     properties:
       avatar:
@@ -189,6 +226,27 @@ info:
   title: 前台接口文档
   version: "1.0"
 paths:
+  /attachments:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 用户上传附件
+      parameters:
+      - description: 文件流
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: http状态码是200，并且code是200, 表示正常返回；code不是200时表示有业务错误
+          schema:
+            $ref: '#/definitions/api_attachment.AttachmentResp'
+      summary: 新增附件
+      tags:
+      - 通用
   /auth/captcha:
     get:
       description: 获取验证码ID和图片base64
@@ -299,6 +357,99 @@ paths:
       summary: 注册
       tags:
       - 登录认证
+  /create:
+    post:
+      description: 当前登录用户上传图片任务
+      parameters:
+      - description: 文件流
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+        "500":
+          description: Internal Server Error
+      security:
+      - APIAuth: []
+      summary: 当前登录用户上传图片任务
+      tags:
+      - ImageFlix-任务
+  /reduce:
+    post:
+      description: 获取当前登录用户可用资源包余额
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api_imageflix.CreditReduceReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+        "500":
+          description: Internal Server Error
+      security:
+      - APIAuth: []
+      summary: 获取当前登录用户可用资源包余额
+      tags:
+      - ImageFlix-资源包
+  /start:
+    post:
+      description: 当前登录用户出发开始任务，成功后扣除点数
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api_imageflix.JobStartReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+        "500":
+          description: Internal Server Error
+      security:
+      - APIAuth: []
+      summary: 当前登录用户出发开始任务
+      tags:
+      - ImageFlix-任务
+  /usable:
+    get:
+      description: 获取当前登录用户可用资源包余额
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - properties:
+                data:
+                  $ref: '#/definitions/api_imageflix.UserCreditResp'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - APIAuth: []
+      summary: 获取当前登录用户可用资源包余额
+      tags:
+      - ImageFlix-资源包
   /users/{uuid}:
     get:
       description: 通过用户UUID获取用户的信息

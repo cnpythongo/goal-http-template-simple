@@ -25,7 +25,7 @@ func NewAttachment() *Attachment {
 func GetAttachmentByUserIdAndMd5(db *gorm.DB, userId int64, md5 string) (*Attachment, error) {
 	var result *Attachment
 	err := db.Model(&Attachment{}).Where(
-		"user_id = ? and md5 = ? and delete_time = 0", userId, md5,
+		"user_id = ? and md5 = ? and deleted_at = null", userId, md5,
 	).Limit(1).First(&result).Error
 	if err != nil {
 		return nil, err

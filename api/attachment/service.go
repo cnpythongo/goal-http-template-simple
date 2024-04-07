@@ -40,9 +40,9 @@ func (svc *attachmentService) Add(payload AttachmentAddReq, file *multipart.File
 	}
 	uid := payload.UserId
 
-	record, e := model.GetAttachmentByUserIdAndMd5(svc.db, uid, upFile.Md5)
-	if e != nil && !errors.Is(e, gorm.ErrRecordNotFound) {
-		log.GetLogger().Errorf("attachmentService.Add.GetAttachmentByUserIdAndMd5 err=%v", e)
+	record, err := model.GetAttachmentByUserIdAndMd5(svc.db, uid, upFile.Md5)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		log.GetLogger().Errorf("attachmentService.Add.GetAttachmentByUserIdAndMd5 err=%v", err)
 		return res, render.QueryError, err
 	}
 
@@ -68,14 +68,14 @@ func (svc *attachmentService) Add(payload AttachmentAddReq, file *multipart.File
 	}
 
 	err = copier.Copy(&res, &att)
-	if e != nil {
-		return res, render.DBAttributesCopyError, errors.New("创建上传附件记录失败")
+	if err != nil {
+		return res, render.DBAttributesCopyError, err
 	}
 
 	return res, render.OK, nil
 }
 
-func (a *attachmentService) uploadFile(file *multipart.FileHeader, folder string) (*storage.UploadFile, int, error) {
+func (svc *attachmentService) uploadFile(file *multipart.FileHeader, folder string) (*storage.UploadFile, int, error) {
 	res, err := storage.StorageDriver.Upload(file, folder)
 	if err != nil {
 		return res, render.UploadFileError, err

@@ -8,6 +8,38 @@
     },
     "basePath": "/api/v1",
     "paths": {
+        "/attachments": {
+            "post": {
+                "description": "用户上传附件",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "通用"
+                ],
+                "summary": "新增附件",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "文件流",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "http状态码是200，并且code是200, 表示正常返回；code不是200时表示有业务错误",
+                        "schema": {
+                            "$ref": "#/definitions/api_attachment.AttachmentResp"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/captcha": {
             "get": {
                 "description": "获取验证码ID和图片base64",
@@ -173,6 +205,161 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/create": {
+            "post": {
+                "security": [
+                    {
+                        "APIAuth": []
+                    }
+                ],
+                "description": "当前登录用户上传图片任务",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ImageFlix-任务"
+                ],
+                "summary": "当前登录用户上传图片任务",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "文件流",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/reduce": {
+            "post": {
+                "security": [
+                    {
+                        "APIAuth": []
+                    }
+                ],
+                "description": "获取当前登录用户可用资源包余额",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ImageFlix-资源包"
+                ],
+                "summary": "获取当前登录用户可用资源包余额",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_imageflix.CreditReduceReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/start": {
+            "post": {
+                "security": [
+                    {
+                        "APIAuth": []
+                    }
+                ],
+                "description": "当前登录用户出发开始任务，成功后扣除点数",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ImageFlix-任务"
+                ],
+                "summary": "当前登录用户出发开始任务",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_imageflix.JobStartReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/usable": {
+            "get": {
+                "security": [
+                    {
+                        "APIAuth": []
+                    }
+                ],
+                "description": "获取当前登录用户可用资源包余额",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ImageFlix-资源包"
+                ],
+                "summary": "获取当前登录用户可用资源包余额",
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api_imageflix.UserCreditResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
@@ -438,6 +625,27 @@
         }
     },
     "definitions": {
+        "api_attachment.AttachmentResp": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "上传时间",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "文件名",
+                    "type": "string"
+                },
+                "size": {
+                    "description": "文件大小, 单位: 字节",
+                    "type": "integer"
+                },
+                "uuid": {
+                    "description": "文件UUID",
+                    "type": "string"
+                }
+            }
+        },
         "api_auth.ReqAuthSignup": {
             "type": "object",
             "required": [
@@ -567,6 +775,39 @@
                 "uuid": {
                     "description": "用户uuid",
                     "type": "string"
+                }
+            }
+        },
+        "api_imageflix.CreditReduceReq": {
+            "type": "object",
+            "required": [
+                "point"
+            ],
+            "properties": {
+                "point": {
+                    "description": "使用点数",
+                    "type": "integer"
+                }
+            }
+        },
+        "api_imageflix.JobStartReq": {
+            "type": "object",
+            "required": [
+                "job_id"
+            ],
+            "properties": {
+                "job_id": {
+                    "description": "任务ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "api_imageflix.UserCreditResp": {
+            "type": "object",
+            "properties": {
+                "usable": {
+                    "description": "可用点数",
+                    "type": "integer"
                 }
             }
         },

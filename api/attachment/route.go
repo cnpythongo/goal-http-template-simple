@@ -9,6 +9,7 @@ func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
 	handler := NewAttachmentHandler(svc)
 
 	r := route.Group("/api/v1/attachments")
+	// r.Use(middleware.JWTAuthenticationMiddleware())
 	r.POST("", handler.Add)
 	return r
 }
