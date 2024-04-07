@@ -42,9 +42,5 @@ func GetImageFlixCreditOrderByUserId(db *gorm.DB, page, limit int, userId int64)
 		return result, total, err
 	}
 	err = query.Find(&result).Error
-	if err != nil {
-		return result, total, err
-	}
-
-	return result, total, nil
+	return result, total, err
 }

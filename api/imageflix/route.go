@@ -5,12 +5,22 @@ import (
 	"goal-app/router/middleware"
 )
 
-func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
-	creditSvc := NewImageFlixCreditService()
-	creditHandler := NewImageFlixCreditHandler(creditSvc)
+func RegisterCreditRoute(route *gin.Engine) *gin.RouterGroup {
+	svc := NewImageFlixCreditService()
+	handler := NewImageFlixCreditHandler(svc)
 
 	r := route.Group("/api/v1/flix/credits")
 	r.Use(middleware.JWTAuthenticationMiddleware())
-	r.GET("/usable", creditHandler.UserCredit)
+	r.GET("/usable", handler.UserCredit)
+	return r
+}
+
+func RegisterJobRoute(route *gin.Engine) *gin.RouterGroup {
+	svc := NewImageFlixJobService()
+	handler := NewImageFlixJobHandler(svc)
+
+	r := route.Group("/api/v1/flix/job")
+	r.Use(middleware.JWTAuthenticationMiddleware())
+	r.GET("/start", handler.Start)
 	return r
 }
