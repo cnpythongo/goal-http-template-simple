@@ -31,12 +31,12 @@ func NewAuthHandler(svc IAuthService) IAuthHandler {
 // @Description 前台用户登录接口
 // @Accept json
 // @Produce json
-// @Param data body ReqUserAuth true "请求体"
-// @Success 200 {object} render.RespJsonData{data=RespUserAuth} "code不为0时表示有错误"
+// @Param data body UserAuthReq true "请求体"
+// @Success 200 {object} render.JsonDataResp{data=UserAuthResp} "code不为0时表示有错误"
 // @Failure 500
 // @Router /auth/signin [post]
 func (h *authHandler) Signin(c *gin.Context) {
-	var req *ReqUserAuth
+	var req *UserAuthReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		render.Json(c, render.PayloadError, err)
 		return
@@ -64,7 +64,7 @@ func (h *authHandler) Signin(c *gin.Context) {
 // @Description 后端可以执行清理redis缓存, 设置token黑名单等操作
 // @Produce json
 // @Security APIAuth
-// @Success 200 {object} render.RespJsonData
+// @Success 200 {object} render.JsonDataResp
 // @Failure 500
 // @Router /auth/logout [post]
 func (h *authHandler) Logout(c *gin.Context) {
@@ -83,12 +83,12 @@ func (h *authHandler) Logout(c *gin.Context) {
 // @Description 前台用户注册接口
 // @Accept json
 // @Produce json
-// @Param data body ReqAuthSignup true "请求体"
-// @Success 200 {object} render.RespJsonData
+// @Param data body SignupReq true "请求体"
+// @Success 200 {object} render.JsonDataResp
 // @Failure 500
 // @Router /auth/signup [post]
 func (h *authHandler) Signup(c *gin.Context) {
-	var req ReqAuthSignup
+	var req SignupReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		render.Json(c, render.PayloadError, err)
 		return
@@ -119,12 +119,12 @@ func (h *authHandler) Signup(c *gin.Context) {
 // @Summary 获取验证码ID和图片base64
 // @Description 获取验证码ID和图片base64
 // @Produce json
-// @Param data query ReqAuthCaptcha true "请求参数"
-// @Success 200 {object} render.RespJsonData{data=RespAuthCaptcha}
+// @Param data query CaptchaReq true "请求参数"
+// @Success 200 {object} render.JsonDataResp{data=CaptchaResp}
 // @Failure 500
 // @Router /auth/captcha [get]
 func (h *authHandler) Captcha(c *gin.Context) {
-	var req ReqAuthCaptcha
+	var req CaptchaReq
 	if err := c.ShouldBindQuery(&req); err != nil {
 		render.Json(c, render.PayloadError, err)
 		return

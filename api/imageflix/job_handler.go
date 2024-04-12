@@ -26,7 +26,7 @@ func NewImageFlixJobHandler(svc IImageFlixJobService) IImageFlixJobHandler {
 // @Description 当前登录用户上传图片任务
 // @Produce json
 // @Param file formData file true "文件流"
-// @Success 200 {object} render.RespJsonData "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
 // @Security APIAuth
 // @Router /create [post]
@@ -57,7 +57,7 @@ func (h *imageFlixJobHandler) Create(c *gin.Context) {
 // @Description 当前登录用户出发开始任务，成功后扣除点数
 // @Produce json
 // @Param data body JobStartReq true "请求体"
-// @Success 200 {object} render.RespJsonData "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
 // @Security APIAuth
 // @Router /start [post]

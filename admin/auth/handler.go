@@ -26,7 +26,7 @@ func NewAuthHandler(svc IAuthService) IAuthHandler {
 // @Accept json
 // @Produce json
 // @Param data body ReqAdminAuth true "请求体"
-// @Success 200 {object} render.RespJsonData{data=RespAdminAuth} "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp{data=RespAdminAuth} "code不为0时表示有错误"
 // @Failure 500
 // @Router /account/login [post]
 func (h *authHandler) Login(c *gin.Context) {
@@ -52,7 +52,7 @@ func (h *authHandler) Login(c *gin.Context) {
 // @Description 后端可以执行清理redis缓存, 设置token黑名单等操作
 // @Produce json
 // @Security AdminAuth
-// @Success 200 {object} render.RespJsonData
+// @Success 200 {object} render.JsonDataResp
 // @Router /account/logout [post]
 func (h *authHandler) Logout(c *gin.Context) {
 	go func() {

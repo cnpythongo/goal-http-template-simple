@@ -15,7 +15,16 @@ definitions:
         description: 文件UUID
         type: string
     type: object
-  api_auth.ReqAuthSignup:
+  api_auth.CaptchaResp:
+    properties:
+      captcha_id:
+        description: 验证码ID
+        type: string
+      captcha_img:
+        description: base64编码的验证码图片
+        type: string
+    type: object
+  api_auth.SignupReq:
     properties:
       captcha_answer:
         description: 验证码,4位
@@ -44,7 +53,7 @@ definitions:
     - confirm_password
     - password
     type: object
-  api_auth.ReqUserAuth:
+  api_auth.UserAuthReq:
     properties:
       captcha_answer:
         description: 验证码,4位
@@ -69,16 +78,7 @@ definitions:
     - email
     - password
     type: object
-  api_auth.RespAuthCaptcha:
-    properties:
-      captcha_id:
-        description: 验证码ID
-        type: string
-      captcha_img:
-        description: base64编码的验证码图片
-        type: string
-    type: object
-  api_auth.RespUserAuth:
+  api_auth.UserAuthResp:
     properties:
       expire_time:
         description: 过期时间
@@ -88,10 +88,10 @@ definitions:
         type: string
       user:
         allOf:
-        - $ref: '#/definitions/api_auth.RespUserInfo'
+        - $ref: '#/definitions/api_auth.UserInfoResp'
         description: 用户基本信息
     type: object
-  api_auth.RespUserInfo:
+  api_auth.UserInfoResp:
     properties:
       avatar:
         description: 头像
@@ -114,14 +114,6 @@ definitions:
         description: 用户uuid
         type: string
     type: object
-  api_imageflix.CreditReduceReq:
-    properties:
-      point:
-        description: 使用点数
-        type: integer
-    required:
-    - point
-    type: object
   api_imageflix.JobStartReq:
     properties:
       job_id:
@@ -130,13 +122,45 @@ definitions:
     required:
     - job_id
     type: object
-  api_imageflix.UserCreditResp:
+  api_imageflix.UserCreditReduceReq:
+    properties:
+      point:
+        description: 使用点数
+        type: integer
+    required:
+    - point
+    type: object
+  api_imageflix.UserCreditUsableResp:
     properties:
       usable:
         description: 可用点数
         type: integer
     type: object
-  api_user.ReqUpdateUser:
+  api_user.UpdateUserPasswordReq:
+    properties:
+      new_password:
+        description: 新密码
+        type: string
+      old_password:
+        description: 旧密码
+        type: string
+      uuid:
+        description: 用户UUID
+        type: string
+    type: object
+  api_user.UpdateUserProfileReq:
+    properties:
+      id_number:
+        description: 身份证号
+        type: string
+      real_name:
+        description: 真实姓名
+        type: string
+      user_id:
+        description: 用户ID
+        type: integer
+    type: object
+  api_user.UpdateUserReq:
     properties:
       avatar:
         description: 用户头像URL
@@ -159,31 +183,7 @@ definitions:
         description: 用户UUID
         type: string
     type: object
-  api_user.ReqUpdateUserPassword:
-    properties:
-      new_password:
-        description: 新密码
-        type: string
-      old_password:
-        description: 旧密码
-        type: string
-      uuid:
-        description: 用户UUID
-        type: string
-    type: object
-  api_user.ReqUpdateUserProfile:
-    properties:
-      id_number:
-        description: 身份证号
-        type: string
-      real_name:
-        description: 真实姓名
-        type: string
-      user_id:
-        description: 用户ID
-        type: integer
-    type: object
-  api_user.RespUserInfo:
+  api_user.UserInfoResp:
     properties:
       avatar:
         description: 头像
@@ -202,7 +202,7 @@ definitions:
         description: 用户uuid
         type: string
     type: object
-  goal-app_pkg_render.RespJsonData:
+  goal-app_pkg_render.JsonDataResp:
     properties:
       code:
         type: integer
@@ -276,10 +276,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
             - properties:
                 data:
-                  $ref: '#/definitions/api_auth.RespAuthCaptcha'
+                  $ref: '#/definitions/api_auth.CaptchaResp'
               type: object
         "500":
           description: Internal Server Error
@@ -298,7 +298,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "500":
           description: Internal Server Error
       security:
@@ -317,7 +317,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api_auth.ReqUserAuth'
+          $ref: '#/definitions/api_auth.UserAuthReq'
       produces:
       - application/json
       responses:
@@ -325,10 +325,10 @@ paths:
           description: code不为0时表示有错误
           schema:
             allOf:
-            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
             - properties:
                 data:
-                  $ref: '#/definitions/api_auth.RespUserAuth'
+                  $ref: '#/definitions/api_auth.UserAuthResp'
               type: object
         "500":
           description: Internal Server Error
@@ -346,14 +346,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api_auth.ReqAuthSignup'
+          $ref: '#/definitions/api_auth.SignupReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "500":
           description: Internal Server Error
       summary: 注册
@@ -374,7 +374,7 @@ paths:
         "200":
           description: code不为0时表示有错误
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "500":
           description: Internal Server Error
       security:
@@ -391,14 +391,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api_imageflix.CreditReduceReq'
+          $ref: '#/definitions/api_imageflix.UserCreditReduceReq'
       produces:
       - application/json
       responses:
         "200":
           description: code不为0时表示有错误
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "500":
           description: Internal Server Error
       security:
@@ -422,7 +422,7 @@ paths:
         "200":
           description: code不为0时表示有错误
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "500":
           description: Internal Server Error
       security:
@@ -440,10 +440,10 @@ paths:
           description: code不为0时表示有错误
           schema:
             allOf:
-            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
             - properties:
                 data:
-                  $ref: '#/definitions/api_imageflix.UserCreditResp'
+                  $ref: '#/definitions/api_imageflix.UserCreditUsableResp'
               type: object
         "500":
           description: Internal Server Error
@@ -468,10 +468,10 @@ paths:
           description: code不为0时表示有错误
           schema:
             allOf:
-            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
             - properties:
                 data:
-                  $ref: '#/definitions/api_user.RespUserInfo'
+                  $ref: '#/definitions/api_user.UserInfoResp'
               type: object
         "500":
           description: Internal Server Error
@@ -490,10 +490,10 @@ paths:
           description: code不为0时表示有错误
           schema:
             allOf:
-            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
             - properties:
                 data:
-                  $ref: '#/definitions/api_user.RespUserInfo'
+                  $ref: '#/definitions/api_user.UserInfoResp'
               type: object
         "500":
           description: Internal Server Error
@@ -513,18 +513,18 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api_user.ReqUpdateUserPassword'
+          $ref: '#/definitions/api_user.UpdateUserPasswordReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
       security:
       - APIAuth: []
       summary: 修改用户密码
@@ -539,11 +539,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
       security:
       - APIAuth: []
       summary: 用户个人资料
@@ -560,18 +560,18 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api_user.ReqUpdateUserProfile'
+          $ref: '#/definitions/api_user.UpdateUserProfileReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
       security:
       - APIAuth: []
       summary: 更新用户个人资料
@@ -588,18 +588,18 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api_user.ReqUpdateUser'
+          $ref: '#/definitions/api_user.UpdateUserReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
       security:
       - APIAuth: []
       summary: 更新用户基本信息

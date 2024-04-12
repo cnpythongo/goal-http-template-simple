@@ -33,7 +33,7 @@ func NewHandler(svc IUserService) IUserHandler {
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param data query ReqGetUserList false "请求体"
-// @Success 200 {object} render.RespJsonData{data=RespGetUserList{result=[]RespUserDetail}} "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp{data=RespGetUserList{result=[]RespUserDetail}} "code不为0时表示有错误"
 // @Failure 500
 // @Security AdminAuth
 // @Router /account/user/list [get]
@@ -62,7 +62,7 @@ func (h *userHandler) List(c *gin.Context) {
 // @Produce json
 // @Param uuid query string true "用户UUID"
 // @Success 200 {object} RespUserDetail
-// @Failure 400 {object} render.RespJsonData
+// @Failure 400 {object} render.JsonDataResp
 // @Security AdminAuth
 // @Router /account/user/detail [get]
 func (h *userHandler) Detail(c *gin.Context) {
@@ -90,7 +90,7 @@ func (h *userHandler) Detail(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param data body ReqCreateUser true "请求体"
-// @Success 200 {object} render.RespJsonData{data=RespUserDetail} "code不为0时表示错误"
+// @Success 200 {object} render.JsonDataResp{data=RespUserDetail} "code不为0时表示错误"
 // @Failure 500
 // @Security AdminAuth
 // @Router /account/user/create [post]
@@ -121,8 +121,8 @@ func (h *userHandler) Create(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param data body ReqUpdateUser true "请求体"
-// @Success 200 {object} render.RespJsonData
-// @Failure 400 {object} render.RespJsonData
+// @Success 200 {object} render.JsonDataResp
+// @Failure 400 {object} render.JsonDataResp
 // @Security AdminAuth
 // @Router /account/user/update [post]
 func (h *userHandler) Update(c *gin.Context) {
@@ -146,8 +146,8 @@ func (h *userHandler) Update(c *gin.Context) {
 // @Description 删除单个用户
 // @Accept json
 // @Produce json
-// @Success 200 {object} render.RespJsonData
-// @Failure 400 {object} render.RespJsonData
+// @Success 200 {object} render.JsonDataResp
+// @Failure 400 {object} render.JsonDataResp
 // @Security AdminAuth
 // @Router /account/user/delete [post]
 func (h *userHandler) Delete(c *gin.Context) {
@@ -167,8 +167,8 @@ func (h *userHandler) Delete(c *gin.Context) {
 // @Description 用户个人资料
 // @Produce json
 // @Param uuid path string true "用户UUID"
-// @Success 200 {object} render.RespJsonData
-// @Failure 400 {object} render.RespJsonData
+// @Success 200 {object} render.JsonDataResp
+// @Failure 400 {object} render.JsonDataResp
 // @Security AdminAuth
 // @Router /account/user/{uuid}/profile [get]
 func (h *userHandler) Profile(c *gin.Context) {
@@ -195,8 +195,8 @@ func (h *userHandler) Profile(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param uuid path string true "用户UUID"
-// @Success 200 {object} render.RespJsonData
-// @Failure 400 {object} render.RespJsonData
+// @Success 200 {object} render.JsonDataResp
+// @Failure 400 {object} render.JsonDataResp
 // @Security AdminAuth
 // @Router /account/users/{uuid}/profile/update [post]
 func (h *userHandler) UpdateProfile(c *gin.Context) {

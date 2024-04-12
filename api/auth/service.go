@@ -15,10 +15,10 @@ import (
 )
 
 type IAuthService interface {
-	Login(c *gin.Context, payload *ReqUserAuth) (*RespUserAuth, int, error)
+	Login(c *gin.Context, payload *UserAuthReq) (*UserAuthResp, int, error)
 	Logout(c *gin.Context) error
-	Signup(payload *ReqAuthSignup) (int, error)
-	Captcha(payload *ReqAuthCaptcha) (RespAuthCaptcha, int, error)
+	Signup(payload *SignupReq) (int, error)
+	Captcha(payload *CaptchaReq) (CaptchaResp, int, error)
 	CaptchaVerify(id, answer string) (bool, error)
 }
 
@@ -37,7 +37,7 @@ func NewAuthService() IAuthService {
 }
 
 // Login 登录
-func (s *authService) Login(c *gin.Context, payload *ReqUserAuth) (*RespUserAuth, int, error) {
+func (s *authService) Login(c *gin.Context, payload *UserAuthReq) (*UserAuthResp, int, error) {
 	user, err := model.GetUserByEmail(s.db, payload.Email)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -58,13 +58,13 @@ func (s *authService) Login(c *gin.Context, payload *ReqUserAuth) (*RespUserAuth
 	if err != nil {
 		return nil, render.AuthTokenGenerateError, err
 	}
-	result := RespUserInfo{}
+	result := UserInfoResp{}
 	err = copier.Copy(&result, &user)
 	if err != nil {
 		return nil, render.DBAttributesCopyError, err
 	}
 
-	data := &RespUserAuth{
+	data := &UserAuthResp{
 		Token:      token,
 		ExpireTime: expireTime.Format(utils.DateTimeLayout),
 		User:       result,
@@ -90,7 +90,7 @@ func (s *authService) Logout(c *gin.Context) error {
 	return nil
 }
 
-func (s *authService) Signup(payload *ReqAuthSignup) (int, error) {
+func (s *authService) Signup(payload *SignupReq) (int, error) {
 	user, err := model.GetUserByEmail(s.db, payload.Email)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return render.QueryError, err
@@ -116,8 +116,8 @@ func (s *authService) Signup(payload *ReqAuthSignup) (int, error) {
 	return render.OK, nil
 }
 
-func (s *authService) Captcha(payload *ReqAuthCaptcha) (RespAuthCaptcha, int, error) {
-	var res RespAuthCaptcha
+func (s *authService) Captcha(payload *CaptchaReq) (CaptchaResp, int, error) {
+	var res CaptchaResp
 	cp := utils.NewCaptcha(payload.W, payload.H, 6)
 	cp.SetStore(s.captchaStore)
 

@@ -52,7 +52,7 @@ func GetLoginCtxUser(c *gin.Context) (*jwt.Claims, int) {
 // @Summary 获取当前登录用户的信息
 // @Description 获取当前登录用户的信息
 // @Produce json
-// @Success 200 {object} render.RespJsonData{data=RespUserInfo} "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp{data=UserInfoResp} "code不为0时表示有错误"
 // @Failure 500
 // @Security APIAuth
 // @Router /users/me [get]
@@ -69,7 +69,7 @@ func (h *userHandler) Me(c *gin.Context) {
 		return
 	}
 
-	result := &RespUserInfo{}
+	result := &UserInfoResp{}
 	err = copier.Copy(&result, &user)
 	if err != nil {
 		render.Json(c, render.DBAttributesCopyError, nil)
@@ -86,12 +86,12 @@ func (h *userHandler) Me(c *gin.Context) {
 // @Description 通过用户UUID获取用户的信息
 // @Produce json
 // @Param uuid path string true "用户UUID"
-// @Success 200 {object} render.RespJsonData{data=RespUserInfo} "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp{data=UserInfoResp} "code不为0时表示有错误"
 // @Failure 500
 // @Security APIAuth
 // @Router /users/{uuid} [get]
 func (h *userHandler) GetUserInfoByUUID(c *gin.Context) {
-	var req ReqGetUserInfo
+	var req UserInfoReq
 	if err := c.ShouldBindUri(&req); err != nil {
 		render.Json(c, render.ParamsError, nil)
 		return
@@ -103,7 +103,7 @@ func (h *userHandler) GetUserInfoByUUID(c *gin.Context) {
 		return
 	}
 
-	result := &RespUserInfo{}
+	result := &UserInfoResp{}
 	err = copier.Copy(&result, &user)
 	if err != nil {
 		render.Json(c, render.DBAttributesCopyError, nil)
@@ -120,8 +120,8 @@ func (h *userHandler) GetUserInfoByUUID(c *gin.Context) {
 // @Summary 用户个人资料
 // @Description 当前登录用户的个人资料
 // @Produce json
-// @Success 200 {object} render.RespJsonData
-// @Failure 400 {object} render.RespJsonData
+// @Success 200 {object} render.JsonDataResp
+// @Failure 400 {object} render.JsonDataResp
 // @Security APIAuth
 // @Router /users/me/profile [get]
 func (h *userHandler) Profile(c *gin.Context) {
@@ -147,13 +147,13 @@ func (h *userHandler) Profile(c *gin.Context) {
 // @Description 更新当前登录用户的个人资料
 // @Accept json
 // @Produce json
-// @Param data body ReqUpdateUserProfile true "请求体"
-// @Success 200 {object} render.RespJsonData
-// @Failure 400 {object} render.RespJsonData
+// @Param data body UpdateUserProfileReq true "请求体"
+// @Success 200 {object} render.JsonDataResp
+// @Failure 400 {object} render.JsonDataResp
 // @Security APIAuth
 // @Router /users/me/profile/update [post]
 func (h *userHandler) UpdateProfile(c *gin.Context) {
-	var req ReqUpdateUserProfile
+	var req UpdateUserProfileReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		render.Json(c, render.ParamsError, err)
 		return
@@ -181,13 +181,13 @@ func (h *userHandler) UpdateProfile(c *gin.Context) {
 // @Description 更新当前登录用户的基本信息
 // @Accept json
 // @Produce json
-// @Param data body ReqUpdateUser true "请求体"
-// @Success 200 {object} render.RespJsonData
-// @Failure 400 {object} render.RespJsonData
+// @Param data body UpdateUserReq true "请求体"
+// @Success 200 {object} render.JsonDataResp
+// @Failure 400 {object} render.JsonDataResp
 // @Security APIAuth
 // @Router /users/me/update [post]
 func (h *userHandler) UpdateUser(c *gin.Context) {
-	var req ReqUpdateUser
+	var req UpdateUserReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		render.Json(c, render.ParamsError, err)
 		return
@@ -215,13 +215,13 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 // @Description 修改当前登录用户的登录密码
 // @Accept json
 // @Produce json
-// @Param data body ReqUpdateUserPassword true "请求体"
-// @Success 200 {object} render.RespJsonData
-// @Failure 400 {object} render.RespJsonData
+// @Param data body UpdateUserPasswordReq true "请求体"
+// @Success 200 {object} render.JsonDataResp
+// @Failure 400 {object} render.JsonDataResp
 // @Security APIAuth
 // @Router /users/me/password/update [post]
 func (h *userHandler) UpdateUserPassword(c *gin.Context) {
-	var req ReqUpdateUserPassword
+	var req UpdateUserPasswordReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		render.Json(c, render.ParamsError, err)
 		return

@@ -92,13 +92,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api_auth.RespAuthCaptcha"
+                                            "$ref": "#/definitions/api_auth.CaptchaResp"
                                         }
                                     }
                                 }
@@ -130,7 +130,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "500": {
@@ -159,7 +159,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api_auth.ReqUserAuth"
+                            "$ref": "#/definitions/api_auth.UserAuthReq"
                         }
                     }
                 ],
@@ -169,13 +169,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api_auth.RespUserAuth"
+                                            "$ref": "#/definitions/api_auth.UserAuthResp"
                                         }
                                     }
                                 }
@@ -208,7 +208,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api_auth.ReqAuthSignup"
+                            "$ref": "#/definitions/api_auth.SignupReq"
                         }
                     }
                 ],
@@ -216,7 +216,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "500": {
@@ -253,7 +253,7 @@ const docTemplate = `{
                     "200": {
                         "description": "code不为0时表示有错误",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "500": {
@@ -284,7 +284,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api_imageflix.CreditReduceReq"
+                            "$ref": "#/definitions/api_imageflix.UserCreditReduceReq"
                         }
                     }
                 ],
@@ -292,7 +292,7 @@ const docTemplate = `{
                     "200": {
                         "description": "code不为0时表示有错误",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "500": {
@@ -331,7 +331,7 @@ const docTemplate = `{
                     "200": {
                         "description": "code不为0时表示有错误",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "500": {
@@ -361,13 +361,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api_imageflix.UserCreditResp"
+                                            "$ref": "#/definitions/api_imageflix.UserCreditUsableResp"
                                         }
                                     }
                                 }
@@ -401,13 +401,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api_user.RespUserInfo"
+                                            "$ref": "#/definitions/api_user.UserInfoResp"
                                         }
                                     }
                                 }
@@ -445,7 +445,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api_user.ReqUpdateUserPassword"
+                            "$ref": "#/definitions/api_user.UpdateUserPasswordReq"
                         }
                     }
                 ],
@@ -453,13 +453,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     }
                 }
@@ -484,13 +484,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     }
                 }
@@ -521,7 +521,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api_user.ReqUpdateUserProfile"
+                            "$ref": "#/definitions/api_user.UpdateUserProfileReq"
                         }
                     }
                 ],
@@ -529,13 +529,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     }
                 }
@@ -566,7 +566,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api_user.ReqUpdateUser"
+                            "$ref": "#/definitions/api_user.UpdateUserReq"
                         }
                     }
                 ],
@@ -574,13 +574,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     }
                 }
@@ -616,13 +616,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api_user.RespUserInfo"
+                                            "$ref": "#/definitions/api_user.UserInfoResp"
                                         }
                                     }
                                 }
@@ -658,7 +658,20 @@ const docTemplate = `{
                 }
             }
         },
-        "api_auth.ReqAuthSignup": {
+        "api_auth.CaptchaResp": {
+            "type": "object",
+            "properties": {
+                "captcha_id": {
+                    "description": "验证码ID",
+                    "type": "string"
+                },
+                "captcha_img": {
+                    "description": "base64编码的验证码图片",
+                    "type": "string"
+                }
+            }
+        },
+        "api_auth.SignupReq": {
             "type": "object",
             "required": [
                 "captcha_answer",
@@ -694,7 +707,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api_auth.ReqUserAuth": {
+        "api_auth.UserAuthReq": {
             "type": "object",
             "required": [
                 "captcha_answer",
@@ -725,20 +738,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api_auth.RespAuthCaptcha": {
-            "type": "object",
-            "properties": {
-                "captcha_id": {
-                    "description": "验证码ID",
-                    "type": "string"
-                },
-                "captcha_img": {
-                    "description": "base64编码的验证码图片",
-                    "type": "string"
-                }
-            }
-        },
-        "api_auth.RespUserAuth": {
+        "api_auth.UserAuthResp": {
             "type": "object",
             "properties": {
                 "expire_time": {
@@ -753,13 +753,13 @@ const docTemplate = `{
                     "description": "用户基本信息",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/api_auth.RespUserInfo"
+                            "$ref": "#/definitions/api_auth.UserInfoResp"
                         }
                     ]
                 }
             }
         },
-        "api_auth.RespUserInfo": {
+        "api_auth.UserInfoResp": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -790,18 +790,6 @@ const docTemplate = `{
                 }
             }
         },
-        "api_imageflix.CreditReduceReq": {
-            "type": "object",
-            "required": [
-                "point"
-            ],
-            "properties": {
-                "point": {
-                    "description": "使用点数",
-                    "type": "integer"
-                }
-            }
-        },
         "api_imageflix.JobStartReq": {
             "type": "object",
             "required": [
@@ -814,7 +802,19 @@ const docTemplate = `{
                 }
             }
         },
-        "api_imageflix.UserCreditResp": {
+        "api_imageflix.UserCreditReduceReq": {
+            "type": "object",
+            "required": [
+                "point"
+            ],
+            "properties": {
+                "point": {
+                    "description": "使用点数",
+                    "type": "integer"
+                }
+            }
+        },
+        "api_imageflix.UserCreditUsableResp": {
             "type": "object",
             "properties": {
                 "usable": {
@@ -823,7 +823,41 @@ const docTemplate = `{
                 }
             }
         },
-        "api_user.ReqUpdateUser": {
+        "api_user.UpdateUserPasswordReq": {
+            "type": "object",
+            "properties": {
+                "new_password": {
+                    "description": "新密码",
+                    "type": "string"
+                },
+                "old_password": {
+                    "description": "旧密码",
+                    "type": "string"
+                },
+                "uuid": {
+                    "description": "用户UUID",
+                    "type": "string"
+                }
+            }
+        },
+        "api_user.UpdateUserProfileReq": {
+            "type": "object",
+            "properties": {
+                "id_number": {
+                    "description": "身份证号",
+                    "type": "string"
+                },
+                "real_name": {
+                    "description": "真实姓名",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "api_user.UpdateUserReq": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -856,41 +890,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api_user.ReqUpdateUserPassword": {
-            "type": "object",
-            "properties": {
-                "new_password": {
-                    "description": "新密码",
-                    "type": "string"
-                },
-                "old_password": {
-                    "description": "旧密码",
-                    "type": "string"
-                },
-                "uuid": {
-                    "description": "用户UUID",
-                    "type": "string"
-                }
-            }
-        },
-        "api_user.ReqUpdateUserProfile": {
-            "type": "object",
-            "properties": {
-                "id_number": {
-                    "description": "身份证号",
-                    "type": "string"
-                },
-                "real_name": {
-                    "description": "真实姓名",
-                    "type": "string"
-                },
-                "user_id": {
-                    "description": "用户ID",
-                    "type": "integer"
-                }
-            }
-        },
-        "api_user.RespUserInfo": {
+        "api_user.UserInfoResp": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -916,7 +916,7 @@ const docTemplate = `{
                 }
             }
         },
-        "goal-app_pkg_render.RespJsonData": {
+        "goal-app_pkg_render.JsonDataResp": {
             "type": "object",
             "properties": {
                 "code": {

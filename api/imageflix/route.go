@@ -11,7 +11,8 @@ func RegisterCreditRoute(route *gin.Engine) *gin.RouterGroup {
 
 	r := route.Group("/api/v1/flix/credits")
 	r.Use(middleware.JWTAuthenticationMiddleware())
-	r.GET("/usable", handler.UserCredit)
+	r.GET("/usable", handler.UserCreditUsable)
+	r.POST("/reduce", handler.UserCreditReduce)
 	return r
 }
 

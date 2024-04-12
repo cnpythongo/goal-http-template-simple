@@ -19,14 +19,14 @@ type RespPageJson struct {
 	Result interface{} `json:"result"`
 }
 
-type RespJsonData struct {
+type JsonDataResp struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
 }
 
 func Json(c *gin.Context, code int, result interface{}) {
-	data := RespJsonData{
+	data := JsonDataResp{
 		Code: code,
 		Msg:  GetCodeMsg(code, result),
 		Data: result,

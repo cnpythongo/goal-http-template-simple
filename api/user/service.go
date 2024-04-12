@@ -16,9 +16,9 @@ type IUserService interface {
 	GetUserByEmail(email string) (*model.User, int, error)
 	GetUserByID(id int64) (*model.User, int, error)
 	GetUserProfile(userId int64) (*model.UserProfile, int, error)
-	UpdateUserProfile(payload *ReqUpdateUserProfile) (int, error)
-	UpdateUser(payload *ReqUpdateUser) (int, error)
-	UpdateUserPassword(payload *ReqUpdateUserPassword) (int, error)
+	UpdateUserProfile(payload *UpdateUserProfileReq) (int, error)
+	UpdateUser(payload *UpdateUserReq) (int, error)
+	UpdateUserPassword(payload *UpdateUserPasswordReq) (int, error)
 }
 
 type userService struct {
@@ -73,7 +73,7 @@ func (s *userService) GetUserProfile(userId int64) (*model.UserProfile, int, err
 	return pf, render.OK, nil
 }
 
-func (s *userService) UpdateUserProfile(payload *ReqUpdateUserProfile) (int, error) {
+func (s *userService) UpdateUserProfile(payload *UpdateUserProfileReq) (int, error) {
 	pf, code, err := s.GetUserProfile(payload.UserId)
 	if err != nil {
 		return code, err
@@ -87,7 +87,7 @@ func (s *userService) UpdateUserProfile(payload *ReqUpdateUserProfile) (int, err
 	return render.OK, nil
 }
 
-func (s *userService) UpdateUser(payload *ReqUpdateUser) (int, error) {
+func (s *userService) UpdateUser(payload *UpdateUserReq) (int, error) {
 	data := map[string]interface{}{}
 	if payload.Nickname != "" {
 		data["nickname"] = payload.Nickname
@@ -111,7 +111,7 @@ func (s *userService) UpdateUser(payload *ReqUpdateUser) (int, error) {
 	return render.OK, nil
 }
 
-func (s *userService) UpdateUserPassword(payload *ReqUpdateUserPassword) (int, error) {
+func (s *userService) UpdateUserPassword(payload *UpdateUserPasswordReq) (int, error) {
 	password, salt := utils.GeneratePassword(payload.NewPassword)
 	err := model.UpdateUser(s.db, payload.UUID, map[string]interface{}{
 		"password": password,

@@ -7,7 +7,8 @@ import (
 )
 
 type IImageFlixCreditHandler interface {
-	UserCredit(c *gin.Context)
+	UserCreditUsable(c *gin.Context)
+	UserCreditReduce(c *gin.Context)
 }
 
 type imageFlixCreditHandler struct {
@@ -20,16 +21,16 @@ func NewImageFlixCreditHandler(svc IImageFlixCreditService) IImageFlixCreditHand
 	}
 }
 
-// UserCredit 用户可用资源包余额
+// UserCreditUsable 用户可用资源包余额
 // @Tags ImageFlix-资源包
 // @Summary 获取当前登录用户可用资源包余额
 // @Description 获取当前登录用户可用资源包余额
 // @Produce json
-// @Success 200 {object} render.RespJsonData{data=UserCreditResp} "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp{data=UserCreditUsableResp} "code不为0时表示有错误"
 // @Failure 500
 // @Security APIAuth
 // @Router /usable [get]
-func (h *imageFlixCreditHandler) UserCredit(c *gin.Context) {
+func (h *imageFlixCreditHandler) UserCreditUsable(c *gin.Context) {
 	ctxUser, errCode := user.GetLoginCtxUser(c)
 	if errCode != render.OK {
 		render.Json(c, errCode, nil)
@@ -42,22 +43,22 @@ func (h *imageFlixCreditHandler) UserCredit(c *gin.Context) {
 		return
 	}
 
-	result := UserCreditResp{Usable: userCredit.Usable}
+	result := UserCreditUsableResp{Usable: userCredit.Usable}
 	render.Json(c, render.OK, result)
 }
 
-// CreditReduce 用户使用资源包点数
+// UserCreditReduce 用户使用资源包点数
 // @Tags ImageFlix-资源包
 // @Summary 获取当前登录用户可用资源包余额
 // @Description 获取当前登录用户可用资源包余额
 // @Produce json
-// @Param data body CreditReduceReq true "请求体"
-// @Success 200 {object} render.RespJsonData "code不为0时表示有错误"
+// @Param data body UserCreditReduceReq true "请求体"
+// @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
 // @Security APIAuth
 // @Router /reduce [post]
-func (h *imageFlixCreditHandler) CreditReduce(c *gin.Context) {
-	var req CreditReduceReq
+func (h *imageFlixCreditHandler) UserCreditReduce(c *gin.Context) {
+	var req UserCreditReduceReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		render.Json(c, render.ParamsError, nil)
 		return
