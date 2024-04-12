@@ -5,10 +5,6 @@ type (
 		Usable int64 `json:"usable"` // 可用点数
 	}
 
-	UserCreditReduceReq struct {
-		Point int64 `json:"point" binding:"required"` // 使用点数
-	}
-
 	JobCreateReq struct {
 	}
 

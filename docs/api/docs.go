@@ -262,45 +262,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/reduce": {
-            "post": {
-                "security": [
-                    {
-                        "APIAuth": []
-                    }
-                ],
-                "description": "获取当前登录用户可用资源包余额",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ImageFlix-资源包"
-                ],
-                "summary": "获取当前登录用户可用资源包余额",
-                "parameters": [
-                    {
-                        "description": "请求体",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api_imageflix.UserCreditReduceReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "code不为0时表示有错误",
-                        "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
-                    }
-                }
-            }
-        },
         "/start": {
             "post": {
                 "security": [
@@ -798,18 +759,6 @@ const docTemplate = `{
             "properties": {
                 "job_id": {
                     "description": "任务ID",
-                    "type": "integer"
-                }
-            }
-        },
-        "api_imageflix.UserCreditReduceReq": {
-            "type": "object",
-            "required": [
-                "point"
-            ],
-            "properties": {
-                "point": {
-                    "description": "使用点数",
                     "type": "integer"
                 }
             }

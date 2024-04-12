@@ -122,14 +122,6 @@ definitions:
     required:
     - job_id
     type: object
-  api_imageflix.UserCreditReduceReq:
-    properties:
-      point:
-        description: 使用点数
-        type: integer
-    required:
-    - point
-    type: object
   api_imageflix.UserCreditUsableResp:
     properties:
       usable:
@@ -382,30 +374,6 @@ paths:
       summary: 当前登录用户上传图片任务
       tags:
       - ImageFlix-任务
-  /reduce:
-    post:
-      description: 获取当前登录用户可用资源包余额
-      parameters:
-      - description: 请求体
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/api_imageflix.UserCreditReduceReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: code不为0时表示有错误
-          schema:
-            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
-        "500":
-          description: Internal Server Error
-      security:
-      - APIAuth: []
-      summary: 获取当前登录用户可用资源包余额
-      tags:
-      - ImageFlix-资源包
   /start:
     post:
       description: 当前登录用户出发开始任务，成功后扣除点数
