@@ -119,12 +119,12 @@ func (s *userService) GetUserDetail(uuid string) (*RespUserDetail, int, error) {
 func (s *userService) CreateUser(payload *ReqCreateUser) (*RespUserDetail, int, error) {
 	user, _, err := s.GetUserByPhone(payload.Phone)
 	if user != nil {
-		return nil, render.DataExistError, errors.New(render.GetCodeMsg(render.DataExistError))
+		return nil, render.DataExistError, errors.New(render.GetCodeMsg(render.DataExistError, nil))
 	}
 
 	user, _, err = s.GetUserByEmail(payload.Email)
 	if user != nil {
-		return nil, render.AccountEmailExistsError, errors.New(render.GetCodeMsg(render.AccountEmailExistsError))
+		return nil, render.AccountEmailExistsError, errors.New(render.GetCodeMsg(render.AccountEmailExistsError, nil))
 	}
 	user = model.NewUser()
 	err = copier.Copy(user, payload)

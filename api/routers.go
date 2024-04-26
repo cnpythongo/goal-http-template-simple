@@ -6,7 +6,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"goal-app/api/attachment"
 	"goal-app/api/auth"
-	"goal-app/api/imageflix"
 	"goal-app/api/user"
 	"goal-app/pkg/config"
 	"goal-app/router"
@@ -27,8 +26,5 @@ func InitAPIRouters(cfg *config.Configuration) *gin.Engine {
 	// attachment api
 	_ = attachment.RegisterRoute(route)
 
-	// imageflix api
-	_ = imageflix.RegisterCreditRoute(route)
-	_ = imageflix.RegisterJobRoute(route)
 	return route
 }

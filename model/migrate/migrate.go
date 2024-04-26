@@ -19,9 +19,6 @@ func MigrateTables(conf *config.Configuration) {
 		model.NewHistory(),
 		model.NewConfig(),
 		model.NewAttachment(),
-		model.NewImageFlixPackage(),
-		model.NewImageFlixCreditOrder(),
-		model.NewImageFlixCredit(),
 	)
 	if err != nil {
 		panic(err)
