@@ -54,9 +54,9 @@ func (s *userService) GetUserList(req *ReqGetUserList) (*RespGetUserList, int, e
 		query = append(query, "status IN ?")
 		args = append(args, req.Status)
 	}
-	if req.IsAdmin {
+	if req.IsAdmin != nil && (*req.IsAdmin == 1 || *req.IsAdmin == 0) {
 		query = append(query, "is_admin = ?")
-		args = append(args, 1)
+		args = append(args, req.IsAdmin)
 	}
 	if req.UUID != "" {
 		query = append(query, "uuid = ?")
@@ -149,7 +149,7 @@ func (s *userService) DeleteUserByUUID(uuid string) (int, error) {
 	err := model.DeleteUser(s.db, uuid)
 	if err != nil {
 		log.GetLogger().Error(err)
-		return render.UpdateError, err
+		return render.DeleteError, err
 	}
 	return render.OK, nil
 }

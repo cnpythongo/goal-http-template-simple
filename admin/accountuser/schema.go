@@ -16,7 +16,7 @@ type (
 		Nickname    string                 `form:"nickname" example:"Tom"`                          // 昵称,模糊查询
 		Status      []model.UserStatusType `form:"status[]" example:"FREEZE,ACTIVE"`                // 用户状态
 		LastLoginAt []string               `form:"last_login_at[]"`                                 // 最近登录时间起止区间
-		IsAdmin     bool                   `form:"is_admin" example:"true"`                         // 是否admin, true or false
+		IsAdmin     *int64                 `form:"is_admin" example:"1"`                            // 是否admin, 1 or 0
 	}
 
 	// RespUserBasic 用户基础数据结构体
