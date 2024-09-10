@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-playground/assert/v2"
-	"goal-app/admin/types"
+	"goal-app/admin/auth"
 	"goal-app/model"
 	"goal-app/test/utils"
 	"net/http"
@@ -28,7 +28,7 @@ func TestLogin(t *testing.T) {
 	assert.Equal(t, result, float64(0))
 
 	data, _ := json.Marshal(response["data"])
-	var res types.RespAdminAuth
+	var res auth.RespAdminAuth
 	_ = json.Unmarshal(data, &res)
 	fmt.Printf("%v\n", res.Token)
 }

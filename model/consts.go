@@ -46,7 +46,7 @@ type AccountHistoryDevice string
 
 const (
 	AccountHistoryDeviceWeb     AccountHistoryDevice = "web"
-	AccountHistoryDeviceAndroid AccountHistoryDevice = "andriod"
+	AccountHistoryDeviceAndroid AccountHistoryDevice = "android"
 	AccountHistoryDeviceIOS     AccountHistoryDevice = "ios"
 )
 

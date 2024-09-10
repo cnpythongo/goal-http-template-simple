@@ -2,11 +2,12 @@ basePath: /api/v1
 definitions:
   admin_accounhistory.ReqGetHistoryList:
     properties:
-      created_at[]:
-        description: 数据创建时间起止区间
-        items:
-          type: string
-        type: array
+      created_at_end:
+        description: 数据创建结束区间
+        type: integer
+      created_at_start:
+        description: 数据创建开始区间
+        type: integer
       email:
         description: 用户邮箱
         example: abc@abc.com
@@ -110,9 +111,9 @@ definitions:
   admin_accountuser.RespUserDetail:
     properties:
       created_at:
-        description: 账号创建时间
-        example: "2023-09-01 13:30:59"
-        type: string
+        description: 账号创建时间(unix秒时间戳)
+        example: 1724914598
+        type: integer
       email:
         description: 邮箱
         example: abc@abc.com
@@ -122,9 +123,9 @@ definitions:
         example: false
         type: boolean
       last_login_at:
-        description: 最近登录时间
-        example: "2023-09-01 13:30:59"
-        type: string
+        description: 最近登录时间(unix秒时间戳)
+        example: 1724914598
+        type: integer
       nickname:
         description: 昵称
         example: Tom
@@ -176,8 +177,9 @@ definitions:
         description: 头像
         type: string
       last_login_at:
-        description: 最近的登录时间
-        type: string
+        description: 最近的登录时间(unix秒时间戳)
+        example: 1724914598
+        type: integer
       nickname:
         description: 昵称
         type: string
@@ -189,7 +191,7 @@ definitions:
         description: 用户uuid
         type: string
     type: object
-  goal-app_pkg_render.RespJsonData:
+  goal-app_pkg_render.JsonDataResp:
     properties:
       code:
         type: integer
@@ -231,13 +233,14 @@ paths:
       - application/x-www-form-urlencoded
       description: 获取用户登录历史记录列表
       parameters:
-      - collectionFormat: multi
-        description: 数据创建时间起止区间
+      - description: 数据创建结束区间
         in: query
-        items:
-          type: string
-        name: created_at[]
-        type: array
+        name: created_at_end
+        type: integer
+      - description: 数据创建开始区间
+        in: query
+        name: created_at_start
+        type: integer
       - description: 用户邮箱
         example: abc@abc.com
         in: query
@@ -308,7 +311,7 @@ paths:
           description: code不为0时表示有错误
           schema:
             allOf:
-            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
             - properties:
                 data:
                   $ref: '#/definitions/admin_auth.RespAdminAuth'
@@ -330,7 +333,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
       security:
       - AdminAuth: []
       summary: 退出
@@ -351,11 +354,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
       security:
       - AdminAuth: []
       summary: 用户个人资料
@@ -380,7 +383,7 @@ paths:
           description: code不为0时表示错误
           schema:
             allOf:
-            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
             - properties:
                 data:
                   $ref: '#/definitions/admin_accountuser.RespUserDetail'
@@ -403,11 +406,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
       security:
       - AdminAuth: []
       summary: 删除用户
@@ -434,7 +437,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
       security:
       - AdminAuth: []
       summary: 通过用户UUID获取用户详情
@@ -446,30 +449,32 @@ paths:
       - application/x-www-form-urlencoded
       description: 获取用户列表
       parameters:
-      - collectionFormat: multi
-        description: 数据创建时间起止区间
+      - description: 数据创建结束区间
         in: query
-        items:
-          type: string
-        name: created_at[]
-        type: array
+        name: created_at_end
+        type: integer
+      - description: 数据创建开始区间
+        in: query
+        name: created_at_start
+        type: integer
       - description: 邮箱,模糊查询
         example: abc@abc.com
         in: query
         name: email
         type: string
-      - description: 是否admin, true or false
-        example: true
+      - description: 是否admin, 1 or 0
+        example: 1
         in: query
         name: is_admin
-        type: boolean
-      - collectionFormat: multi
-        description: 最近登录时间起止区间
+        type: integer
+      - description: 最近登录结束时间
         in: query
-        items:
-          type: string
-        name: last_login_at[]
-        type: array
+        name: last_login_at_end
+        type: integer
+      - description: 最近登录开始时间
+        in: query
+        name: last_login_at_start
+        type: integer
       - default: 10
         description: 每页数量
         example: 10
@@ -519,7 +524,7 @@ paths:
           description: code不为0时表示有错误
           schema:
             allOf:
-            - $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
             - properties:
                 data:
                   allOf:
@@ -556,11 +561,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
       security:
       - AdminAuth: []
       summary: 更新用户
@@ -583,11 +588,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.RespJsonData'
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
       security:
       - AdminAuth: []
       summary: 删除用户

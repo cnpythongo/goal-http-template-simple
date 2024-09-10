@@ -1,7 +1,6 @@
 package accountuser
 
 import (
-	"github.com/cnpythongo/goal-tools/utils"
 	"goal-app/model"
 	"goal-app/pkg/render"
 )
@@ -10,13 +9,14 @@ type (
 	// ReqGetUserList 获取用户列表的请求参数体
 	ReqGetUserList struct {
 		render.Pagination
-		UUID        string                 `form:"uuid" example:"826d6b1aa64d471d822d667e92218158"` // 用户UUID,精确匹配
-		Phone       string                 `form:"phone" example:"13800138000"`                     // 手机号,模糊查询
-		Email       string                 `form:"email" example:"abc@abc.com"`                     // 邮箱,模糊查询
-		Nickname    string                 `form:"nickname" example:"Tom"`                          // 昵称,模糊查询
-		Status      []model.UserStatusType `form:"status[]" example:"FREEZE,ACTIVE"`                // 用户状态
-		LastLoginAt []string               `form:"last_login_at[]"`                                 // 最近登录时间起止区间
-		IsAdmin     *int64                 `form:"is_admin" example:"1"`                            // 是否admin, 1 or 0
+		UUID             string                 `form:"uuid" example:"826d6b1aa64d471d822d667e92218158"` // 用户UUID,精确匹配
+		Phone            string                 `form:"phone" example:"13800138000"`                     // 手机号,模糊查询
+		Email            string                 `form:"email" example:"abc@abc.com"`                     // 邮箱,模糊查询
+		Nickname         string                 `form:"nickname" example:"Tom"`                          // 昵称,模糊查询
+		Status           []model.UserStatusType `form:"status[]" example:"FREEZE,ACTIVE"`                // 用户状态
+		LastLoginAtStart int64                  `form:"last_login_at_start"`                             // 最近登录开始时间
+		LastLoginAtEnd   int64                  `form:"last_login_at_end"`                               // 最近登录结束时间
+		IsAdmin          *int64                 `form:"is_admin" example:"1"`                            // 是否admin, 1 or 0
 	}
 
 	// RespUserBasic 用户基础数据结构体
@@ -27,8 +27,8 @@ type (
 		Nickname    string               `json:"nickname" example:"Tom"`                          // 昵称
 		Status      model.UserStatusType `json:"status" example:"ACTIVE"`                         // 用户状态
 		IsAdmin     bool                 `json:"is_admin" example:"false"`                        // 是否管理员
-		CreatedAt   *utils.LocalTime     `json:"created_at" example:"2023-09-01 13:30:59"`        // 账号创建时间
-		LastLoginAt *utils.LocalTime     `json:"last_login_at" example:"2023-09-01 13:30:59"`     // 最近登录时间
+		CreatedAt   int64                `json:"created_at" example:"1724914598"`                 // 账号创建时间(unix秒时间戳)
+		LastLoginAt int64                `json:"last_login_at" example:"1724914598"`              // 最近登录时间(unix秒时间戳)
 	}
 
 	// RespUserDetail 用户详情数据结构体

@@ -225,122 +225,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/create": {
-            "post": {
-                "security": [
-                    {
-                        "APIAuth": []
-                    }
-                ],
-                "description": "当前登录用户上传图片任务",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ImageFlix-任务"
-                ],
-                "summary": "当前登录用户上传图片任务",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "文件流",
-                        "name": "file",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "code不为0时表示有错误",
-                        "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
-                    }
-                }
-            }
-        },
-        "/start": {
-            "post": {
-                "security": [
-                    {
-                        "APIAuth": []
-                    }
-                ],
-                "description": "当前登录用户出发开始任务，成功后扣除点数",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ImageFlix-任务"
-                ],
-                "summary": "当前登录用户出发开始任务",
-                "parameters": [
-                    {
-                        "description": "请求体",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api_imageflix.JobStartReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "code不为0时表示有错误",
-                        "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
-                    }
-                }
-            }
-        },
-        "/usable": {
-            "get": {
-                "security": [
-                    {
-                        "APIAuth": []
-                    }
-                ],
-                "description": "获取当前登录用户可用资源包余额",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ImageFlix-资源包"
-                ],
-                "summary": "获取当前登录用户可用资源包余额",
-                "responses": {
-                    "200": {
-                        "description": "code不为0时表示有错误",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/api_imageflix.UserCreditUsableResp"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
-                    }
-                }
-            }
-        },
         "/users/me": {
             "get": {
                 "security": [
@@ -602,8 +486,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "created_at": {
-                    "description": "上传时间",
-                    "type": "string"
+                    "description": "上传时间(unix秒时间戳)",
+                    "type": "integer"
                 },
                 "name": {
                     "description": "文件名",
@@ -733,8 +617,8 @@ const docTemplate = `{
                     "example": "foo@bar.com"
                 },
                 "last_login_at": {
-                    "description": "最近的登录时间",
-                    "type": "string"
+                    "description": "最近的登录时间(unix秒时间戳)",
+                    "type": "integer"
                 },
                 "nickname": {
                     "description": "昵称",
@@ -748,27 +632,6 @@ const docTemplate = `{
                 "uuid": {
                     "description": "用户uuid",
                     "type": "string"
-                }
-            }
-        },
-        "api_imageflix.JobStartReq": {
-            "type": "object",
-            "required": [
-                "job_id"
-            ],
-            "properties": {
-                "job_id": {
-                    "description": "任务ID",
-                    "type": "integer"
-                }
-            }
-        },
-        "api_imageflix.UserCreditUsableResp": {
-            "type": "object",
-            "properties": {
-                "usable": {
-                    "description": "可用点数",
-                    "type": "integer"
                 }
             }
         },
@@ -847,8 +710,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "last_login_at": {
-                    "description": "最近的登录时间",
-                    "type": "string"
+                    "description": "最近的登录时间(unix秒时间戳)",
+                    "type": "integer"
                 },
                 "nickname": {
                     "description": "昵称",

@@ -30,7 +30,7 @@ func NewConfigList() []*Config {
 
 // GetConfigList 获取配置列表
 func GetConfigList(db *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*Config, int, error) {
-	qs := db.Where("deleted_at = null")
+	qs := db.Where("deleted_at = 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}
@@ -77,7 +77,7 @@ func UpdateConfig(db *gorm.DB, id int, data map[string]interface{}) error {
 
 // DeleteConfig 删除配置，逻辑删除
 func DeleteConfig(db *gorm.DB, id int) error {
-	return UpdateConfig(db, id, map[string]interface{}{"deleted_at": time.Now()})
+	return UpdateConfig(db, id, map[string]interface{}{"deleted_at": time.Now().Unix()})
 }
 
 // GetConfigById 根据ID获取单个配置数据

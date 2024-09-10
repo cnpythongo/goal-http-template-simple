@@ -35,13 +35,15 @@ const docTemplate = `{
                 "summary": "登录历史记录列表",
                 "parameters": [
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "description": "数据创建时间起止区间",
-                        "name": "created_at[]",
+                        "type": "integer",
+                        "description": "数据创建结束区间",
+                        "name": "created_at_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "数据创建开始区间",
+                        "name": "created_at_start",
                         "in": "query"
                     },
                     {
@@ -139,7 +141,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                                 },
                                 {
                                     "type": "object",
@@ -177,7 +179,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     }
                 }
@@ -218,7 +220,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                                 },
                                 {
                                     "type": "object",
@@ -259,13 +261,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     }
                 }
@@ -308,7 +310,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     }
                 }
@@ -334,13 +336,15 @@ const docTemplate = `{
                 "summary": "获取用户列表",
                 "parameters": [
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "description": "数据创建时间起止区间",
-                        "name": "created_at[]",
+                        "type": "integer",
+                        "description": "数据创建结束区间",
+                        "name": "created_at_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "数据创建开始区间",
+                        "name": "created_at_start",
                         "in": "query"
                     },
                     {
@@ -351,20 +355,22 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "boolean",
-                        "example": true,
-                        "description": "是否admin, true or false",
+                        "type": "integer",
+                        "example": 1,
+                        "description": "是否admin, 1 or 0",
                         "name": "is_admin",
                         "in": "query"
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "description": "最近登录时间起止区间",
-                        "name": "last_login_at[]",
+                        "type": "integer",
+                        "description": "最近登录结束时间",
+                        "name": "last_login_at_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "最近登录开始时间",
+                        "name": "last_login_at_start",
                         "in": "query"
                     },
                     {
@@ -431,7 +437,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                                 },
                                 {
                                     "type": "object",
@@ -498,13 +504,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     }
                 }
@@ -538,13 +544,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     }
                 }
@@ -581,13 +587,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.RespJsonData"
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     }
                 }
@@ -598,12 +604,13 @@ const docTemplate = `{
         "admin_accounhistory.ReqGetHistoryList": {
             "type": "object",
             "properties": {
-                "created_at[]": {
-                    "description": "数据创建时间起止区间",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "created_at_end": {
+                    "description": "数据创建结束区间",
+                    "type": "integer"
+                },
+                "created_at_start": {
+                    "description": "数据创建开始区间",
+                    "type": "integer"
                 },
                 "email": {
                     "description": "用户邮箱",
@@ -742,9 +749,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "created_at": {
-                    "description": "账号创建时间",
-                    "type": "string",
-                    "example": "2023-09-01 13:30:59"
+                    "description": "账号创建时间(unix秒时间戳)",
+                    "type": "integer",
+                    "example": 1724914598
                 },
                 "email": {
                     "description": "邮箱",
@@ -757,9 +764,9 @@ const docTemplate = `{
                     "example": false
                 },
                 "last_login_at": {
-                    "description": "最近登录时间",
-                    "type": "string",
-                    "example": "2023-09-01 13:30:59"
+                    "description": "最近登录时间(unix秒时间戳)",
+                    "type": "integer",
+                    "example": 1724914598
                 },
                 "nickname": {
                     "description": "昵称",
@@ -835,8 +842,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "last_login_at": {
-                    "description": "最近的登录时间",
-                    "type": "string"
+                    "description": "最近的登录时间(unix秒时间戳)",
+                    "type": "integer",
+                    "example": 1724914598
                 },
                 "nickname": {
                     "description": "昵称",
@@ -853,7 +861,7 @@ const docTemplate = `{
                 }
             }
         },
-        "goal-app_pkg_render.RespJsonData": {
+        "goal-app_pkg_render.JsonDataResp": {
             "type": "object",
             "properties": {
                 "code": {

@@ -1,7 +1,5 @@
 package auth
 
-import "github.com/cnpythongo/goal-tools/utils"
-
 type (
 	// ReqAdminAuth 用户登录请求结构体
 	ReqAdminAuth struct {
@@ -11,11 +9,11 @@ type (
 
 	// RespAdminAuthUser 用户基本数据结构
 	RespAdminAuthUser struct {
-		UUID        string           `json:"uuid"`                        // 用户uuid
-		Phone       string           `json:"phone" example:"138****8000"` // 带掩码的手机号
-		LastLoginAt *utils.LocalTime `json:"last_login_at"`               // 最近的登录时间
-		Nickname    string           `json:"nickname"`                    // 昵称
-		Avatar      string           `json:"avatar"`                      // 头像
+		UUID        string `json:"uuid"`                               // 用户uuid
+		Phone       string `json:"phone" example:"138****8000"`        // 带掩码的手机号
+		LastLoginAt int64  `json:"last_login_at" example:"1724914598"` // 最近的登录时间(unix秒时间戳)
+		Nickname    string `json:"nickname"`                           // 昵称
+		Avatar      string `json:"avatar"`                             // 头像
 	}
 
 	// RespAdminAuth 用户登录接口返回数据结构
