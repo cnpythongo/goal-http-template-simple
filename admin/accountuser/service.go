@@ -62,21 +62,21 @@ func (s *userService) GetUserList(req *ReqGetUserList) (*RespGetUserList, int, e
 		query = append(query, "uuid = ?")
 		args = append(args, req.UUID)
 	}
-	if len(req.CreatedAt) > 0 {
+	if req.CreatedAtStart > 0 {
 		query = append(query, "created_at >= ?")
-		args = append(args, req.CreatedAt[0])
-		if len(req.CreatedAt) == 2 {
-			query = append(query, "created_at <= ?")
-			args = append(args, req.CreatedAt[1])
-		}
+		args = append(args, req.CreatedAtStart)
 	}
-	if len(req.LastLoginAt) > 0 {
+	if req.CreatedAtEnd > 0 {
+		query = append(query, "created_at <= ?")
+		args = append(args, req.CreatedAtEnd)
+	}
+	if req.LastLoginAtStart > 0 {
 		query = append(query, "last_login_at >= ?")
-		args = append(args, req.LastLoginAt[0])
-		if len(req.LastLoginAt) == 2 {
-			query = append(query, "last_login_at <= ?")
-			args = append(args, req.LastLoginAt[1])
-		}
+		args = append(args, req.LastLoginAtStart)
+	}
+	if req.LastLoginAtEnd > 0 {
+		query = append(query, "last_login_at <= ?")
+		args = append(args, req.LastLoginAtEnd)
 	}
 	queryStr := strings.Join(query, " AND ")
 	rows, total, err := model.GetUserList(s.db, req.Page, req.Limit, queryStr, args)
