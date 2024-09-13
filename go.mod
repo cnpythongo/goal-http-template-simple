@@ -4,10 +4,10 @@ go 1.20
 
 require (
 	github.com/aviddiviner/gin-limit v0.0.0-20170918012823-43b5f79762c1
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/gzip v0.0.6
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/assert/v2 v2.2.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/uuid v1.6.0
 	github.com/guanguans/id-validator v1.3.0
 	github.com/jinzhu/configor v1.2.1

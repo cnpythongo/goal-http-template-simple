@@ -3,7 +3,7 @@ package jwt
 import (
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 
 	"goal-app/pkg/config"
 )
@@ -18,7 +18,7 @@ type Claims struct {
 	ID   uint64 `json:"id"`
 	UUID string `json:"uuid"`
 	// Phone string `json:"phone"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func GenerateToken(id uint64, uid, phone string) (string, time.Time, error) {
@@ -29,8 +29,8 @@ func GenerateToken(id uint64, uid, phone string) (string, time.Time, error) {
 		id,
 		uid,
 		// phone,
-		jwt.StandardClaims{
-			ExpiresAt: expireTime.Unix(),
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expireTime),
 			Issuer:    "goal-app",
 		},
 	}

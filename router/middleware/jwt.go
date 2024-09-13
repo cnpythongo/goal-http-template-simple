@@ -27,7 +27,7 @@ func JWTAuthenticationMiddleware() gin.HandlerFunc {
 			claims, err = jwt.ParseToken(token)
 			if err != nil {
 				code = render.AuthTokenError
-			} else if time.Now().Unix() > claims.ExpiresAt {
+			} else if time.Now().Unix() > claims.ExpiresAt.Unix() {
 				code = render.AuthTokenError
 			}
 		}
