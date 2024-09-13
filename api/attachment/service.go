@@ -21,14 +21,10 @@ type IAttachmentService interface {
 
 type attachmentService struct {
 	ctx *gin.Context
-	db  *gorm.DB
 }
 
 func NewAttachmentService() IAttachmentService {
-	db := model.GetDB()
-	return &attachmentService{
-		db: db,
-	}
+	return &attachmentService{}
 }
 
 func (svc *attachmentService) Add(payload AttachmentAddReq, file *multipart.FileHeader) (AttachmentResp, int, error) {
@@ -40,7 +36,7 @@ func (svc *attachmentService) Add(payload AttachmentAddReq, file *multipart.File
 	}
 	uid := payload.UserId
 
-	record, err := model.GetAttachmentByUserIdAndMd5(svc.db, uid, upFile.Md5)
+	record, err := model.GetAttachmentByUserIdAndMd5(model.GetDB(), uid, upFile.Md5)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.GetLogger().Errorf("attachmentService.Add.GetAttachmentByUserIdAndMd5 err=%v", err)
 		return res, render.QueryError, err
@@ -61,7 +57,7 @@ func (svc *attachmentService) Add(payload AttachmentAddReq, file *multipart.File
 			Path:   upFile.Uri,
 			IP:     payload.IP,
 		}
-		err = svc.db.Create(&att).Error
+		err = model.GetDB().Create(&att).Error
 		if err != nil {
 			return res, render.CreateError, errors.New("创建上传附件记录失败")
 		}

@@ -29,7 +29,7 @@ func NewConfigList() []*Config {
 }
 
 // GetConfigList 获取配置列表
-func GetConfigList(db *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*Config, int, error) {
+func GetConfigList(db *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*Config, int64, error) {
 	qs := db.Where("deleted_at = 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
@@ -53,7 +53,7 @@ func GetConfigList(db *gorm.DB, page, size int, query interface{}, args []interf
 		log.GetLogger().Errorf("model.system_config.GetConfigList Query Error ==> %s", err)
 		return nil, 0, err
 	}
-	return result, int(count), nil
+	return result, count, nil
 }
 
 // CreateConfig 创建配置
@@ -67,7 +67,7 @@ func CreateConfig(db *gorm.DB, cfg *Config) (*Config, error) {
 }
 
 // UpdateConfig 更新配置
-func UpdateConfig(db *gorm.DB, id int, data map[string]interface{}) error {
+func UpdateConfig(db *gorm.DB, id uint64, data map[string]interface{}) error {
 	err := db.Model(NewConfig()).Where("id = ?", id).UpdateColumns(data).Error
 	if err != nil {
 		log.GetLogger().Errorf("model.system_config.UpdateConfig Error ==> %v", err)
@@ -76,12 +76,12 @@ func UpdateConfig(db *gorm.DB, id int, data map[string]interface{}) error {
 }
 
 // DeleteConfig 删除配置，逻辑删除
-func DeleteConfig(db *gorm.DB, id int) error {
+func DeleteConfig(db *gorm.DB, id uint64) error {
 	return UpdateConfig(db, id, map[string]interface{}{"deleted_at": time.Now().Unix()})
 }
 
 // GetConfigById 根据ID获取单个配置数据
-func GetConfigById(db *gorm.DB, id int) (*Config, error) {
+func GetConfigById(db *gorm.DB, id uint64) (*Config, error) {
 	result := NewConfig()
 	err := db.Model(NewConfig()).Where("id = ?", id).Limit(1).First(&result).Error
 	if !errors.Is(err, gorm.ErrRecordNotFound) {

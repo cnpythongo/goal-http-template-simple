@@ -14,8 +14,8 @@ type IUserService interface {
 	GetUserByPhone(phone string) (*model.User, error)
 	GetUserByUUID(uuid string) (*model.User, int, error)
 	GetUserByEmail(email string) (*model.User, int, error)
-	GetUserByID(id int64) (*model.User, int, error)
-	GetUserProfile(userId int64) (*model.UserProfile, int, error)
+	GetUserByID(id uint64) (*model.User, int, error)
+	GetUserProfile(userId uint64) (*model.UserProfile, int, error)
 	UpdateUserProfile(payload *UpdateUserProfileReq) (int, error)
 	UpdateUser(payload *UpdateUserReq) (int, error)
 	UpdateUserPassword(payload *UpdateUserPasswordReq) (int, error)
@@ -23,22 +23,18 @@ type IUserService interface {
 
 type userService struct {
 	ctx *gin.Context
-	db  *gorm.DB
 }
 
 func NewUserService() IUserService {
-	db := model.GetDB()
-	return &userService{
-		db: db,
-	}
+	return &userService{}
 }
 
 func (s *userService) GetUserByPhone(phone string) (*model.User, error) {
-	return model.GetUserByPhone(s.db, phone)
+	return model.GetUserByPhone(model.GetDB(), phone)
 }
 
 func (s *userService) GetUserByUUID(uuid string) (*model.User, int, error) {
-	user, err := model.GetUserByConditions(s.db, map[string]interface{}{"uuid": uuid})
+	user, err := model.GetUserByConditions(model.GetDB(), map[string]interface{}{"uuid": uuid})
 	if err != nil {
 		return nil, render.QueryError, err
 	}
@@ -46,23 +42,23 @@ func (s *userService) GetUserByUUID(uuid string) (*model.User, int, error) {
 }
 
 func (s *userService) GetUserByEmail(email string) (*model.User, int, error) {
-	user, err := model.GetUserByConditions(s.db, map[string]interface{}{"email": email})
+	user, err := model.GetUserByConditions(model.GetDB(), map[string]interface{}{"email": email})
 	if err != nil {
 		return nil, render.QueryError, err
 	}
 	return user, render.OK, nil
 }
 
-func (s *userService) GetUserByID(id int64) (*model.User, int, error) {
-	user, err := model.GetUserByConditions(s.db, map[string]interface{}{"id": id})
+func (s *userService) GetUserByID(id uint64) (*model.User, int, error) {
+	user, err := model.GetUserByConditions(model.GetDB(), map[string]interface{}{"id": id})
 	if err != nil {
 		return nil, render.QueryError, err
 	}
 	return user, render.OK, nil
 }
 
-func (s *userService) GetUserProfile(userId int64) (*model.UserProfile, int, error) {
-	pf, err := model.GetUserProfileByUserId(s.db, userId)
+func (s *userService) GetUserProfile(userId uint64) (*model.UserProfile, int, error) {
+	pf, err := model.GetUserProfileByUserId(model.GetDB(), userId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, render.DataNotExistError, err
@@ -79,7 +75,7 @@ func (s *userService) UpdateUserProfile(payload *UpdateUserProfileReq) (int, err
 		return code, err
 	}
 
-	_, err = model.UpdateUserProfile(s.db, pf)
+	_, err = model.UpdateUserProfile(model.GetDB(), pf)
 	if err != nil {
 		log.GetLogger().Errorf("model.UpdateUserProfile Error ==> %v", err)
 		return render.UpdateError, err
@@ -102,7 +98,7 @@ func (s *userService) UpdateUser(payload *UpdateUserReq) (int, error) {
 		data["signature"] = payload.Signature
 	}
 	if len(data) > 0 {
-		err := model.UpdateUser(s.db, payload.UUID, data)
+		err := model.UpdateUser(model.GetDB(), payload.UUID, data)
 		if err != nil {
 			log.GetLogger().Errorf("model.UpdateUser Error ==> %v", err)
 			return render.UpdateError, err
@@ -113,7 +109,7 @@ func (s *userService) UpdateUser(payload *UpdateUserReq) (int, error) {
 
 func (s *userService) UpdateUserPassword(payload *UpdateUserPasswordReq) (int, error) {
 	password, salt := utils.GeneratePassword(payload.NewPassword)
-	err := model.UpdateUser(s.db, payload.UUID, map[string]interface{}{
+	err := model.UpdateUser(model.GetDB(), payload.UUID, map[string]interface{}{
 		"password": password,
 		"salt":     salt,
 	})

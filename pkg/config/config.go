@@ -71,12 +71,13 @@ type (
 	}
 
 	Configuration struct {
-		App     AppConfig     `json:"app"`
-		Http    HttpConfig    `json:"http"`
-		Mysql   MysqlConfig   `json:"mysql"`
-		Logger  LoggerConfig  `json:"logger"`
-		Redis   RedisConfig   `json:"redis"`
-		Storage StorageConfig `json:"storage"`
+		App        AppConfig     `json:"app"`
+		Http       HttpConfig    `json:"http"`
+		Mysql      MysqlConfig   `json:"mysql"`
+		MysqlWrite MysqlConfig   `json:"mysql_write"`
+		Logger     LoggerConfig  `json:"logger"`
+		Redis      RedisConfig   `json:"redis"`
+		Storage    StorageConfig `json:"storage"`
 	}
 )
 

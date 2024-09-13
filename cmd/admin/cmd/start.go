@@ -65,6 +65,10 @@ func (app *Application) Init(env svc.Environment) error {
 		logger.Error("Init Mysql Err:", err.Error())
 		return err
 	}
+	//if err = model.InitWrite(&cfg.MysqlWrite); err != nil {
+	//	logger.Error("Init MysqlWrite Err:", err.Error())
+	//	return err
+	//}
 	if config.GetConfig().Redis.Enable {
 		client := redis.Init()
 		if client == nil {

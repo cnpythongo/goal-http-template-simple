@@ -9,7 +9,7 @@ import (
 
 type History struct {
 	BaseModel
-	UserID int64                `json:"user_id" gorm:"index:idx_account_history_user_id;column:user_id;type:int(11);not null;comment:用户ID"`
+	UserID uint64               `json:"user_id" gorm:"index:idx_account_history_user_id;column:user_id;type:int(11);not null;comment:用户ID"`
 	Device AccountHistoryDevice `json:"device" gorm:"column:device;type:varchar(50);not null;default:'web';comment:登录设备"`
 	IP     string               `json:"ip" gorm:"column:ip;type:varchar(50);not null;default:'';comment:登录IP"`
 	Locate string               `json:"locate" gorm:"column:locate;type:varchar(100);not null;default:'';comment:归属地"`
@@ -28,7 +28,7 @@ func (h *History) TableName() string {
 }
 
 // GetHistoryById 获取单条历史记录
-func GetHistoryById(db *gorm.DB, id int) (*History, error) {
+func GetHistoryById(db *gorm.DB, id uint64) (*History, error) {
 	result := NewHistory()
 	err := db.Model(NewHistory()).Where("id = ?", id).Limit(1).First(&result).Error
 	if err != nil {
@@ -75,10 +75,10 @@ func CreateHistory(db *gorm.DB, h *History) (*History, error) {
 	return h, nil
 }
 
-func DeleteHistoryByIds(db *gorm.DB, ids []int) error {
+func DeleteHistoryByIds(db *gorm.DB, ids []uint64) error {
 	return db.Model(NewHistory()).Where("id in ?", ids).Update("deleted_at", time.Now().Unix()).Error
 }
 
-func DeleteHistoryByUserIds(db *gorm.DB, userIds []int) error {
+func DeleteHistoryByUserIds(db *gorm.DB, userIds []uint64) error {
 	return db.Model(NewHistory()).Where("user_id in ?", userIds).Update("deleted_at", time.Now().Unix()).Error
 }

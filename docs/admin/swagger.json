@@ -591,6 +591,155 @@
                     }
                 }
             }
+        },
+        "/system/orgs/create": {
+            "post": {
+                "description": "创建组织机构",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "创建组织机构",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemorg.ReqSystemOrgCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/orgs/delete": {
+            "post": {
+                "description": "删除组织机构",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "删除组织机构",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemorg.ReqSystemOrgId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/orgs/tree": {
+            "get": {
+                "description": "获取组织机构树结构数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "获取组织机构树结构数据",
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_systemorg.RespSystemOrgTree"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/orgs/update": {
+            "post": {
+                "description": "更新组织机构",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "更新组织机构",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemorg.ReqSystemOrgUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -850,6 +999,73 @@
                 },
                 "uuid": {
                     "description": "用户uuid",
+                    "type": "string"
+                }
+            }
+        },
+        "admin_systemorg.ReqSystemOrgCreate": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "组织名称",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "父ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_systemorg.ReqSystemOrgId": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "组织ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_systemorg.ReqSystemOrgUpdate": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "组织ID",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "组织名称",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "父ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_systemorg.RespSystemOrgTree": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "description": "子节点",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin_systemorg.RespSystemOrgTree"
+                    }
+                },
+                "id": {
+                    "description": "组织ID",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "组织名称",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "父ID",
+                    "type": "integer"
+                },
+                "parent_name": {
+                    "description": "父名称",
                     "type": "string"
                 }
             }

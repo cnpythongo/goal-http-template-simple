@@ -11,19 +11,27 @@ import (
 )
 
 var db *gorm.DB
+var dbWrite *gorm.DB
 
 type BaseModel struct {
-	ID        int64 `gorm:"primary_key;comment:流水ID" json:"-"`
-	CreatedAt int64 `gorm:"column:created_at;autoCreateTime;not null;comment:数据创建时间" json:"-"`
-	UpdatedAt int64 `gorm:"column:updated_at;autoUpdateTime;not null;comment:数据更新时间" json:"-"`
-	DeletedAt int64 `gorm:"column:deleted_at;default:0;comment:数据删除时间" json:"-"`
+	ID        uint64 `gorm:"primary_key;comment:流水ID" json:"-"`
+	CreatedAt uint64 `gorm:"column:created_at;autoCreateTime;not null;comment:数据创建时间" json:"-"`
+	UpdatedAt uint64 `gorm:"column:updated_at;autoUpdateTime;not null;comment:数据更新时间" json:"-"`
+	DeletedAt uint64 `gorm:"column:deleted_at;default:0;comment:数据删除时间" json:"-"`
 }
 
 func GetDB() *gorm.DB {
 	if db == nil {
-		panic("DB not inited")
+		panic("DB Reader not inited")
 	}
 	return db
+}
+
+func GetDBWrite() *gorm.DB {
+	if dbWrite == nil {
+		panic("DBWrite not inited")
+	}
+	return dbWrite
 }
 
 func getDatabaseDsn(cfg *config.MysqlConfig) string {
@@ -47,13 +55,11 @@ func initDatabase(cfg *config.MysqlConfig) {
 	)
 	err = db.Exec(createSQL).Error
 	if err != nil {
-		panic("Create Database error >>> " + err.Error())
+		panic("CreateDatabase error: " + err.Error())
 	}
 }
 
 func Init(conf *config.MysqlConfig) error {
-	initDatabase(conf)
-
 	var err error
 	dsn := fmt.Sprintf("%s/%s?%s",
 		getDatabaseDsn(conf), conf.DbName, conf.DbParams,
@@ -86,5 +92,40 @@ func Close() error {
 		}
 	}
 	log.GetLogger().Info("Close mysql database connect done")
+
+	if dbWrite != nil {
+		wdb, err := dbWrite.DB()
+		if err == nil {
+			_ = wdb.Close()
+		}
+	}
+	log.GetLogger().Info("Close mysql write database connect done")
+	return nil
+}
+
+func InitWrite(conf *config.MysqlConfig) error {
+	initDatabase(conf)
+
+	var err error
+	dsn := fmt.Sprintf("%s/%s?%s",
+		getDatabaseDsn(conf), conf.DbName, conf.DbParams,
+	)
+	dbWrite, err = gorm.Open(
+		mysql.Open(dsn),
+		&gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		},
+	)
+	if err != nil {
+		return err
+	}
+	idb, _ := dbWrite.DB()
+	idb.SetConnMaxIdleTime(120 * time.Second)
+	idb.SetConnMaxLifetime(7200 * time.Second)
+	idb.SetMaxOpenConns(200)
+	idb.SetMaxIdleConns(10)
+	if err = idb.Ping(); err != nil {
+		return err
+	}
 	return nil
 }

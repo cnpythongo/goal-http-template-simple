@@ -15,13 +15,13 @@ var (
 )
 
 type Claims struct {
-	ID   int64  `json:"id"`
+	ID   uint64 `json:"id"`
 	UUID string `json:"uuid"`
 	// Phone string `json:"phone"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(id int64, uid, phone string) (string, time.Time, error) {
+func GenerateToken(id uint64, uid, phone string) (string, time.Time, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(15 * 24 * time.Hour)
 

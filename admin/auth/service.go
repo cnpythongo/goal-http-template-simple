@@ -19,19 +19,15 @@ type IAuthService interface {
 }
 
 type authService struct {
-	db *gorm.DB
 }
 
 func NewAuthService() IAuthService {
-	db := model.GetDB()
-	return &authService{
-		db: db,
-	}
+	return &authService{}
 }
 
 // Login 登录
 func (s *authService) Login(c *gin.Context, payload *ReqAdminAuth) (*RespAdminAuth, int, error) {
-	user, err := model.GetUserByPhone(s.db, payload.Phone)
+	user, err := model.GetUserByPhone(model.GetDB(), payload.Phone)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, render.AccountUserOrPwdError, err
@@ -90,5 +86,5 @@ func (s *authService) Logout(c *gin.Context) error {
 }
 
 func (s *authService) UpdateUserLastLogin(uuid string) error {
-	return model.UpdateUserLastLoginAt(s.db, uuid)
+	return model.UpdateUserLastLoginAt(model.GetDB(), uuid)
 }

@@ -23,22 +23,19 @@ type IAuthService interface {
 }
 
 type authService struct {
-	db           *gorm.DB
 	captchaStore *utils.CaptchaRedisStore // 验证码存储器
 }
 
 func NewAuthService() IAuthService {
-	db := model.GetDB()
 	store := utils.NewCaptchaRedisStore(redis.GetRedis(), fmt.Sprintf("%sCaptcha:", redis.RedisPrefix))
 	return &authService{
-		db:           db,
 		captchaStore: store,
 	}
 }
 
 // Login 登录
 func (s *authService) Login(c *gin.Context, payload *UserAuthReq) (*UserAuthResp, int, error) {
-	user, err := model.GetUserByEmail(s.db, payload.Email)
+	user, err := model.GetUserByEmail(model.GetDB(), payload.Email)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, render.AccountUserOrPwdError, err
@@ -70,7 +67,7 @@ func (s *authService) Login(c *gin.Context, payload *UserAuthReq) (*UserAuthResp
 		User:       result,
 	}
 	go func() {
-		err = model.UpdateUserLastLoginAt(s.db, user.UUID)
+		err = model.UpdateUserLastLoginAt(model.GetDB(), user.UUID)
 	}()
 	return data, render.OK, nil
 }
@@ -91,7 +88,7 @@ func (s *authService) Logout(c *gin.Context) error {
 }
 
 func (s *authService) Signup(payload *SignupReq) (int, error) {
-	user, err := model.GetUserByEmail(s.db, payload.Email)
+	user, err := model.GetUserByEmail(model.GetDB(), payload.Email)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return render.QueryError, err
 	}
@@ -100,7 +97,7 @@ func (s *authService) Signup(payload *SignupReq) (int, error) {
 		return render.DataExistError, err
 	}
 
-	_, err = model.CreateUser(s.db, &model.User{
+	_, err = model.CreateUser(model.GetDB(), &model.User{
 		UUID:     utils.UUID(),
 		Password: payload.Password,
 		Email:    payload.Email,

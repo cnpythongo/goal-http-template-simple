@@ -50,7 +50,7 @@ func NewUserProfileList() []*UserProfile {
 }
 
 // GetUserProfileByUserId 获取单个用户的个人资料
-func GetUserProfileByUserId(db *gorm.DB, userId int64) (*UserProfile, error) {
+func GetUserProfileByUserId(db *gorm.DB, userId uint64) (*UserProfile, error) {
 	pf := NewUserProfile()
 	err := db.Model(NewUserProfile()).Where("user_id = ?", userId).Limit(1).First(&pf).Error
 	return pf, err
@@ -90,7 +90,7 @@ func CreateUserProfile(db *gorm.DB, pf *UserProfile) (*UserProfile, error) {
 }
 
 // UpdateUserProfileByUserId 根据用户ID更新用户资料
-func UpdateUserProfileByUserId(db *gorm.DB, userId int, data map[string]interface{}) error {
+func UpdateUserProfileByUserId(db *gorm.DB, userId uint64, data map[string]interface{}) error {
 	err := db.Where("user_id = ?", userId).UpdateColumns(data).Error
 	if err != nil {
 		log.GetLogger().Errorf("model.account_user_profile.UpdateUserProfileByUserId Error ==> %v", err)
@@ -105,7 +105,7 @@ func UpdateUserProfile(db *gorm.DB, pf *UserProfile) (*UserProfile, error) {
 }
 
 // DeleteUserProfileByUserId 根据用户ID删除用户资料
-func DeleteUserProfileByUserId(db *gorm.DB, userId int) error {
+func DeleteUserProfileByUserId(db *gorm.DB, userId uint64) error {
 	err := db.Where("user_id = ?", userId).Delete(NewUserProfile()).Error
 	if err != nil {
 		log.GetLogger().Errorf("model.account_user_profile.DeleteUserProfileByUserId Error ==> %v", err)

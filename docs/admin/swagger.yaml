@@ -191,6 +191,53 @@ definitions:
         description: 用户uuid
         type: string
     type: object
+  admin_systemorg.ReqSystemOrgCreate:
+    properties:
+      name:
+        description: 组织名称
+        type: string
+      parent_id:
+        description: 父ID
+        type: integer
+    type: object
+  admin_systemorg.ReqSystemOrgId:
+    properties:
+      id:
+        description: 组织ID
+        type: integer
+    type: object
+  admin_systemorg.ReqSystemOrgUpdate:
+    properties:
+      id:
+        description: 组织ID
+        type: integer
+      name:
+        description: 组织名称
+        type: string
+      parent_id:
+        description: 父ID
+        type: integer
+    type: object
+  admin_systemorg.RespSystemOrgTree:
+    properties:
+      children:
+        description: 子节点
+        items:
+          $ref: '#/definitions/admin_systemorg.RespSystemOrgTree'
+        type: array
+      id:
+        description: 组织ID
+        type: integer
+      name:
+        description: 组织名称
+        type: string
+      parent_id:
+        description: 父ID
+        type: integer
+      parent_name:
+        description: 父名称
+        type: string
+    type: object
   goal-app_pkg_render.JsonDataResp:
     properties:
       code:
@@ -598,6 +645,100 @@ paths:
       summary: 删除用户
       tags:
       - 用户管理
+  /system/orgs/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建组织机构
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemorg.ReqSystemOrgCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "500":
+          description: Internal Server Error
+      summary: 创建组织机构
+      tags:
+      - 组织管理
+  /system/orgs/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除组织机构
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemorg.ReqSystemOrgId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "500":
+          description: Internal Server Error
+      summary: 删除组织机构
+      tags:
+      - 组织管理
+  /system/orgs/tree:
+    get:
+      consumes:
+      - application/json
+      description: 获取组织机构树结构数据
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemorg.RespSystemOrgTree'
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 获取组织机构树结构数据
+      tags:
+      - 组织管理
+  /system/orgs/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新组织机构
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemorg.ReqSystemOrgUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "500":
+          description: Internal Server Error
+      summary: 更新组织机构
+      tags:
+      - 组织管理
 securityDefinitions:
   AdminAuth:
     description: Type "Bearer" followed by a space and JWT token.

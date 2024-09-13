@@ -2,8 +2,6 @@ package accounhistory
 
 import (
 	"github.com/gin-gonic/gin"
-	"goal-app/model"
-	"gorm.io/gorm"
 )
 
 type IHistoryService interface {
@@ -11,12 +9,10 @@ type IHistoryService interface {
 }
 
 type historyService struct {
-	db *gorm.DB
 }
 
 func NewHistoryService() IHistoryService {
-	db := model.GetDB()
-	return &historyService{db: db}
+	return &historyService{}
 }
 
 func (h *historyService) GetHistoryList(c *gin.Context) {

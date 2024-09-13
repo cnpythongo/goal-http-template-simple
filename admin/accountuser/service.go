@@ -20,19 +20,15 @@ type IUserService interface {
 	GetUserByPhone(phone string) (*model.User, int, error)
 	GetUserByUUID(uuid string) (*model.User, int, error)
 	GetUserByEmail(email string) (*model.User, int, error)
-	GetUserProfile(userId int64) (*model.UserProfile, int, error)
+	GetUserProfile(userId uint64) (*model.UserProfile, int, error)
 	UpdateUserProfile(payload *ReqUpdateUserProfile) (int, error)
 }
 
 type userService struct {
-	db *gorm.DB
 }
 
 func NewUserService() IUserService {
-	db := model.GetDB()
-	return &userService{
-		db: db,
-	}
+	return &userService{}
 }
 
 func (s *userService) GetUserList(req *ReqGetUserList) (*RespGetUserList, int, error) {
@@ -79,7 +75,7 @@ func (s *userService) GetUserList(req *ReqGetUserList) (*RespGetUserList, int, e
 		args = append(args, req.LastLoginAtEnd)
 	}
 	queryStr := strings.Join(query, " AND ")
-	rows, total, err := model.GetUserList(s.db, req.Page, req.Limit, queryStr, args)
+	rows, total, err := model.GetUserList(model.GetDB(), req.Page, req.Limit, queryStr, args)
 	if err != nil {
 		return nil, render.QueryError, err
 	}
@@ -133,7 +129,7 @@ func (s *userService) CreateUser(payload *ReqCreateUser) (*RespUserDetail, int, 
 		return nil, render.DBAttributesCopyError, err
 	}
 
-	user, err = model.CreateUser(s.db, user)
+	user, err = model.CreateUser(model.GetDB(), user)
 	if err != nil {
 		log.GetLogger().Error(fmt.Sprintf("model.CreateUser ==> %v", err))
 		return nil, render.CreateError, err
@@ -146,7 +142,7 @@ func (s *userService) DeleteUserByUUID(uuid string) (int, error) {
 	go func() {
 		// todo 异步清理用户的其他数据
 	}()
-	err := model.DeleteUser(s.db, uuid)
+	err := model.DeleteUser(model.GetDB(), uuid)
 	if err != nil {
 		log.GetLogger().Error(err)
 		return render.DeleteError, err
@@ -155,7 +151,7 @@ func (s *userService) DeleteUserByUUID(uuid string) (int, error) {
 }
 
 func (s *userService) GetUserByPhone(phone string) (*model.User, int, error) {
-	user, err := model.GetUserByPhone(s.db, phone)
+	user, err := model.GetUserByPhone(model.GetDB(), phone)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, render.DataNotExistError, err
@@ -167,7 +163,7 @@ func (s *userService) GetUserByPhone(phone string) (*model.User, int, error) {
 }
 
 func (s *userService) GetUserByUUID(uuid string) (*model.User, int, error) {
-	user, err := model.GetUserByUUID(s.db, uuid)
+	user, err := model.GetUserByUUID(model.GetDB(), uuid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, render.DataNotExistError, err
@@ -179,7 +175,7 @@ func (s *userService) GetUserByUUID(uuid string) (*model.User, int, error) {
 }
 
 func (s *userService) GetUserByEmail(email string) (*model.User, int, error) {
-	user, err := model.GetUserByEmail(s.db, email)
+	user, err := model.GetUserByEmail(model.GetDB(), email)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, render.DataNotExistError, err
@@ -211,7 +207,7 @@ func (s *userService) UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int
 		log.GetLogger().Error(err)
 		return render.DBAttributesCopyError, err
 	}
-	err = s.db.Save(&user).Error
+	err = model.GetDB().Save(&user).Error
 	if err != nil {
 		log.GetLogger().Error(err)
 		return render.DataExistError, err
@@ -219,8 +215,8 @@ func (s *userService) UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int
 	return render.OK, nil
 }
 
-func (s *userService) GetUserProfile(userId int64) (*model.UserProfile, int, error) {
-	pf, err := model.GetUserProfileByUserId(s.db, userId)
+func (s *userService) GetUserProfile(userId uint64) (*model.UserProfile, int, error) {
+	pf, err := model.GetUserProfileByUserId(model.GetDB(), userId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, render.DataNotExistError, err
@@ -237,7 +233,7 @@ func (s *userService) UpdateUserProfile(payload *ReqUpdateUserProfile) (int, err
 		return code, err
 	}
 
-	_, err = model.UpdateUserProfile(s.db, pf)
+	_, err = model.UpdateUserProfile(model.GetDB(), pf)
 	if err != nil {
 		log.GetLogger().Errorf("model.UpdateUserProfile Error ==> %v", err)
 		return render.UpdateError, err

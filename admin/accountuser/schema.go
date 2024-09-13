@@ -58,7 +58,7 @@ type (
 	}
 
 	ReqUpdateUserProfile struct {
-		UserId   int64  `json:"user_id"`   // 用户ID
+		UserId   uint64 `json:"user_id"`   // 用户ID
 		RealName string `json:"real_name"` // 真实姓名
 		IDNumber string `json:"id_number"` // 身份证号
 	}
