@@ -2,11 +2,11 @@ package user
 
 import (
 	"errors"
-	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/gin-gonic/gin"
 	"goal-app/model"
 	"goal-app/pkg/log"
 	"goal-app/pkg/render"
+	"goal-app/pkg/utils"
 	"gorm.io/gorm"
 )
 

@@ -16,9 +16,9 @@ var MessageEn = map[int]string{
 
 	QueryError:            "查询失败",
 	DBAttributesCopyError: "属性操作失败",
-	DeleteError:           "删除用户账号失败",
-	UpdateError:           "更新用户数据失败",
-	CreateError:           "创建用户失败",
+	DeleteError:           "删除数据失败",
+	UpdateError:           "更新数据失败",
+	CreateError:           "创建数据失败",
 	DataExistError:        "数据已存在",
 	DataNotExistError:     "数据不存在",
 
@@ -27,6 +27,7 @@ var MessageEn = map[int]string{
 	AccountUserInactiveError: "用户账号未激活",
 	AccountUserFreezeError:   "用户账号被冻结",
 	AccountOldPasswordError:  "旧密码不正确",
+	AccountUserNotExistError: "用户账号不存在",
 
 	FlixCreditBalanceError:       "余额不足",
 	FlixCreditBalanceReduceError: "余额扣减失败",

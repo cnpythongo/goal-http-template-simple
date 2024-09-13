@@ -60,7 +60,7 @@ func (h *systemOrgHandler) Create(c *gin.Context) {
 	err := h.svc.CreateOrg(payload)
 	if err != nil {
 		log.GetLogger().Errorln(err)
-		render.Json(c, render.Error, err)
+		render.Json(c, render.CreateError, err)
 		return
 	}
 	render.Json(c, render.OK, "ok")
@@ -84,7 +84,7 @@ func (h *systemOrgHandler) Update(c *gin.Context) {
 	}
 	err := h.svc.UpdateOrg(&payload)
 	if err != nil {
-		render.Json(c, render.Error, err)
+		render.Json(c, render.UpdateError, err)
 		return
 	}
 	render.Json(c, render.OK, "ok")
@@ -107,7 +107,7 @@ func (h *systemOrgHandler) Delete(c *gin.Context) {
 		return
 	}
 	if err := h.svc.DeleteOrg(payload.ID); err != nil {
-		render.Json(c, render.Error, err)
+		render.Json(c, render.DeleteError, err)
 		return
 	}
 	render.Json(c, render.OK, "ok")

@@ -1,12 +1,12 @@
 package user
 
 import (
-	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"goal-app/pkg/jwt"
 	"goal-app/pkg/log"
 	"goal-app/pkg/render"
+	"goal-app/pkg/utils"
 )
 
 type IUserHandler interface {

@@ -2,13 +2,13 @@ package attachment
 
 import (
 	"errors"
-	"github.com/cnpythongo/goal-tools/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"goal-app/model"
 	"goal-app/pkg/log"
 	"goal-app/pkg/render"
 	"goal-app/pkg/storage"
+	"goal-app/pkg/utils"
 	"gorm.io/gorm"
 	"mime/multipart"
 	"path"

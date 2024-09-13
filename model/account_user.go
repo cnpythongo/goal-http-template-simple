@@ -2,8 +2,8 @@ package model
 
 import (
 	"errors"
-	"github.com/cnpythongo/goal-tools/utils"
 	"goal-app/pkg/log"
+	"goal-app/pkg/utils"
 	"gorm.io/gorm"
 	"time"
 )
