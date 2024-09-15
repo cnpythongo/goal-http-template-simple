@@ -79,7 +79,7 @@ func (h *systemOrgHandler) Create(c *gin.Context) {
 func (h *systemOrgHandler) Update(c *gin.Context) {
 	var payload ReqSystemOrgUpdate
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		render.Json(c, render.ParamsError, err)
+		render.Json(c, render.PayloadError, err)
 		return
 	}
 	err := h.svc.UpdateOrg(&payload)
@@ -101,12 +101,12 @@ func (h *systemOrgHandler) Update(c *gin.Context) {
 // @Failure 500
 // @Router /system/orgs/delete [post]
 func (h *systemOrgHandler) Delete(c *gin.Context) {
-	var payload ReqSystemOrgId
+	var payload ReqSystemOrgIds
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		render.Json(c, render.ParamsError, err)
+		render.Json(c, render.PayloadError, err)
 		return
 	}
-	if err := h.svc.DeleteOrg(payload.ID); err != nil {
+	if err := h.svc.DeleteOrg(payload.IDs); err != nil {
 		render.Json(c, render.DeleteError, err)
 		return
 	}

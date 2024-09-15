@@ -9,7 +9,7 @@ type ISystemOrgService interface {
 	GetOrg(id uint64) (*model.SystemOrg, error)
 	GetAllOrgs() ([]*model.SystemOrg, int, error)
 	UpdateOrg(payload *ReqSystemOrgUpdate) error
-	DeleteOrg(id uint64) error
+	DeleteOrg(ids []uint64) error
 	BuildOrgTree() (*RespSystemOrgTree, error)
 }
 
@@ -24,6 +24,8 @@ func (s *systemOrgService) CreateOrg(payload ReqSystemOrgCreate) error {
 	org := model.SystemOrg{
 		ParentID: payload.ParentID,
 		Name:     payload.Name,
+		Manager:  payload.Manager,
+		Phone:    payload.Phone,
 	}
 	return model.CreateOrg(model.GetDB(), org)
 }
@@ -47,11 +49,13 @@ func (s *systemOrgService) UpdateOrg(payload *ReqSystemOrgUpdate) error {
 	}
 	org.ParentID = payload.ParentID
 	org.Name = payload.Name
+	org.Manager = payload.Manager
+	org.Phone = payload.Phone
 	return model.UpdateOrg(model.GetDB(), org)
 }
 
-func (s *systemOrgService) DeleteOrg(id uint64) error {
-	return model.DeleteOrg(model.GetDB(), id)
+func (s *systemOrgService) DeleteOrg(ids []uint64) error {
+	return model.DeleteOrgs(model.GetDB(), ids)
 }
 
 func (s *systemOrgService) ConvertOrgTreeToJSON(org *model.SystemOrg, parent *model.SystemOrg) *RespSystemOrgTree {
@@ -64,6 +68,8 @@ func (s *systemOrgService) ConvertOrgTreeToJSON(org *model.SystemOrg, parent *mo
 		ParentID:   org.ParentID,
 		ParentName: pName,
 		Name:       org.Name,
+		Manager:    org.Manager,
+		Phone:      org.Phone,
 		Children:   make([]*RespSystemOrgTree, len(org.Children)),
 	}
 
