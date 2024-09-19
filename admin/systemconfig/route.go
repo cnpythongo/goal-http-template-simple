@@ -6,11 +6,11 @@ import (
 )
 
 func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
-	svc := NewSystemConfigService()
-	handler := NewSystemConfigHandler(svc)
+	svc := NewService()
+	h := NewHandler(svc)
 
 	r := route.Group("/api/v1/system/config")
 	r.Use(middleware.JWTAuthenticationMiddleware())
-	r.GET("/list", handler.ConfigList)
+	r.GET("/list", h.GetList)
 	return r
 }
