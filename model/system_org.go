@@ -24,7 +24,7 @@ func GetOrg(db *gorm.DB, id uint64) (*SystemOrg, error) {
 	return &org, nil
 }
 
-func CreateOrg(db *gorm.DB, org SystemOrg) error {
+func CreateOrg(db *gorm.DB, org *SystemOrg) error {
 	return db.Create(&org).Error
 }
 

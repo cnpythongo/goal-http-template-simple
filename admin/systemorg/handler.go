@@ -2,23 +2,24 @@ package systemorg
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
 	"goal-app/pkg/log"
 	"goal-app/pkg/render"
 )
 
-type ISystemOrgHandler interface {
+type IHandler interface {
 	GetTreeData(c *gin.Context)
 	Create(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
 }
 
-type systemOrgHandler struct {
-	svc ISystemOrgService
+type handler struct {
+	svc IService
 }
 
-func NewSystemOrgHandler(svc ISystemOrgService) ISystemOrgHandler {
-	return &systemOrgHandler{svc: svc}
+func NewHandler(svc IService) IHandler {
+	return &handler{svc: svc}
 }
 
 // GetTreeData 获取组织机构树结构数据
@@ -30,8 +31,8 @@ func NewSystemOrgHandler(svc ISystemOrgService) ISystemOrgHandler {
 // @Success 200 {object} render.JsonDataResp{data=RespSystemOrgTree} "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/orgs/tree [get]
-func (h *systemOrgHandler) GetTreeData(c *gin.Context) {
-	tree, err := h.svc.BuildOrgTree()
+func (h *handler) GetTreeData(c *gin.Context) {
+	tree, err := h.svc.GetTreeData()
 	if err != nil {
 		render.Json(c, render.Error, err)
 		return
@@ -46,10 +47,10 @@ func (h *systemOrgHandler) GetTreeData(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param data body ReqSystemOrgCreate true "请求体"
-// @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp{data=RespSystemOrgDetail} "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/orgs/create [post]
-func (h *systemOrgHandler) Create(c *gin.Context) {
+func (h *handler) Create(c *gin.Context) {
 	var payload ReqSystemOrgCreate
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		log.GetLogger().Errorln(err)
@@ -57,13 +58,19 @@ func (h *systemOrgHandler) Create(c *gin.Context) {
 		return
 	}
 
-	err := h.svc.CreateOrg(payload)
+	instance, code, err := h.svc.Create(&payload)
 	if err != nil {
-		log.GetLogger().Errorln(err)
-		render.Json(c, render.CreateError, err)
+		render.Json(c, code, err)
 		return
 	}
-	render.Json(c, render.OK, "ok")
+	result := &RespSystemOrgDetail{}
+	err = copier.Copy(result, &instance)
+	if err != nil {
+		log.GetLogger().Error(err)
+		render.Json(c, render.DBAttributesCopyError, err)
+		return
+	}
+	render.Json(c, render.OK, result)
 }
 
 // Update 更新组织机构
@@ -76,15 +83,15 @@ func (h *systemOrgHandler) Create(c *gin.Context) {
 // @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/orgs/update [post]
-func (h *systemOrgHandler) Update(c *gin.Context) {
+func (h *handler) Update(c *gin.Context) {
 	var payload ReqSystemOrgUpdate
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		render.Json(c, render.PayloadError, err)
 		return
 	}
-	err := h.svc.UpdateOrg(&payload)
+	code, err := h.svc.Update(&payload)
 	if err != nil {
-		render.Json(c, render.UpdateError, err)
+		render.Json(c, code, err)
 		return
 	}
 	render.Json(c, render.OK, "ok")
@@ -100,13 +107,13 @@ func (h *systemOrgHandler) Update(c *gin.Context) {
 // @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/orgs/delete [post]
-func (h *systemOrgHandler) Delete(c *gin.Context) {
+func (h *handler) Delete(c *gin.Context) {
 	var payload ReqSystemOrgIds
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		render.Json(c, render.PayloadError, err)
 		return
 	}
-	if err := h.svc.DeleteOrg(payload.IDs); err != nil {
+	if err := h.svc.Delete(payload.IDs); err != nil {
 		render.Json(c, render.DeleteError, err)
 		return
 	}

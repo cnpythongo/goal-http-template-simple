@@ -1,40 +1,49 @@
 package systemorg
 
 import (
+	"github.com/jinzhu/copier"
 	"goal-app/model"
+	"goal-app/pkg/log"
+	"goal-app/pkg/render"
 )
 
-type ISystemOrgService interface {
-	CreateOrg(payload ReqSystemOrgCreate) error
-	GetOrg(id uint64) (*model.SystemOrg, error)
-	GetAllOrgs() ([]*model.SystemOrg, int, error)
-	UpdateOrg(payload *ReqSystemOrgUpdate) error
-	DeleteOrg(ids []uint64) error
-	BuildOrgTree() (*RespSystemOrgTree, error)
+type IService interface {
+	Create(payload *ReqSystemOrgCreate) (*model.SystemOrg, int, error)
+	GetInstance(id uint64) (*model.SystemOrg, error)
+	GetAllInstances() ([]*model.SystemOrg, int, error)
+	Update(payload *ReqSystemOrgUpdate) (int, error)
+	Delete(ids []uint64) error
+	GetTreeData() (*RespSystemOrgTree, error)
 }
 
-type systemOrgService struct {
+type service struct {
 }
 
-func NewSystemOrgService() ISystemOrgService {
-	return &systemOrgService{}
+func NewService() IService {
+	return &service{}
 }
 
-func (s *systemOrgService) CreateOrg(payload ReqSystemOrgCreate) error {
-	org := model.SystemOrg{
-		ParentID: payload.ParentID,
-		Name:     payload.Name,
-		Manager:  payload.Manager,
-		Phone:    payload.Phone,
+func (s *service) Create(payload *ReqSystemOrgCreate) (*model.SystemOrg, int, error) {
+	org := model.NewSystemOrg()
+	err := copier.Copy(&org, &payload)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, render.DBAttributesCopyError, err
 	}
-	return model.CreateOrg(model.GetDB(), org)
+
+	err = model.CreateOrg(model.GetDB(), org)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, render.CreateError, err
+	}
+	return org, render.OK, err
 }
 
-func (s *systemOrgService) GetOrg(id uint64) (*model.SystemOrg, error) {
+func (s *service) GetInstance(id uint64) (*model.SystemOrg, error) {
 	return model.GetOrg(model.GetDB(), id)
 }
 
-func (s *systemOrgService) GetAllOrgs() ([]*model.SystemOrg, int, error) {
+func (s *service) GetAllInstances() ([]*model.SystemOrg, int, error) {
 	orgs, err := model.GetAllOrgs(model.GetDB())
 	if err != nil {
 		return nil, 0, err
@@ -42,23 +51,29 @@ func (s *systemOrgService) GetAllOrgs() ([]*model.SystemOrg, int, error) {
 	return orgs, len(orgs), err
 }
 
-func (s *systemOrgService) UpdateOrg(payload *ReqSystemOrgUpdate) error {
+func (s *service) Update(payload *ReqSystemOrgUpdate) (int, error) {
 	org, err := model.GetOrg(model.GetDB(), payload.ID)
 	if err != nil {
-		return err
+		return render.DataNotExistError, err
 	}
-	org.ParentID = payload.ParentID
-	org.Name = payload.Name
-	org.Manager = payload.Manager
-	org.Phone = payload.Phone
-	return model.UpdateOrg(model.GetDB(), org)
+	err = copier.Copy(&org, &payload)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return render.DBAttributesCopyError, err
+	}
+	err = model.UpdateOrg(model.GetDB(), org)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return render.UpdateError, err
+	}
+	return render.OK, err
 }
 
-func (s *systemOrgService) DeleteOrg(ids []uint64) error {
+func (s *service) Delete(ids []uint64) error {
 	return model.DeleteOrgs(model.GetDB(), ids)
 }
 
-func (s *systemOrgService) ConvertOrgTreeToJSON(org *model.SystemOrg, parent *model.SystemOrg) *RespSystemOrgTree {
+func (s *service) ConvertOrgTreeToJSON(org *model.SystemOrg, parent *model.SystemOrg) *RespSystemOrgTree {
 	pName := ""
 	if parent != nil {
 		pName = parent.Name
@@ -79,8 +94,8 @@ func (s *systemOrgService) ConvertOrgTreeToJSON(org *model.SystemOrg, parent *mo
 	return result
 }
 
-func (s *systemOrgService) BuildOrgTree() (*RespSystemOrgTree, error) {
-	orgs, _, err := s.GetAllOrgs()
+func (s *service) GetTreeData() (*RespSystemOrgTree, error) {
+	orgs, _, err := s.GetAllInstances()
 	if err != nil {
 		return nil, err
 	}

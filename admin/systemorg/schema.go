@@ -27,6 +27,16 @@ type (
 		IDs []uint64 `json:"ids" binding:"required"` // 组织ID
 	}
 
+	// RespSystemOrgDetail 组织机构详情
+	RespSystemOrgDetail struct {
+		ID         uint64 `json:"id"`          // 组织ID
+		ParentID   uint64 `json:"parent_id"`   // 父ID
+		ParentName string `json:"parent_name"` // 父名称
+		Name       string `json:"name"`        // 组织名称
+		Manager    string `json:"manager"`     // 负责人名称
+		Phone      string `json:"phone"`       // 负责人电话
+	}
+
 	// RespSystemOrgTree 组织机构树结构数据
 	RespSystemOrgTree struct {
 		ID         uint64               `json:"id"`          // 组织ID
