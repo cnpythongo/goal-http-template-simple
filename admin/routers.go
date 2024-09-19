@@ -8,6 +8,7 @@ import (
 	"goal-app/admin/accountuser"
 	"goal-app/admin/auth"
 	"goal-app/admin/systemconfig"
+	"goal-app/admin/systemmenu"
 	"goal-app/admin/systemorg"
 	"goal-app/pkg/config"
 	"goal-app/router"
@@ -29,6 +30,7 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 	// system api
 	_ = systemconfig.RegisterRoute(route)
 	_ = systemorg.RegisterRoute(route)
+	_ = systemmenu.RegisterRoute(route)
 
 	return route
 }
