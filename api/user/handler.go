@@ -111,7 +111,7 @@ func (h *userHandler) GetUserInfoByUUID(c *gin.Context) {
 	}
 
 	result.Phone = "" // user.PhoneMask()
-	result.LastLoginAt = 0
+	result.LastLoginTime = 0
 	render.Json(c, render.OK, result)
 }
 

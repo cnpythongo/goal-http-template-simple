@@ -16,12 +16,12 @@ type (
 
 	// UserInfoResp 用户登录接口返回的用户信息数据结构
 	UserInfoResp struct {
-		UUID        string `json:"uuid"`                        // 用户uuid
-		Email       string `json:"email" example:"foo@bar.com"` // 邮箱
-		Phone       string `json:"phone" example:"138****8000"` // 带掩码的手机号
-		LastLoginAt int    `json:"last_login_at"`               // 最近的登录时间(unix秒时间戳)
-		Nickname    string `json:"nickname"`                    // 昵称
-		Avatar      string `json:"avatar"`                      // 头像
+		UUID          string `json:"uuid"`                        // 用户uuid
+		Email         string `json:"email" example:"foo@bar.com"` // 邮箱
+		Phone         string `json:"phone" example:"138****8000"` // 带掩码的手机号
+		LastLoginTime int    `json:"last_login_time"`             // 最近的登录时间(unix秒时间戳)
+		Nickname      string `json:"nickname"`                    // 昵称
+		Avatar        string `json:"avatar"`                      // 头像
 	}
 
 	// UserAuthResp 用户登录接口返回数据结构

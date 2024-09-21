@@ -8,9 +8,9 @@ type (
 	}
 
 	AttachmentResp struct {
-		UUID      string `json:"uuid"`       // 文件UUID
-		Name      string `json:"name"`       // 文件名
-		Size      int64  `json:"size"`       // 文件大小, 单位: 字节
-		CreatedAt int64  `json:"created_at"` // 上传时间(unix秒时间戳)
+		UUID       string `json:"uuid"`        // 文件UUID
+		Name       string `json:"name"`        // 文件名
+		Size       int64  `json:"size"`        // 文件大小, 单位: 字节
+		CreateTime int64  `json:"create_time"` // 上传时间(unix秒时间戳)
 	}
 )

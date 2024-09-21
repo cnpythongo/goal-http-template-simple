@@ -2,7 +2,7 @@ basePath: /api/v1
 definitions:
   api_attachment.AttachmentResp:
     properties:
-      created_at:
+      create_time:
         description: 上传时间(unix秒时间戳)
         type: integer
       name:
@@ -100,7 +100,7 @@ definitions:
         description: 邮箱
         example: foo@bar.com
         type: string
-      last_login_at:
+      last_login_time:
         description: 最近的登录时间(unix秒时间戳)
         type: integer
       nickname:
@@ -166,7 +166,7 @@ definitions:
       avatar:
         description: 头像
         type: string
-      last_login_at:
+      last_login_time:
         description: 最近的登录时间(unix秒时间戳)
         type: integer
       nickname:

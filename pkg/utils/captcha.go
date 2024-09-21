@@ -91,8 +91,8 @@ func (c *Captcha) generate(driver base64Captcha.Driver) (code string, b64s strin
 }
 
 // Verify 校验应答的验证码,校验完成无论是否正确都会清理缓存
-// @param id string "生成验证码时的ID"
-// @param answer string "应答码"
+// param: id string "生成验证码时的ID"
+// param: answer string "应答码"
 func (c *Captcha) Verify(id, answer string) (match bool) {
 	return c.store.Get(id, true) == answer
 }

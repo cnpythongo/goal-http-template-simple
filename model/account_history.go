@@ -42,7 +42,7 @@ func GetHistoryById(db *gorm.DB, id uint64) (*History, error) {
 
 // GetHistoryList 获取账号登录历史列表
 func GetHistoryList(db *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*History, int, error) {
-	qs := db.Model(NewHistory()).Where("deleted_at = 0")
+	qs := db.Model(NewHistory()).Where("delete_time = 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}
@@ -76,9 +76,9 @@ func CreateHistory(db *gorm.DB, h *History) (*History, error) {
 }
 
 func DeleteHistoryByIds(db *gorm.DB, ids []uint64) error {
-	return db.Model(NewHistory()).Where("id in ?", ids).Update("deleted_at", time.Now().Unix()).Error
+	return db.Model(NewHistory()).Where("id in ?", ids).Update("delete_time", time.Now().Unix()).Error
 }
 
 func DeleteHistoryByUserIds(db *gorm.DB, userIds []uint64) error {
-	return db.Model(NewHistory()).Where("user_id in ?", userIds).Update("deleted_at", time.Now().Unix()).Error
+	return db.Model(NewHistory()).Where("user_id in ?", userIds).Update("delete_time", time.Now().Unix()).Error
 }

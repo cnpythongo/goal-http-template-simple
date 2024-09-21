@@ -58,7 +58,7 @@ func GetUserProfileByUserId(db *gorm.DB, userId uint64) (*UserProfile, error) {
 
 // GetUserProfileList 获取个人资料列表
 func GetUserProfileList(db *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*UserProfile, int, error) {
-	qs := db.Model(NewUserProfile()).Where("deleted_at = 0")
+	qs := db.Model(NewUserProfile()).Where("delete_time = 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}

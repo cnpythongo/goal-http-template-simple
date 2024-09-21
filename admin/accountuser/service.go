@@ -58,21 +58,21 @@ func (s *userService) GetUserList(req *ReqGetUserList) (*RespGetUserList, int, e
 		query = append(query, "uuid = ?")
 		args = append(args, req.UUID)
 	}
-	if req.CreatedAtStart > 0 {
-		query = append(query, "created_at >= ?")
-		args = append(args, req.CreatedAtStart)
+	if req.CreateTimeStart > 0 {
+		query = append(query, "create_time >= ?")
+		args = append(args, req.CreateTimeStart)
 	}
-	if req.CreatedAtEnd > 0 {
-		query = append(query, "created_at <= ?")
-		args = append(args, req.CreatedAtEnd)
+	if req.CreateTimeEnd > 0 {
+		query = append(query, "create_time <= ?")
+		args = append(args, req.CreateTimeEnd)
 	}
-	if req.LastLoginAtStart > 0 {
-		query = append(query, "last_login_at >= ?")
-		args = append(args, req.LastLoginAtStart)
+	if req.LastLoginTimeStart > 0 {
+		query = append(query, "last_login_time >= ?")
+		args = append(args, req.LastLoginTimeStart)
 	}
-	if req.LastLoginAtEnd > 0 {
-		query = append(query, "last_login_at <= ?")
-		args = append(args, req.LastLoginAtEnd)
+	if req.LastLoginTimeEnd > 0 {
+		query = append(query, "last_login_time <= ?")
+		args = append(args, req.LastLoginTimeEnd)
 	}
 	queryStr := strings.Join(query, " AND ")
 	rows, total, err := model.GetUserList(model.GetDB(), req.Page, req.Limit, queryStr, args)

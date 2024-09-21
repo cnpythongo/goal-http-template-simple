@@ -485,7 +485,7 @@ const docTemplate = `{
         "api_attachment.AttachmentResp": {
             "type": "object",
             "properties": {
-                "created_at": {
+                "create_time": {
                     "description": "上传时间(unix秒时间戳)",
                     "type": "integer"
                 },
@@ -616,7 +616,7 @@ const docTemplate = `{
                     "type": "string",
                     "example": "foo@bar.com"
                 },
-                "last_login_at": {
+                "last_login_time": {
                     "description": "最近的登录时间(unix秒时间戳)",
                     "type": "integer"
                 },
@@ -709,7 +709,7 @@ const docTemplate = `{
                     "description": "头像",
                     "type": "string"
                 },
-                "last_login_at": {
+                "last_login_time": {
                     "description": "最近的登录时间(unix秒时间戳)",
                     "type": "integer"
                 },

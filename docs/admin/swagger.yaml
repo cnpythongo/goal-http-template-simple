@@ -2,10 +2,10 @@ basePath: /api/v1
 definitions:
   admin_accounhistory.ReqGetHistoryList:
     properties:
-      created_at_end:
+      create_time_end:
         description: 数据创建结束区间
         type: integer
-      created_at_start:
+      create_time_start:
         description: 数据创建开始区间
         type: integer
       email:
@@ -110,7 +110,7 @@ definitions:
     type: object
   admin_accountuser.RespUserDetail:
     properties:
-      created_at:
+      create_time:
         description: 账号创建时间(unix秒时间戳)
         example: 1724914598
         type: integer
@@ -122,7 +122,7 @@ definitions:
         description: 是否管理员
         example: false
         type: boolean
-      last_login_at:
+      last_login_time:
         description: 最近登录时间(unix秒时间戳)
         example: 1724914598
         type: integer
@@ -176,7 +176,7 @@ definitions:
       avatar:
         description: 头像
         type: string
-      last_login_at:
+      last_login_time:
         description: 最近的登录时间(unix秒时间戳)
         example: 1724914598
         type: integer
@@ -191,32 +191,249 @@ definitions:
         description: 用户uuid
         type: string
     type: object
+  admin_systemmenu.ReqSystemMenuCreate:
+    properties:
+      auth_tag:
+        description: 权限标识
+        type: string
+      component:
+        description: 前端组件
+        type: string
+      icon:
+        description: 菜单图标
+        type: string
+      kind:
+        description: 菜单类别
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      params:
+        description: 路由参数
+        type: string
+      parent_id:
+        description: 父ID
+        minimum: 0
+        type: integer
+      route:
+        description: 路由地址
+        type: string
+      sort:
+        description: 菜单排序
+        type: integer
+      status:
+        description: '状态: disable=停用, enable=启用'
+        type: string
+    required:
+    - kind
+    - name
+    - parent_id
+    type: object
+  admin_systemmenu.ReqSystemMenuIds:
+    properties:
+      ids:
+        description: 菜单ID
+        items:
+          type: integer
+        type: array
+    required:
+    - ids
+    type: object
+  admin_systemmenu.ReqSystemMenuUpdate:
+    properties:
+      auth_tag:
+        description: 权限标识
+        type: string
+      component:
+        description: 前端组件
+        type: string
+      icon:
+        description: 菜单图标
+        type: string
+      id:
+        description: 菜单ID
+        minimum: 0
+        type: integer
+      kind:
+        description: 菜单类别
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      params:
+        description: 路由参数
+        type: string
+      parent_id:
+        description: 父ID
+        minimum: 0
+        type: integer
+      route:
+        description: 路由地址
+        type: string
+      sort:
+        description: 菜单排序
+        type: integer
+      status:
+        description: '状态: disable=停用, enable=启用'
+        type: string
+    required:
+    - id
+    - kind
+    - name
+    - parent_id
+    type: object
+  admin_systemmenu.RespSystemMenuDetail:
+    properties:
+      auth_tag:
+        description: 权限标识
+        type: string
+      component:
+        description: 前端组件
+        type: string
+      icon:
+        description: 菜单图标
+        type: string
+      id:
+        description: 菜单ID
+        type: integer
+      kind:
+        description: 菜单类别
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      params:
+        description: 路由参数
+        type: string
+      parent_id:
+        description: 父ID
+        type: integer
+      parent_name:
+        description: 父名称
+        type: string
+      route:
+        description: 路由地址
+        type: string
+      sort:
+        description: 菜单排序
+        type: integer
+      status:
+        description: '状态: disable=停用, enable=启用'
+        type: string
+    type: object
+  admin_systemmenu.RespSystemMenuTree:
+    properties:
+      auth_tag:
+        description: 权限标识
+        type: string
+      children:
+        description: 子节点
+        items:
+          $ref: '#/definitions/admin_systemmenu.RespSystemMenuTree'
+        type: array
+      component:
+        description: 前端组件
+        type: string
+      icon:
+        description: 菜单图标
+        type: string
+      id:
+        description: 菜单ID
+        type: integer
+      kind:
+        description: 菜单类别
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      params:
+        description: 路由参数
+        type: string
+      parent_id:
+        description: 父ID
+        type: integer
+      parent_name:
+        description: 父名称
+        type: string
+      route:
+        description: 路由地址
+        type: string
+      sort:
+        description: 菜单排序
+        type: integer
+      status:
+        description: '状态: disable=停用, enable=启用'
+        type: string
+    type: object
   admin_systemorg.ReqSystemOrgCreate:
     properties:
+      manager:
+        description: 负责人名称
+        type: string
       name:
         description: 组织名称
         type: string
       parent_id:
         description: 父ID
+        minimum: 0
         type: integer
+      phone:
+        description: 负责人电话
+        type: string
+    required:
+    - name
+    - parent_id
     type: object
   admin_systemorg.ReqSystemOrgId:
     properties:
       id:
         description: 组织ID
         type: integer
+    required:
+    - id
     type: object
   admin_systemorg.ReqSystemOrgUpdate:
     properties:
       id:
         description: 组织ID
         type: integer
+      manager:
+        description: 负责人名称
+        type: string
+      name:
+        description: 组织名称
+        type: string
+      parent_id:
+        description: 父ID
+        minimum: 0
+        type: integer
+      phone:
+        description: 负责人电话
+        type: string
+    required:
+    - id
+    - name
+    type: object
+  admin_systemorg.RespSystemOrgDetail:
+    properties:
+      id:
+        description: 组织ID
+        type: integer
+      manager:
+        description: 负责人名称
+        type: string
       name:
         description: 组织名称
         type: string
       parent_id:
         description: 父ID
         type: integer
+      parent_name:
+        description: 父名称
+        type: string
+      phone:
+        description: 负责人电话
+        type: string
     type: object
   admin_systemorg.RespSystemOrgTree:
     properties:
@@ -228,6 +445,9 @@ definitions:
       id:
         description: 组织ID
         type: integer
+      manager:
+        description: 负责人名称
+        type: string
       name:
         description: 组织名称
         type: string
@@ -236,6 +456,9 @@ definitions:
         type: integer
       parent_name:
         description: 父名称
+        type: string
+      phone:
+        description: 负责人电话
         type: string
     type: object
   goal-app_pkg_render.JsonDataResp:
@@ -282,11 +505,11 @@ paths:
       parameters:
       - description: 数据创建结束区间
         in: query
-        name: created_at_end
+        name: create_time_end
         type: integer
       - description: 数据创建开始区间
         in: query
-        name: created_at_start
+        name: create_time_start
         type: integer
       - description: 用户邮箱
         example: abc@abc.com
@@ -498,11 +721,11 @@ paths:
       parameters:
       - description: 数据创建结束区间
         in: query
-        name: created_at_end
+        name: create_time_end
         type: integer
       - description: 数据创建开始区间
         in: query
-        name: created_at_start
+        name: create_time_start
         type: integer
       - description: 邮箱,模糊查询
         example: abc@abc.com
@@ -516,11 +739,11 @@ paths:
         type: integer
       - description: 最近登录结束时间
         in: query
-        name: last_login_at_end
+        name: last_login_time_end
         type: integer
       - description: 最近登录开始时间
         in: query
-        name: last_login_at_start
+        name: last_login_time_start
         type: integer
       - default: 10
         description: 每页数量
@@ -645,6 +868,105 @@ paths:
       summary: 删除用户
       tags:
       - 用户管理
+  /system/menus/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建菜单
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemmenu.ReqSystemMenuCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemmenu.RespSystemMenuDetail'
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 创建菜单
+      tags:
+      - 组织管理
+  /system/menus/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除菜单
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemmenu.ReqSystemMenuIds'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "500":
+          description: Internal Server Error
+      summary: 删除菜单
+      tags:
+      - 组织管理
+  /system/menus/tree:
+    get:
+      consumes:
+      - application/json
+      description: 获取菜单树结构数据
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemmenu.RespSystemMenuTree'
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 获取菜单树结构数据
+      tags:
+      - 组织管理
+  /system/menus/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新菜单
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemmenu.ReqSystemMenuUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "500":
+          description: Internal Server Error
+      summary: 更新菜单
+      tags:
+      - 组织管理
   /system/orgs/create:
     post:
       consumes:
@@ -663,7 +985,12 @@ paths:
         "200":
           description: code不为0时表示有错误
           schema:
-            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemorg.RespSystemOrgDetail'
+              type: object
         "500":
           description: Internal Server Error
       summary: 创建组织机构

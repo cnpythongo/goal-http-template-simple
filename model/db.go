@@ -14,10 +14,10 @@ var db *gorm.DB
 var dbWrite *gorm.DB
 
 type BaseModel struct {
-	ID        uint64 `gorm:"primary_key;comment:流水ID" json:"-"`
-	CreatedAt uint64 `gorm:"column:created_at;autoCreateTime;not null;comment:数据创建时间" json:"-"`
-	UpdatedAt uint64 `gorm:"column:updated_at;autoUpdateTime;not null;comment:数据更新时间" json:"-"`
-	DeletedAt uint64 `gorm:"column:deleted_at;default:0;comment:数据删除时间" json:"-"`
+	ID         uint64 `gorm:"primary_key;comment:流水ID" json:"-"`
+	CreateTime uint64 `gorm:"column:create_time;autoCreateTime;not null;comment:数据创建时间" json:"-"`
+	UpdateTime uint64 `gorm:"column:update_time;autoUpdateTime;not null;comment:数据更新时间" json:"-"`
+	DeleteTime uint64 `gorm:"column:delete_time;default:0;comment:数据删除时间" json:"-"`
 }
 
 func GetDB() *gorm.DB {
