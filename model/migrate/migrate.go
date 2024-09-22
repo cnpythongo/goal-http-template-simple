@@ -20,6 +20,9 @@ func MigrateTables(conf *config.Configuration) {
 		model.NewConfig(),
 		model.NewAttachment(),
 		model.NewSystemOrg(),
+		model.NewSystemMenu(),
+		model.NewGenTable(),
+		model.NewGenTableColumn(),
 	)
 	if err != nil {
 		panic(err)

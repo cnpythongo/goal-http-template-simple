@@ -7,6 +7,7 @@ import (
 	"goal-app/admin/accounhistory"
 	"goal-app/admin/accountuser"
 	"goal-app/admin/auth"
+	"goal-app/admin/generator"
 	"goal-app/admin/systemconfig"
 	"goal-app/admin/systemmenu"
 	"goal-app/admin/systemorg"
@@ -28,6 +29,7 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 	_ = accounhistory.RegisterRoute(route)
 
 	// system api
+	_ = generator.RegisterRoute(route)
 	_ = systemconfig.RegisterRoute(route)
 	_ = systemorg.RegisterRoute(route)
 	_ = systemmenu.RegisterRoute(route)

@@ -599,6 +599,101 @@ const docTemplate = `{
                 }
             }
         },
+        "/system/generator/db-tables": {
+            "get": {
+                "description": "获取数据库表名称列表",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统管理--代码生成器"
+                ],
+                "summary": "获取数据库表名称列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "数据创建结束区间",
+                        "name": "create_time_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "数据创建开始区间",
+                        "name": "create_time_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "example": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表描述",
+                        "name": "table_comment",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表名称",
+                        "name": "table_name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/admin_generator.RespDbTableList"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "result": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/admin_generator.RespDbTableItem"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/system/menus/create": {
             "post": {
                 "description": "创建菜单",
@@ -1180,6 +1275,42 @@ const docTemplate = `{
                 "uuid": {
                     "description": "用户uuid",
                     "type": "string"
+                }
+            }
+        },
+        "admin_generator.RespDbTableItem": {
+            "type": "object",
+            "properties": {
+                "create_time": {
+                    "description": "创建时间",
+                    "type": "integer"
+                },
+                "table_comment": {
+                    "description": "表描述",
+                    "type": "string"
+                },
+                "table_name": {
+                    "description": "表名称",
+                    "type": "string"
+                },
+                "update_time": {
+                    "description": "更新时间",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_generator.RespDbTableList": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "result": {},
+                "total": {
+                    "type": "integer"
                 }
             }
         },

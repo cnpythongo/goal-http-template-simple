@@ -191,6 +191,31 @@ definitions:
         description: 用户uuid
         type: string
     type: object
+  admin_generator.RespDbTableItem:
+    properties:
+      create_time:
+        description: 创建时间
+        type: integer
+      table_comment:
+        description: 表描述
+        type: string
+      table_name:
+        description: 表名称
+        type: string
+      update_time:
+        description: 更新时间
+        type: integer
+    type: object
+  admin_generator.RespDbTableList:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      result: {}
+      total:
+        type: integer
+    type: object
   admin_systemmenu.ReqSystemMenuCreate:
     properties:
       auth_tag:
@@ -868,6 +893,64 @@ paths:
       summary: 删除用户
       tags:
       - 用户管理
+  /system/generator/db-tables:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 获取数据库表名称列表
+      parameters:
+      - description: 数据创建结束区间
+        in: query
+        name: create_time_end
+        type: integer
+      - description: 数据创建开始区间
+        in: query
+        name: create_time_start
+        type: integer
+      - default: 10
+        description: 每页数量
+        example: 10
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 表描述
+        in: query
+        name: table_comment
+        type: string
+      - description: 表名称
+        in: query
+        name: table_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/admin_generator.RespDbTableList'
+                  - properties:
+                      result:
+                        items:
+                          $ref: '#/definitions/admin_generator.RespDbTableItem'
+                        type: array
+                    type: object
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 获取数据库表名称列表
+      tags:
+      - 系统管理--代码生成器
   /system/menus/create:
     post:
       consumes:
