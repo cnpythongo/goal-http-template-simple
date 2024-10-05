@@ -12,7 +12,7 @@ import (
 )
 
 type IUserService interface {
-	GetUserList(req *ReqGetUserList) (*RespGetUserList, int, error)
+	GetUserList(req *ReqGetUserList) ([]*RespUserBasic, int64, int, error)
 	GetUserDetail(uuid string) (*RespUserDetail, int, error)
 	CreateUser(payload *ReqCreateUser) (*RespUserDetail, int, error)
 	DeleteUserByUUID(uuid string) (int, error)
@@ -31,7 +31,7 @@ func NewUserService() IUserService {
 	return &userService{}
 }
 
-func (s *userService) GetUserList(req *ReqGetUserList) (*RespGetUserList, int, error) {
+func (s *userService) GetUserList(req *ReqGetUserList) ([]*RespUserBasic, int64, int, error) {
 	var query []string
 	var args []interface{}
 	if req.Email != "" {
@@ -77,7 +77,7 @@ func (s *userService) GetUserList(req *ReqGetUserList) (*RespGetUserList, int, e
 	queryStr := strings.Join(query, " AND ")
 	rows, total, err := model.GetUserList(model.GetDB(), req.Page, req.Limit, queryStr, args)
 	if err != nil {
-		return nil, render.QueryError, err
+		return nil, total, render.QueryError, err
 	}
 
 	result := make([]*RespUserBasic, 0)
@@ -86,17 +86,11 @@ func (s *userService) GetUserList(req *ReqGetUserList) (*RespGetUserList, int, e
 		err = copier.Copy(item, row)
 		if err != nil {
 			log.GetLogger().Error(err)
-			return nil, render.DBAttributesCopyError, err
+			return nil, total, render.DBAttributesCopyError, err
 		}
 		result = append(result, item)
 	}
-	resp := &RespGetUserList{
-		Page:   req.Page,
-		Limit:  req.Limit,
-		Total:  total,
-		Result: result,
-	}
-	return resp, render.OK, nil
+	return result, total, render.OK, nil
 }
 
 func (s *userService) GetUserDetail(uuid string) (*RespUserDetail, int, error) {

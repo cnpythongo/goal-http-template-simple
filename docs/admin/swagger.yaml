@@ -98,16 +98,6 @@ definitions:
         example: FREEZE
         type: string
     type: object
-  admin_accountuser.RespGetUserList:
-    properties:
-      limit:
-        type: integer
-      page:
-        type: integer
-      result: {}
-      total:
-        type: integer
-    type: object
   admin_accountuser.RespUserDetail:
     properties:
       create_time:
@@ -191,30 +181,161 @@ definitions:
         description: 用户uuid
         type: string
     type: object
-  admin_generator.RespDbTableItem:
+  admin_generator.ReqDelGenTableColumn:
+    properties:
+      ids:
+        description: 主键
+        items:
+          type: integer
+        type: array
+    required:
+    - ids
+    type: object
+  admin_generator.ReqDelTable:
+    properties:
+      ids:
+        description: 主键
+        items:
+          type: integer
+        type: array
+    required:
+    - ids
+    type: object
+  admin_generator.ReqGenTableCreate:
+    properties:
+      tables:
+        description: 导入的表, 用","分隔
+        type: string
+    required:
+    - tables
+    type: object
+  admin_generator.ReqPreview:
+    properties:
+      id:
+        description: 主键
+        type: integer
+    required:
+    - id
+    type: object
+  admin_generator.RespDbTable:
     properties:
       create_time:
         description: 创建时间
         type: integer
+      name:
+        description: 表名称
+        type: string
       table_comment:
         description: 表描述
-        type: string
-      table_name:
-        description: 表名称
         type: string
       update_time:
         description: 更新时间
         type: integer
     type: object
-  admin_generator.RespDbTableList:
+  admin_generator.RespGenColumn:
     properties:
-      limit:
+      column_comment:
+        description: 字段描述
+        type: string
+      column_length:
+        description: 字段长度
         type: integer
-      page:
+      column_name:
+        description: 字段名称
+        type: string
+      column_type:
+        description: 字段类型
+        type: string
+      create_time:
+        description: 创建时间
         type: integer
-      result: {}
-      total:
+      dict_type:
+        description: 字典类型
+        type: string
+      go_field:
+        description: Go字段
+        type: string
+      go_type:
+        description: Go类型
+        type: string
+      html_type:
+        description: '显示类型: [文本框、文本域、下拉框、复选框、单选框、日期控件]'
+        type: string
+      id:
+        description: 字段主键
         type: integer
+      is_edit:
+        description: 是否编辑字段
+        type: integer
+      is_insert:
+        description: 是否为插入字段
+        type: integer
+      is_list:
+        description: 是否列表字段
+        type: integer
+      is_query:
+        description: 是否查询字段
+        type: integer
+      is_required:
+        description: 是否必填
+        type: integer
+      query_type:
+        description: '查询方式: [等于、不等于、大于、小于、范围]'
+        type: string
+      update_time:
+        description: 更新时间
+        type: integer
+    type: object
+  admin_generator.RespGenTableItem:
+    properties:
+      create_time:
+        description: 创建时间
+        type: integer
+      entity_name:
+        description: 实体的名称
+        type: string
+      function_name:
+        description: 生成功能名
+        type: string
+      gen_path:
+        description: '生成代码路径: [不填默认项目路径]'
+        type: string
+      gen_tpl:
+        description: '生成模板方式: [crud=单表, tree=树表]'
+        type: string
+      id:
+        description: 主键
+        type: integer
+      module_name:
+        description: '''生成模块名'
+        type: string
+      name:
+        description: 表名称
+        type: string
+      table_comment:
+        description: 表描述
+        type: string
+      tree_name:
+        description: 树显示字段
+        type: string
+      tree_parent:
+        description: 树父级字段
+        type: string
+      tree_primary:
+        description: 树主键字段
+        type: string
+      update_time:
+        description: 更新时间
+        type: integer
+    type: object
+  admin_generator.RespPreviewItem:
+    properties:
+      content:
+        type: string
+      language:
+        type: string
+      name:
+        type: string
     type: object
   admin_systemmenu.ReqSystemMenuCreate:
     properties:
@@ -493,6 +614,16 @@ definitions:
       data: {}
       msg:
         type: string
+    type: object
+  goal-app_pkg_render.RespPageJson:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      result: {}
+      total:
+        type: integer
     type: object
   model.UserGender:
     enum:
@@ -823,7 +954,7 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/admin_accountuser.RespGetUserList'
+                  - $ref: '#/definitions/goal-app_pkg_render.RespPageJson'
                   - properties:
                       result:
                         items:
@@ -893,7 +1024,179 @@ paths:
       summary: 删除用户
       tags:
       - 用户管理
-  /system/generator/db-tables:
+  /system/generator/create:
+    post:
+      consumes:
+      - application/json
+      description: 向 gen_tables 表中导入数据表信息
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        schema:
+          $ref: '#/definitions/admin_generator.ReqGenTableCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 向 gen_tables 表中导入数据表信息
+      tags:
+      - 系统管理--代码生成器
+  /system/generator/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除代码生成配置表数据
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        schema:
+          $ref: '#/definitions/admin_generator.ReqDelTable'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 删除代码生成配置表数据
+      tags:
+      - 系统管理--代码生成器
+  /system/generator/gencode:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 预览代码生成内容
+      parameters:
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 预览代码生成内容
+      tags:
+      - 系统管理--代码生成器
+  /system/generator/list:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 获取已导入的数据表列表
+      parameters:
+      - description: 数据创建结束区间
+        in: query
+        name: create_time_end
+        type: integer
+      - description: 数据创建开始区间
+        in: query
+        name: create_time_start
+        type: integer
+      - default: 10
+        description: 每页数量
+        example: 10
+        in: query
+        name: limit
+        type: integer
+      - description: 表名称
+        in: query
+        name: name
+        type: string
+      - default: 1
+        description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 表描述
+        in: query
+        name: table_comment
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/goal-app_pkg_render.RespPageJson'
+                  - properties:
+                      result:
+                        items:
+                          $ref: '#/definitions/admin_generator.RespGenTableItem'
+                        type: array
+                    type: object
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 获取已导入的数据表列表
+      tags:
+      - 系统管理--代码生成器
+  /system/generator/preview:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 预览代码生成内容
+      parameters:
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/admin_generator.RespPreviewItem'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 预览代码生成内容
+      tags:
+      - 系统管理--代码生成器
+  /system/generator/tables:
     get:
       consumes:
       - application/x-www-form-urlencoded
@@ -938,17 +1241,126 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/admin_generator.RespDbTableList'
+                  - $ref: '#/definitions/goal-app_pkg_render.RespPageJson'
                   - properties:
                       result:
                         items:
-                          $ref: '#/definitions/admin_generator.RespDbTableItem'
+                          $ref: '#/definitions/admin_generator.RespDbTable'
                         type: array
                     type: object
               type: object
         "500":
           description: Internal Server Error
       summary: 获取数据库表名称列表
+      tags:
+      - 系统管理--代码生成器
+  /system/generator/tables/{id}/columns:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 获取数据库表每个列的信息
+      parameters:
+      - description: 表格ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/admin_generator.RespGenColumn'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 获取数据库表每个列的信息
+      tags:
+      - 系统管理--代码生成器
+  /system/generator/tables/{id}/columns/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除代码生成配置表的行属性数据
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        schema:
+          $ref: '#/definitions/admin_generator.ReqDelGenTableColumn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 删除代码生成配置表的行属性数据
+      tags:
+      - 系统管理--代码生成器
+  /system/generator/tables/{id}/columns/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新生成代码表列信息
+      parameters:
+      - description: 表格ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "500":
+          description: Internal Server Error
+      summary: 更新生成代码表列信息
+      tags:
+      - 系统管理--代码生成器
+  /system/generator/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新代码生成配置表数据
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        schema:
+          $ref: '#/definitions/admin_generator.ReqPreview'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+      summary: 更新代码生成配置表数据
       tags:
       - 系统管理--代码生成器
   /system/menus/create:

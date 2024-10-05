@@ -11,6 +11,7 @@ import (
 	"golang.org/x/crypto/pbkdf2"
 	"math/big"
 	"strings"
+	"unicode"
 )
 
 const NormalLetters string = "abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNOPQRSTUVWXYZ123456789"
@@ -79,4 +80,46 @@ func VerifyPassword(password, hashPwd, salt string) bool {
 func UUID() string {
 	uuidStr := uuid.New().String()
 	return strings.ReplaceAll(uuidStr, "-", "")
+}
+
+// ToCamelCase 转驼峰名称
+func ToCamelCase(s string) string {
+	words := strings.Split(s, "_")
+	for i := 0; i < len(words); i++ {
+		words[i] = strings.Title(words[i])
+	}
+	return strings.Join(words, "")
+}
+
+// ToCamelCaseWithoutFirst 转驼峰名称,首字母除外
+func ToCamelCaseWithoutFirst(s string) string {
+	words := strings.Split(s, "_")
+	for i := 1; i < len(words); i++ {
+		words[i] = strings.Title(words[i])
+	}
+	return strings.Join(words, "")
+}
+
+// ToSnakeCase 转蛇形名称
+func ToSnakeCase(s string) string {
+	buf := bytes.Buffer{}
+	for i, r := range s {
+		if unicode.IsUpper(r) {
+			if i > 0 {
+				buf.WriteRune('_')
+			}
+			buf.WriteRune(unicode.ToLower(r))
+		} else {
+			buf.WriteRune(r)
+		}
+	}
+	return buf.String()
+}
+
+// UpperFirst 首字母大写
+func UpperFirst(s string) string {
+	if s == "" {
+		return ""
+	}
+	return strings.ToUpper(s[:1]) + s[1:]
 }

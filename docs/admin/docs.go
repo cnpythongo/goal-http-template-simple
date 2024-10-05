@@ -445,7 +445,7 @@ const docTemplate = `{
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/admin_accountuser.RespGetUserList"
+                                                    "$ref": "#/definitions/goal-app_pkg_render.RespPageJson"
                                                 },
                                                 {
                                                     "type": "object",
@@ -599,7 +599,295 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/generator/db-tables": {
+        "/system/generator/create": {
+            "post": {
+                "description": "向 gen_tables 表中导入数据表信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统管理--代码生成器"
+                ],
+                "summary": "向 gen_tables 表中导入数据表信息",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/admin_generator.ReqGenTableCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/generator/delete": {
+            "post": {
+                "description": "删除代码生成配置表数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统管理--代码生成器"
+                ],
+                "summary": "删除代码生成配置表数据",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/admin_generator.ReqDelTable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/generator/gencode": {
+            "get": {
+                "description": "预览代码生成内容",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统管理--代码生成器"
+                ],
+                "summary": "预览代码生成内容",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/generator/list": {
+            "get": {
+                "description": "获取已导入的数据表列表",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统管理--代码生成器"
+                ],
+                "summary": "获取已导入的数据表列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "数据创建结束区间",
+                        "name": "create_time_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "数据创建开始区间",
+                        "name": "create_time_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "example": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表描述",
+                        "name": "table_comment",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/goal-app_pkg_render.RespPageJson"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "result": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/admin_generator.RespGenTableItem"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/generator/preview": {
+            "get": {
+                "description": "预览代码生成内容",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统管理--代码生成器"
+                ],
+                "summary": "预览代码生成内容",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/admin_generator.RespPreviewItem"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/generator/tables": {
             "get": {
                 "description": "获取数据库表名称列表",
                 "consumes": [
@@ -668,7 +956,7 @@ const docTemplate = `{
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/admin_generator.RespDbTableList"
+                                                    "$ref": "#/definitions/goal-app_pkg_render.RespPageJson"
                                                 },
                                                 {
                                                     "type": "object",
@@ -676,12 +964,193 @@ const docTemplate = `{
                                                         "result": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/admin_generator.RespDbTableItem"
+                                                                "$ref": "#/definitions/admin_generator.RespDbTable"
                                                             }
                                                         }
                                                     }
                                                 }
                                             ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/generator/tables/{id}/columns": {
+            "get": {
+                "description": "获取数据库表每个列的信息",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统管理--代码生成器"
+                ],
+                "summary": "获取数据库表每个列的信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "表格ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/admin_generator.RespGenColumn"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/generator/tables/{id}/columns/delete": {
+            "post": {
+                "description": "删除代码生成配置表的行属性数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统管理--代码生成器"
+                ],
+                "summary": "删除代码生成配置表的行属性数据",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/admin_generator.ReqDelGenTableColumn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/generator/tables/{id}/columns/update": {
+            "post": {
+                "description": "更新生成代码表列信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统管理--代码生成器"
+                ],
+                "summary": "更新生成代码表列信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "表格ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/generator/update": {
+            "post": {
+                "description": "更新代码生成配置表数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统管理--代码生成器"
+                ],
+                "summary": "更新代码生成配置表数据",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/admin_generator.ReqPreview"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
                                         }
                                     }
                                 }
@@ -1147,21 +1616,6 @@ const docTemplate = `{
                 }
             }
         },
-        "admin_accountuser.RespGetUserList": {
-            "type": "object",
-            "properties": {
-                "limit": {
-                    "type": "integer"
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "result": {},
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "admin_accountuser.RespUserDetail": {
             "type": "object",
             "properties": {
@@ -1278,19 +1732,73 @@ const docTemplate = `{
                 }
             }
         },
-        "admin_generator.RespDbTableItem": {
+        "admin_generator.ReqDelGenTableColumn": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "description": "主键",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "admin_generator.ReqDelTable": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "description": "主键",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "admin_generator.ReqGenTableCreate": {
+            "type": "object",
+            "required": [
+                "tables"
+            ],
+            "properties": {
+                "tables": {
+                    "description": "导入的表, 用\",\"分隔",
+                    "type": "string"
+                }
+            }
+        },
+        "admin_generator.ReqPreview": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "主键",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_generator.RespDbTable": {
             "type": "object",
             "properties": {
                 "create_time": {
                     "description": "创建时间",
                     "type": "integer"
                 },
-                "table_comment": {
-                    "description": "表描述",
+                "name": {
+                    "description": "表名称",
                     "type": "string"
                 },
-                "table_name": {
-                    "description": "表名称",
+                "table_comment": {
+                    "description": "表描述",
                     "type": "string"
                 },
                 "update_time": {
@@ -1299,18 +1807,147 @@ const docTemplate = `{
                 }
             }
         },
-        "admin_generator.RespDbTableList": {
+        "admin_generator.RespGenColumn": {
             "type": "object",
             "properties": {
-                "limit": {
+                "column_comment": {
+                    "description": "字段描述",
+                    "type": "string"
+                },
+                "column_length": {
+                    "description": "字段长度",
                     "type": "integer"
                 },
-                "page": {
+                "column_name": {
+                    "description": "字段名称",
+                    "type": "string"
+                },
+                "column_type": {
+                    "description": "字段类型",
+                    "type": "string"
+                },
+                "create_time": {
+                    "description": "创建时间",
                     "type": "integer"
                 },
-                "result": {},
-                "total": {
+                "dict_type": {
+                    "description": "字典类型",
+                    "type": "string"
+                },
+                "go_field": {
+                    "description": "Go字段",
+                    "type": "string"
+                },
+                "go_type": {
+                    "description": "Go类型",
+                    "type": "string"
+                },
+                "html_type": {
+                    "description": "显示类型: [文本框、文本域、下拉框、复选框、单选框、日期控件]",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "字段主键",
                     "type": "integer"
+                },
+                "is_edit": {
+                    "description": "是否编辑字段",
+                    "type": "integer"
+                },
+                "is_insert": {
+                    "description": "是否为插入字段",
+                    "type": "integer"
+                },
+                "is_list": {
+                    "description": "是否列表字段",
+                    "type": "integer"
+                },
+                "is_query": {
+                    "description": "是否查询字段",
+                    "type": "integer"
+                },
+                "is_required": {
+                    "description": "是否必填",
+                    "type": "integer"
+                },
+                "query_type": {
+                    "description": "查询方式: [等于、不等于、大于、小于、范围]",
+                    "type": "string"
+                },
+                "update_time": {
+                    "description": "更新时间",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_generator.RespGenTableItem": {
+            "type": "object",
+            "properties": {
+                "create_time": {
+                    "description": "创建时间",
+                    "type": "integer"
+                },
+                "entity_name": {
+                    "description": "实体的名称",
+                    "type": "string"
+                },
+                "function_name": {
+                    "description": "生成功能名",
+                    "type": "string"
+                },
+                "gen_path": {
+                    "description": "生成代码路径: [不填默认项目路径]",
+                    "type": "string"
+                },
+                "gen_tpl": {
+                    "description": "生成模板方式: [crud=单表, tree=树表]",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "integer"
+                },
+                "module_name": {
+                    "description": "'生成模块名",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "表名称",
+                    "type": "string"
+                },
+                "table_comment": {
+                    "description": "表描述",
+                    "type": "string"
+                },
+                "tree_name": {
+                    "description": "树显示字段",
+                    "type": "string"
+                },
+                "tree_parent": {
+                    "description": "树父级字段",
+                    "type": "string"
+                },
+                "tree_primary": {
+                    "description": "树主键字段",
+                    "type": "string"
+                },
+                "update_time": {
+                    "description": "更新时间",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_generator.RespPreviewItem": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -1692,6 +2329,21 @@ const docTemplate = `{
                 "data": {},
                 "msg": {
                     "type": "string"
+                }
+            }
+        },
+        "goal-app_pkg_render.RespPageJson": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "result": {},
+                "total": {
+                    "type": "integer"
                 }
             }
         },

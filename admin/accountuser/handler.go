@@ -33,7 +33,7 @@ func NewHandler(svc IUserService) IUserHandler {
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param data query ReqGetUserList false "请求体"
-// @Success 200 {object} render.JsonDataResp{data=RespGetUserList{result=[]RespUserDetail}} "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp{data=render.RespPageJson{result=[]RespUserDetail}} "code不为0时表示有错误"
 // @Failure 500
 // @Security AdminAuth
 // @Router /account/user/list [get]
@@ -45,13 +45,19 @@ func (h *userHandler) List(c *gin.Context) {
 		return
 	}
 
-	result, code, err := h.svc.GetUserList(&req)
+	result, total, code, err := h.svc.GetUserList(&req)
 	if err != nil {
 		log.GetLogger().Errorln(err)
 		render.Json(c, code, err)
 		return
 	}
-	render.Json(c, render.OK, result)
+	resp := &render.RespPageJson{
+		Page:   req.Page,
+		Limit:  req.Limit,
+		Total:  total,
+		Result: result,
+	}
+	render.Json(c, render.OK, resp)
 }
 
 // Detail 根据用户UUID获取用户详情

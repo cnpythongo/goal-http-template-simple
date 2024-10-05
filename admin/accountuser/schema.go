@@ -34,9 +34,6 @@ type (
 	// RespUserDetail 用户详情数据结构体
 	RespUserDetail RespUserBasic
 
-	// RespGetUserList 获取用户列表的响应数据结构
-	RespGetUserList render.RespPageJson
-
 	// ReqCreateUser 创建用户的请求结构体
 	ReqCreateUser struct {
 		Phone           string `json:"phone" binding:"required" example:"13800138000"`       // 手机号
