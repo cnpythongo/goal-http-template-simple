@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"goal-app/admin/accounhistory"
 	"goal-app/admin/accountuser"
 	"goal-app/admin/auth"
 	"goal-app/admin/generator"
@@ -26,7 +25,6 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 
 	// account api
 	_ = accountuser.RegisterRoute(route)
-	_ = accounhistory.RegisterRoute(route)
 
 	// system api
 	_ = generator.RegisterRoute(route)
