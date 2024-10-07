@@ -47,7 +47,7 @@ export default function {{{.EntityName}}}Page() {
   const [editRecord, setEditRecord] = useState<any>(null);
   const [showDataModal, setShowDataModal] = useState<boolean>(false);
   // 数据表格属性定义
-  const [tableData, setTableData] = useState<any>([]);
+  const [treeData, setTreeData] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   // 上传组件
   const [loading, setLoading] = useState(false);
@@ -149,7 +149,7 @@ export default function {{{.EntityName}}}Page() {
     api
       .list(params)
       .then(res => {
-        setTableData(res.result);
+        setTreeData(res);
       })
       .catch(err => {
         console.log(err);
@@ -300,12 +300,36 @@ export default function {{{.EntityName}}}Page() {
         </div>
         <div className="">
           <Table
-            size="middle"
-            columns={columns}
-            rowSelection={rowSelection}
-            rowKey={record => record.id}
-            dataSource={tableData}
-          />
+              pagination={false}
+              size="middle"
+              columns={columns}
+              rowSelection={{ ...rowSelection }}
+              dataSource={treeData}
+              rowKey={record => record.id}
+              indentSize={35}
+              expandable={{
+                defaultExpandAllRows: true,
+                expandIcon: ({ expanded, onExpand, record }) => {
+                  if (record && record?.children && record.children.length > 0) {
+                    if (expanded) {
+                      return (
+                        <Icons.CaretDownFilled
+                          className="mr-1 cursor-pointer"
+                          onClick={e => onExpand(record, e)}
+                        />
+                      );
+                    } else {
+                      return (
+                        <Icons.CaretRightFilled
+                          className="mr-1 cursor-pointer"
+                          onClick={e => onExpand(record, e)}
+                        />
+                      );
+                    }
+                  }
+                }
+              }}
+            />
         </div>
       </div>
 

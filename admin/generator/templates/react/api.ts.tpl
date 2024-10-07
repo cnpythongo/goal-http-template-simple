@@ -22,7 +22,7 @@ export interface {{{.EntityName}}}DeleteBody {
   ids: Array<number>;
 }
 
-export interface {{{.EntityName}}}DataTableItem {
+export interface {{{.EntityName}}}Item {
   id: number;
   name: string;
   table_comment: string;
@@ -35,9 +35,9 @@ export interface {{{.EntityName}}}DataTableItem {
 export default {
   // {{{.EntityName}}}列表
   list: (params: {{{.EntityName}}}ListParams) =>
-    get<PageList<{{{.EntityName}}}DataTableItem>>('{{{.GenPath}}}/list', params),
+    get<PageList<{{{.EntityName}}}Item>>('{{{.GenPath}}}/list', params),
   // {{{.EntityName}}}详情
-  detail: (id: number) => get<{{{.EntityName}}}DataTableItem>('{{{.GenPath}}}/detail', { id }),
+  detail: (id: number) => get<{{{.EntityName}}}Item>('{{{.GenPath}}}/detail', { id }),
   // {{{.EntityName}}}新增
   create: (data: {{{.EntityName}}}CreateBody) => post<any>('{{{.GenPath}}}/create', data),
   // {{{.EntityName}}}更新

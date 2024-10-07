@@ -172,11 +172,9 @@ func (t *templateUtil) GetTemplatePaths(genTpl string) []string {
 		"react/index.tsx.tpl",
 		//"react/edit.tsx.tpl",
 	}
-	//if genTpl == GenConstants.TplCrud {
-	//	tplPaths = append(tplPaths, "react/index.tsx.tpl")
-	//} else if genTpl == GenConstants.TplTree {
-	//	tplPaths = append(tplPaths, "react/index-tree.tsx.tpl")
-	//}
+	if genTpl == GenConstants.TplTree {
+		tplPaths = append(tplPaths, "react/index-tree.tsx.tpl")
+	}
 	return tplPaths
 }
 
@@ -214,7 +212,7 @@ func (t *templateUtil) GetFilePaths(tplCodeMap map[string]string, moduleName str
 		"react/api.ts.tpl":    "react/%s/api.ts",
 		"react/index.tsx.tpl": "react/%s/index.tsx",
 		//"react/edit.tsx.tpl":       "react/%s/edit.tsx",
-		//"react/index-tree.tsx.tpl": "react/%s/index-tree.tsx",
+		"react/index-tree.tsx.tpl": "react/%s/index-tree.tsx",
 	}
 	filePath := make(map[string]string)
 	for tplPath, tplCode := range tplCodeMap {
