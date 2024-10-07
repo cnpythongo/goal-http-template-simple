@@ -1802,8 +1802,7 @@
             "type": "object",
             "required": [
                 "kind",
-                "name",
-                "parent_id"
+                "name"
             ],
             "properties": {
                 "auth_tag": {
@@ -1869,8 +1868,7 @@
             "required": [
                 "id",
                 "kind",
-                "name",
-                "parent_id"
+                "name"
             ],
             "properties": {
                 "auth_tag": {

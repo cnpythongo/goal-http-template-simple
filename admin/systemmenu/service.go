@@ -7,7 +7,7 @@ import (
 	"goal-app/pkg/render"
 )
 
-type IService interface {
+type ISystemMenuService interface {
 	Create(payload *ReqSystemMenuCreate) (*model.SystemMenu, int, error)
 	GetInstance(id uint64) (*model.SystemMenu, error)
 	GetAllInstances() ([]*model.SystemMenu, int, error)
@@ -16,14 +16,14 @@ type IService interface {
 	BuildTree() (*RespSystemMenuTree, error)
 }
 
-type service struct {
+type systemMenuService struct {
 }
 
-func NewService() IService {
-	return &service{}
+func NewSystemMenuService() ISystemMenuService {
+	return &systemMenuService{}
 }
 
-func (s *service) Create(payload *ReqSystemMenuCreate) (*model.SystemMenu, int, error) {
+func (s *systemMenuService) Create(payload *ReqSystemMenuCreate) (*model.SystemMenu, int, error) {
 	menu := model.NewSystemMenu()
 	err := copier.Copy(menu, payload)
 	if err != nil {
@@ -38,11 +38,11 @@ func (s *service) Create(payload *ReqSystemMenuCreate) (*model.SystemMenu, int, 
 	return menu, render.OK, err
 }
 
-func (s *service) GetInstance(id uint64) (*model.SystemMenu, error) {
+func (s *systemMenuService) GetInstance(id uint64) (*model.SystemMenu, error) {
 	return model.GetSystemMenuById(model.GetDB(), id)
 }
 
-func (s *service) GetAllInstances() ([]*model.SystemMenu, int, error) {
+func (s *systemMenuService) GetAllInstances() ([]*model.SystemMenu, int, error) {
 	result, err := model.GetAllSystemMenus(model.GetDB())
 	if err != nil {
 		return nil, 0, err
@@ -50,7 +50,7 @@ func (s *service) GetAllInstances() ([]*model.SystemMenu, int, error) {
 	return result, len(result), err
 }
 
-func (s *service) Update(payload *ReqSystemMenuUpdate) error {
+func (s *systemMenuService) Update(payload *ReqSystemMenuUpdate) error {
 	obj, err := model.GetSystemMenuById(model.GetDB(), payload.ID)
 	if err != nil {
 		return err
@@ -62,11 +62,11 @@ func (s *service) Update(payload *ReqSystemMenuUpdate) error {
 	return model.UpdateSystemMenu(model.GetDB(), obj.ID, data)
 }
 
-func (s *service) Delete(ids []uint64) error {
+func (s *systemMenuService) Delete(ids []uint64) error {
 	return model.DeleteOrgs(model.GetDB(), ids)
 }
 
-func (s *service) ConvertTreeToJSON(menu *model.SystemMenu, parent *model.SystemMenu) *RespSystemMenuTree {
+func (s *systemMenuService) ConvertTreeToJSON(menu *model.SystemMenu, parent *model.SystemMenu) *RespSystemMenuTree {
 	pName := ""
 	if parent != nil {
 		pName = parent.Name
@@ -84,7 +84,7 @@ func (s *service) ConvertTreeToJSON(menu *model.SystemMenu, parent *model.System
 	return result
 }
 
-func (s *service) BuildTree() (*RespSystemMenuTree, error) {
+func (s *systemMenuService) BuildTree() (*RespSystemMenuTree, error) {
 	orgs, _, err := s.GetAllInstances()
 	if err != nil {
 		return nil, err

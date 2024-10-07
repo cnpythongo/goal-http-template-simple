@@ -1,15 +1,15 @@
 package systemconfig
 
-type IService interface {
+type ISystemConfigService interface {
 	GetSystemConfigList()
 }
 
-type service struct {
+type systemConfigService struct {
 }
 
-func NewService() IService {
-	return &service{}
+func NewSystemConfigService() ISystemConfigService {
+	return &systemConfigService{}
 }
-func (s *service) GetSystemConfigList() {
+func (s *systemConfigService) GetSystemConfigList() {
 	return
 }

@@ -334,7 +334,6 @@ definitions:
     required:
     - kind
     - name
-    - parent_id
     type: object
   admin_systemmenu.ReqSystemMenuIds:
     properties:
@@ -387,7 +386,6 @@ definitions:
     - id
     - kind
     - name
-    - parent_id
     type: object
   admin_systemmenu.RespSystemMenuDetail:
     properties:

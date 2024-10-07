@@ -7,19 +7,19 @@ import (
 	"goal-app/pkg/render"
 )
 
-type IHandler interface {
+type ISystemMenuHandler interface {
 	GetTreeData(c *gin.Context)
 	Create(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
 }
 
-type handler struct {
-	svc IService
+type systemMenuHandler struct {
+	svc ISystemMenuService
 }
 
-func NewHandler(svc IService) IHandler {
-	return &handler{svc: svc}
+func NewSystemMenuHandler(svc ISystemMenuService) ISystemMenuHandler {
+	return &systemMenuHandler{svc: svc}
 }
 
 // GetTreeData 获取菜单树结构数据
@@ -31,7 +31,7 @@ func NewHandler(svc IService) IHandler {
 // @Success 200 {object} render.JsonDataResp{data=RespSystemMenuTree} "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/menus/tree [get]
-func (h *handler) GetTreeData(c *gin.Context) {
+func (h *systemMenuHandler) GetTreeData(c *gin.Context) {
 	tree, err := h.svc.BuildTree()
 	if err != nil {
 		render.Json(c, render.Error, err)
@@ -50,7 +50,7 @@ func (h *handler) GetTreeData(c *gin.Context) {
 // @Success 200 {object} render.JsonDataResp{data=RespSystemMenuDetail} "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/menus/create [post]
-func (h *handler) Create(c *gin.Context) {
+func (h *systemMenuHandler) Create(c *gin.Context) {
 	var payload ReqSystemMenuCreate
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		log.GetLogger().Errorln(err)
@@ -82,7 +82,7 @@ func (h *handler) Create(c *gin.Context) {
 // @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/menus/update [post]
-func (h *handler) Update(c *gin.Context) {
+func (h *systemMenuHandler) Update(c *gin.Context) {
 	var payload ReqSystemMenuUpdate
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		render.Json(c, render.PayloadError, err)
@@ -106,7 +106,7 @@ func (h *handler) Update(c *gin.Context) {
 // @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/menus/delete [post]
-func (h *handler) Delete(c *gin.Context) {
+func (h *systemMenuHandler) Delete(c *gin.Context) {
 	var payload ReqSystemMenuIds
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		render.Json(c, render.PayloadError, err)

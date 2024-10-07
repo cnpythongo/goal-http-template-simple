@@ -5,8 +5,8 @@ import (
 )
 
 func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
-	svc := NewService()
-	h := NewHandler(svc)
+	svc := NewSystemMenuService()
+	h := NewSystemMenuHandler(svc)
 
 	r := route.Group("/api/v1/system/menus")
 	r.GET("/tree", h.GetTreeData)

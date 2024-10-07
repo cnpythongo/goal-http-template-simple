@@ -1809,8 +1809,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "kind",
-                "name",
-                "parent_id"
+                "name"
             ],
             "properties": {
                 "auth_tag": {
@@ -1876,8 +1875,7 @@ const docTemplate = `{
             "required": [
                 "id",
                 "kind",
-                "name",
-                "parent_id"
+                "name"
             ],
             "properties": {
                 "auth_tag": {

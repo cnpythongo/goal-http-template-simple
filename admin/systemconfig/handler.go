@@ -5,18 +5,18 @@ import (
 	"goal-app/pkg/render"
 )
 
-type IHandler interface {
+type ISystemConfigHandler interface {
 	GetList(c *gin.Context)
 }
 
-type handler struct {
-	svc IService
+type systemConfigHandler struct {
+	svc ISystemConfigService
 }
 
-func NewHandler(svc IService) IHandler {
-	return &handler{svc: svc}
+func NewSystemConfigHandler(svc ISystemConfigService) ISystemConfigHandler {
+	return &systemConfigHandler{svc: svc}
 }
 
-func (h *handler) GetList(c *gin.Context) {
+func (h *systemConfigHandler) GetList(c *gin.Context) {
 	render.Json(c, render.OK, "")
 }
