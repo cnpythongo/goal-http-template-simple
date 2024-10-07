@@ -180,7 +180,7 @@ func (s *{{{ toCamelCaseWithoutFirst .EntityName }}}Service) GetAll{{{ title (to
 }
 
 // Convert{{{ title (toCamelCase .EntityName) }}}TreeToJSON 行模型数据转成JSON树结构
-func (s *service) Convert{{{ title (toCamelCase .EntityName) }}}TreeToJSON(root *model.{{{ title (toCamelCase .EntityName) }}}, parent *model.{{{ title (toCamelCase .EntityName) }}}) *{{{ .EntityName }}}TreeResp {
+func (s *{{{ toCamelCaseWithoutFirst .EntityName }}}Service) Convert{{{ title (toCamelCase .EntityName) }}}TreeToJSON(root *model.{{{ title (toCamelCase .EntityName) }}}, parent *model.{{{ title (toCamelCase .EntityName) }}}) *{{{ .EntityName }}}TreeResp {
 	pName := ""
 	if parent != nil {
 		pName = parent.Name
