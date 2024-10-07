@@ -30,6 +30,7 @@ export interface {{{.EntityName}}}Item {
   gen_tpl: string;
   create_time: number;
   update_time: number;
+  children?: Array<{{{.EntityName}}}Item>;
 }
 
 export default {
@@ -44,4 +45,6 @@ export default {
   update: (data: {{{.EntityName}}}UpdateBody) => post<any>('{{{.GenPath}}}/update', data),
   // {{{.EntityName}}}删除
   delete: (data: {{{.EntityName}}}DeleteBody) => post<any>('{{{.GenPath}}}/delete', data),
+  //
+  getTreeData: () => get<Array<{{{.EntityName}}}Item>>('{{{.GenPath}}}/tree'),
 };

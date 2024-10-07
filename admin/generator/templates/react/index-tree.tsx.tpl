@@ -46,6 +46,7 @@ export default function {{{.EntityName}}}Page() {
   const [editForm] = Form.useForm();
   const [editRecord, setEditRecord] = useState<any>(null);
   const [showDataModal, setShowDataModal] = useState<boolean>(false);
+  const [disableTreeSelect, setDisableTreeSelect] = useState(false);
   // 数据表格属性定义
   const [treeData, setTreeData] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -106,6 +107,8 @@ export default function {{{.EntityName}}}Page() {
 
   // 更新
   const onUpdate = (record: {{{.EntityName}}}Item) => {
+    setEditRecord(record);
+    editForm.resetFields();
     showEditFormModal(record);
   };
 
@@ -122,15 +125,13 @@ export default function {{{.EntityName}}}Page() {
 
   // 弹出层事件
   const showEditFormModal = (record?: {{{.EntityName}}}Item) => {
-    setEditRecord(record);
-    editForm.resetFields();
     if (record) {
       editForm.setFieldsValue({ ...record });
     }
     setShowDataModal(true);
   };
 
-  const handleDataFormOk = () => {
+  const onDataFormOK = () => {
     if (editRecord) {
       update();
     } else {
@@ -139,22 +140,26 @@ export default function {{{.EntityName}}}Page() {
     setShowDataModal(false);
   };
 
-  const handleDataFormCancel = () => {
+  const onDataFormCancel = () => {
     setShowDataModal(false);
   };
 
   // http请求
   // 获取数据列表
-  const list = () => {
+  const getTreeData = () => {
     api
-      .list(params)
-      .then(res => {
+    .getTreeData()
+    .then(res => {
+      if (res) {
         setTreeData(res);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+        setDisableTreeSelect(false);
+      }
+    })
+    .catch(err => {
+      console.log(err);
+    });
+    };
+
 
   // 详情
   const detail = (id: number) => {
@@ -338,8 +343,8 @@ export default function {{{.EntityName}}}Page() {
         centered={true}
         maskClosable={false}
         open={showDataModal}
-        onOk={handleDataFormOk}
-        onCancel={handleDataFormCancel}
+        onOk={onDataFormOK}
+        onCancel={onDataFormCancel}
         width={600}
       >
         <Form
@@ -354,19 +359,25 @@ export default function {{{.EntityName}}}Page() {
         <Form.Item
           name="{{{.ColumnName}}}"
           label="{{{.ColumnComment}}}"
-          rules={[{ required: true, message: '请输入{{{.ColumnComment}}}' }]}
+          rules={[{ required: { required: treeData && treeData.length > 0, message: '请选择上级节点' }, message: '请输入{{{.ColumnComment}}}' }]}
         >
         {{{- if and (ne $.Table.TreeParent "") (eq .GoField $.Table.TreeParent) }}}
             <TreeSelect
               treeDefaultExpandAll={true}
               treeLine={true}
-              treeData={[]}
+              treeData={treeData}
               disabled={disableTreeSelect}
               fieldNames={{
                 label: 'name',
                 value: 'id',
                 children: 'children'
               }}
+              treeTitleRender={node => {
+                  if (node.value === 0) {
+                    return '无上级节点';
+                  }
+                  return node.name;
+                }}
             />
         {{{- else if eq .HtmlType "input" }}}
           <Input />

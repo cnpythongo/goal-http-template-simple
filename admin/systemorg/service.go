@@ -7,7 +7,7 @@ import (
 	"goal-app/pkg/render"
 )
 
-type IService interface {
+type ISystemOrgService interface {
 	Create(payload *ReqSystemOrgCreate) (*model.SystemOrg, int, error)
 	GetInstance(id uint64) (*model.SystemOrg, error)
 	GetAllInstances() ([]*model.SystemOrg, int, error)
@@ -16,14 +16,14 @@ type IService interface {
 	GetTreeData() (*RespSystemOrgTree, error)
 }
 
-type service struct {
+type systemOrgService struct {
 }
 
-func NewService() IService {
-	return &service{}
+func NewService() ISystemOrgService {
+	return &systemOrgService{}
 }
 
-func (s *service) Create(payload *ReqSystemOrgCreate) (*model.SystemOrg, int, error) {
+func (s *systemOrgService) Create(payload *ReqSystemOrgCreate) (*model.SystemOrg, int, error) {
 	org := model.NewSystemOrg()
 	err := copier.Copy(&org, &payload)
 	if err != nil {
@@ -39,11 +39,11 @@ func (s *service) Create(payload *ReqSystemOrgCreate) (*model.SystemOrg, int, er
 	return org, render.OK, err
 }
 
-func (s *service) GetInstance(id uint64) (*model.SystemOrg, error) {
+func (s *systemOrgService) GetInstance(id uint64) (*model.SystemOrg, error) {
 	return model.GetOrg(model.GetDB(), id)
 }
 
-func (s *service) GetAllInstances() ([]*model.SystemOrg, int, error) {
+func (s *systemOrgService) GetAllInstances() ([]*model.SystemOrg, int, error) {
 	orgs, err := model.GetAllOrgs(model.GetDB())
 	if err != nil {
 		return nil, 0, err
@@ -51,7 +51,7 @@ func (s *service) GetAllInstances() ([]*model.SystemOrg, int, error) {
 	return orgs, len(orgs), err
 }
 
-func (s *service) Update(payload *ReqSystemOrgUpdate) (int, error) {
+func (s *systemOrgService) Update(payload *ReqSystemOrgUpdate) (int, error) {
 	org, err := model.GetOrg(model.GetDB(), payload.ID)
 	if err != nil {
 		return render.DataNotExistError, err
@@ -69,11 +69,11 @@ func (s *service) Update(payload *ReqSystemOrgUpdate) (int, error) {
 	return render.OK, err
 }
 
-func (s *service) Delete(ids []uint64) error {
+func (s *systemOrgService) Delete(ids []uint64) error {
 	return model.DeleteOrgs(model.GetDB(), ids)
 }
 
-func (s *service) ConvertOrgTreeToJSON(org *model.SystemOrg, parent *model.SystemOrg) *RespSystemOrgTree {
+func (s *systemOrgService) ConvertOrgTreeToJSON(org *model.SystemOrg, parent *model.SystemOrg) *RespSystemOrgTree {
 	pName := ""
 	if parent != nil {
 		pName = parent.Name
@@ -94,7 +94,7 @@ func (s *service) ConvertOrgTreeToJSON(org *model.SystemOrg, parent *model.Syste
 	return result
 }
 
-func (s *service) GetTreeData() (*RespSystemOrgTree, error) {
+func (s *systemOrgService) GetTreeData() (*RespSystemOrgTree, error) {
 	orgs, _, err := s.GetAllInstances()
 	if err != nil {
 		return nil, err

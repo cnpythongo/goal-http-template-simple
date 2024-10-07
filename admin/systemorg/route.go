@@ -6,7 +6,7 @@ import (
 
 func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
 	svc := NewService()
-	h := NewHandler(svc)
+	h := NewSystemOrgHandler(svc)
 
 	r := route.Group("/api/v1/system/orgs")
 	r.GET("/tree", h.GetTreeData)

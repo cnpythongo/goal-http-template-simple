@@ -3,10 +3,10 @@ package systemorg
 type (
 	// ReqSystemOrgCreate 创建组织机构数据
 	ReqSystemOrgCreate struct {
-		ParentID uint64 `json:"parent_id" binding:"required,gte=0"` // 父ID
-		Name     string `json:"name" binding:"required"`            // 组织名称
-		Manager  string `json:"manager"`                            // 负责人名称
-		Phone    string `json:"phone"`                              // 负责人电话
+		ParentID uint64 `json:"parent_id" binding:"gte=0"` // 父ID
+		Name     string `json:"name" binding:"required"`   // 组织名称
+		Manager  string `json:"manager"`                   // 负责人名称
+		Phone    string `json:"phone"`                     // 负责人电话
 	}
 
 	// ReqSystemOrgUpdate 更新组织机构数据

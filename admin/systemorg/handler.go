@@ -7,19 +7,19 @@ import (
 	"goal-app/pkg/render"
 )
 
-type IHandler interface {
+type ISystemOrgHandler interface {
 	GetTreeData(c *gin.Context)
 	Create(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
 }
 
-type handler struct {
-	svc IService
+type systemOrgHandler struct {
+	svc ISystemOrgService
 }
 
-func NewHandler(svc IService) IHandler {
-	return &handler{svc: svc}
+func NewSystemOrgHandler(svc ISystemOrgService) ISystemOrgHandler {
+	return &systemOrgHandler{svc: svc}
 }
 
 // GetTreeData 获取组织机构树结构数据
@@ -31,7 +31,7 @@ func NewHandler(svc IService) IHandler {
 // @Success 200 {object} render.JsonDataResp{data=RespSystemOrgTree} "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/orgs/tree [get]
-func (h *handler) GetTreeData(c *gin.Context) {
+func (h *systemOrgHandler) GetTreeData(c *gin.Context) {
 	tree, err := h.svc.GetTreeData()
 	if err != nil {
 		render.Json(c, render.Error, err)
@@ -50,7 +50,7 @@ func (h *handler) GetTreeData(c *gin.Context) {
 // @Success 200 {object} render.JsonDataResp{data=RespSystemOrgDetail} "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/orgs/create [post]
-func (h *handler) Create(c *gin.Context) {
+func (h *systemOrgHandler) Create(c *gin.Context) {
 	var payload ReqSystemOrgCreate
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		log.GetLogger().Errorln(err)
@@ -83,7 +83,7 @@ func (h *handler) Create(c *gin.Context) {
 // @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/orgs/update [post]
-func (h *handler) Update(c *gin.Context) {
+func (h *systemOrgHandler) Update(c *gin.Context) {
 	var payload ReqSystemOrgUpdate
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		render.Json(c, render.PayloadError, err)
@@ -107,7 +107,7 @@ func (h *handler) Update(c *gin.Context) {
 // @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
 // @Router /system/orgs/delete [post]
-func (h *handler) Delete(c *gin.Context) {
+func (h *systemOrgHandler) Delete(c *gin.Context) {
 	var payload ReqSystemOrgIds
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		render.Json(c, render.PayloadError, err)

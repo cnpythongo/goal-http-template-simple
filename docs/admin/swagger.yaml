@@ -1,44 +1,5 @@
 basePath: /api/v1
 definitions:
-  admin_accounhistory.ReqGetHistoryList:
-    properties:
-      create_time_end:
-        description: 数据创建结束区间
-        type: integer
-      create_time_start:
-        description: 数据创建开始区间
-        type: integer
-      email:
-        description: 用户邮箱
-        example: abc@abc.com
-        type: string
-      limit:
-        default: 10
-        description: 每页数量
-        example: 10
-        type: integer
-      nickname:
-        description: 用户昵称
-        example: Tom
-        type: string
-      page:
-        default: 1
-        description: 页码
-        example: 1
-        type: integer
-      phone:
-        description: 用户手机号
-        example: "13800138000"
-        type: string
-      user_id:
-        description: 用户ID
-        example: 123
-        type: integer
-      user_uuid:
-        description: 用户UUID
-        example: abcef123
-        type: string
-    type: object
   admin_accountuser.ReqCreateUser:
     properties:
       email:
@@ -528,7 +489,6 @@ definitions:
         type: string
     required:
     - name
-    - parent_id
     type: object
   admin_systemorg.ReqSystemOrgId:
     properties:
@@ -653,71 +613,6 @@ info:
   title: 后台管理系统接口文档
   version: "1.0"
 paths:
-  /account/history/list:
-    get:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: 获取用户登录历史记录列表
-      parameters:
-      - description: 数据创建结束区间
-        in: query
-        name: create_time_end
-        type: integer
-      - description: 数据创建开始区间
-        in: query
-        name: create_time_start
-        type: integer
-      - description: 用户邮箱
-        example: abc@abc.com
-        in: query
-        name: email
-        type: string
-      - default: 10
-        description: 每页数量
-        example: 10
-        in: query
-        name: limit
-        type: integer
-      - description: 用户昵称
-        example: Tom
-        in: query
-        name: nickname
-        type: string
-      - default: 1
-        description: 页码
-        example: 1
-        in: query
-        name: page
-        type: integer
-      - description: 用户手机号
-        example: "13800138000"
-        in: query
-        name: phone
-        type: string
-      - description: 用户ID
-        example: 123
-        in: query
-        name: user_id
-        type: integer
-      - description: 用户UUID
-        example: abcef123
-        in: query
-        name: user_uuid
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/admin_accounhistory.ReqGetHistoryList'
-        "500":
-          description: Internal Server Error
-      security:
-      - AdminAuth: []
-      summary: 登录历史记录列表
-      tags:
-      - 用户管理
   /account/login:
     post:
       consumes:
