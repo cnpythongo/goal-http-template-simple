@@ -19,8 +19,8 @@ type {{{ toCamelCaseWithoutFirst .Name }}}Handler struct {
 	svc I{{{ .EntityName }}}Service
 }
 
-func New{{{ .EntityName }}}Handler(svc I{{{ .EntityName }}}Service) IHandler {
-	return &handler{svc: svc}
+func New{{{ .EntityName }}}Handler(svc I{{{ .EntityName }}}Service) I{{{ .EntityName }}}Handler {
+	return &{{{ toCamelCaseWithoutFirst .Name }}}Handler{svc: svc}
 }
 
 // list {{{ .EntityName }}}列表
