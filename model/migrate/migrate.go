@@ -16,7 +16,7 @@ func MigrateTables(conf *config.Configuration) {
 	err := db.AutoMigrate(
 		model.NewUser(),
 		model.NewUserProfile(),
-		model.NewConfig(),
+		model.NewSystemConfig(),
 		model.NewAttachment(),
 		model.NewSystemOrg(),
 		model.NewSystemMenu(),

@@ -8,11 +8,13 @@ import (
 
 type I{{{ .EntityName }}}Handler interface {
 	list(c *gin.Context)
-	tree(c *gin.Context)
 	detail(c *gin.Context)
 	create(c *gin.Context)
 	update(c *gin.Context)
 	delete(c *gin.Context)
+	{{{- if eq .GenTpl "tree" }}}
+	tree(c *gin.Context)
+	{{{- end }}}
 }
 
 type {{{ toCamelCaseWithoutFirst .Name }}}Handler struct {
@@ -57,30 +59,6 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) list(c *gin.Context) {
     render.Json(c, render.OK, resp)
 }
 
-// tree {{{ .FunctionName }}}树结构数据
-// @Tags {{{ .FunctionName }}}
-// @Summary {{{ .FunctionName }}}树结构数据
-// @Description {{{ .FunctionName }}}树结构数据
-// @Accept json
-// @Produce json
-// @Success 200 {object} render.JsonDataResp{data=Resp{{{ .EntityName }}}Tree} "code不为0时表示有错误"
-// @Failure 500
-// @Router {{{ .GenPath }}}/tree [get]
-func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) tree(c *gin.Context) {
-	var req Req{{{ .EntityName }}}Tree
-	if err := c.ShouldBindQuery(&req); err != nil {
-        log.GetLogger().Errorln(err)
-        render.Json(c, render.PayloadError, nil)
-        return
-    }
-
-    tree, code, err := h.svc.Tree(&req)
-    if err != nil {
-        render.Json(c, code, err)
-        return
-    }
-    render.Json(c, render.OK, tree)
-}
 
 // detail {{{ .FunctionName }}}详情
 // @Tags {{{ .FunctionName }}}
@@ -188,3 +166,30 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) delete(c *gin.Context) {
     }
     render.Json(c, render.OK, "OK")
 }
+
+{{{- if eq .GenTpl "tree" }}}
+// tree {{{ .FunctionName }}}树结构数据
+// @Tags {{{ .FunctionName }}}
+// @Summary {{{ .FunctionName }}}树结构数据
+// @Description {{{ .FunctionName }}}树结构数据
+// @Accept json
+// @Produce json
+// @Success 200 {object} render.JsonDataResp{data=Resp{{{ .EntityName }}}Tree} "code不为0时表示有错误"
+// @Failure 500
+// @Router {{{ .GenPath }}}/tree [get]
+func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) tree(c *gin.Context) {
+	var req Req{{{ .EntityName }}}Tree
+	if err := c.ShouldBindQuery(&req); err != nil {
+        log.GetLogger().Errorln(err)
+        render.Json(c, render.PayloadError, nil)
+        return
+    }
+
+    tree, code, err := h.svc.Tree(&req)
+    if err != nil {
+        render.Json(c, code, err)
+        return
+    }
+    render.Json(c, render.OK, tree)
+}
+{{{- end }}}

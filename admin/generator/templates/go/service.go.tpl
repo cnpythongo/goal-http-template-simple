@@ -14,9 +14,11 @@ type I{{{ .EntityName }}}Service interface {
 	Create(payload *Req{{{ .EntityName }}}Create) (res *Resp{{{ .EntityName }}}Item, code int, err error)
 	Update(payload *Req{{{ .EntityName }}}Update) (res *Resp{{{ .EntityName }}}Item, code int, err error)
 	Delete(payload *Req{{{ .EntityName }}}Delete) (code int, e error)
-	Tree(req *Req{{{ .EntityName }}}Tree) (res *Resp{{{ .EntityName }}}Tree, code int, err error)
 	GetAll{{{ .EntityName }}}() ([]*model.{{{ .EntityName }}}, error)
+	{{{- if eq .GenTpl "tree" }}}
+	Tree(req *Req{{{ .EntityName }}}Tree) (res *Resp{{{ .EntityName }}}Tree, code int, err error)
     Convert{{{ .EntityName }}}TreeToJSON(root *model.{{{ .EntityName }}}, parent *model.{{{ .EntityName }}}) *Resp{{{ .EntityName }}}Tree
+    {{{- end }}}
 }
 
 // {{{ lowerFirst .EntityName }}}Service {{{ .FunctionName }}}服务实现类
@@ -179,6 +181,16 @@ func (s *{{{ lowerFirst .EntityName }}}Service) Delete(payload *Req{{{ .EntityNa
     return render.OK, nil
 }
 
+// GetAll{{{ .EntityName }}} {{{ .FunctionName }}}获取所有有效数据
+func (s *{{{ lowerFirst .EntityName }}}Service) GetAll{{{ .EntityName }}}() ([]*model.{{{ .EntityName }}}, error) {
+	result, err := model.GetAll{{{ .EntityName }}}(model.GetDB())
+	if err != nil {
+		return nil, err
+	}
+	return result, err
+}
+
+{{{- if eq .GenTpl "tree" }}}
 // Tree {{{ .FunctionName }}}树
 func (s *{{{ lowerFirst .EntityName }}}Service) Tree(req *Req{{{ .EntityName }}}Tree) (res *Resp{{{ .EntityName }}}Tree, code int, err error) {
 	rows, err := s.GetAll{{{ .EntityName }}}()
@@ -190,14 +202,6 @@ func (s *{{{ lowerFirst .EntityName }}}Service) Tree(req *Req{{{ .EntityName }}}
 	return result, render.OK, nil
 }
 
-// GetAll{{{ .EntityName }}} {{{ .FunctionName }}}获取所有有效数据
-func (s *{{{ lowerFirst .EntityName }}}Service) GetAll{{{ .EntityName }}}() ([]*model.{{{ .EntityName }}}, error) {
-	result, err := model.GetAll{{{ .EntityName }}}(model.GetDB())
-	if err != nil {
-		return nil, err
-	}
-	return result, err
-}
 
 // Convert{{{ .EntityName }}}TreeToJSON 行模型数据转成JSON树结构
 func (s *{{{ lowerFirst .EntityName }}}Service) Convert{{{ .EntityName }}}TreeToJSON(root *model.{{{ .EntityName }}}, parent *model.{{{ .EntityName }}}) *Resp{{{ .EntityName }}}Tree {
@@ -217,3 +221,4 @@ func (s *{{{ lowerFirst .EntityName }}}Service) Convert{{{ .EntityName }}}TreeTo
 	}
 	return result
 }
+{{{- end }}}

@@ -56,7 +56,7 @@ type Req{{{ .EntityName }}}Delete struct {
     {{{- end }}}
 }
 
-// Resp{{{ .EntityName }}}ItemResp {{{ .FunctionName }}}单条详情
+// Resp{{{ .EntityName }}}Item {{{ .FunctionName }}}单条详情
 type Resp{{{ .EntityName }}}Item struct {
 	{{{- range .Columns }}}
     {{{- if or .IsList .IsPk }}}
@@ -65,6 +65,7 @@ type Resp{{{ .EntityName }}}Item struct {
     {{{- end }}}
 }
 
+{{{- if eq .GenTpl "tree" }}}
 // Resp{{{ .EntityName }}}Tree {{{ .FunctionName }}}树结构数据
 type Resp{{{ .EntityName }}}Tree struct {
     {{{- range .Columns }}}
@@ -75,3 +76,4 @@ type Resp{{{ .EntityName }}}Tree struct {
     ParentName string                `json:"parent_name" structs:"parent_name"` // '父级名称'
     Children []*Resp{{{ .EntityName }}}Tree `json:"children"`    // 子节点
 }
+{{{- end }}}

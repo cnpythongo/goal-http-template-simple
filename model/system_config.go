@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type Config struct {
+type SystemConfig struct {
 	BaseModel
 	Scope   SystemConfigScope `json:"scope" gorm:"column:scope;type:varchar(50);not null;default:'';comment:作用域,global-全局,admin-管理后台,app-前台应用"`
 	Name    string            `json:"name" gorm:"column:name;type:varchar(100);not null;default:'';comment:配置名称"`
@@ -16,76 +16,96 @@ type Config struct {
 	Enabled bool              `json:"enabled" gorm:"column:enabled;type:tinyint(1);not null;default:1;comment:是否启用,0-否,1-是"`
 }
 
-func (c *Config) TableName() string {
+func (m *SystemConfig) TableName() string {
 	return "system_config"
 }
 
-func NewConfig() *Config {
-	return &Config{}
+func NewSystemConfig() *SystemConfig {
+	return &SystemConfig{}
 }
 
-func NewConfigList() []*Config {
-	return make([]*Config, 0)
+func NewSystemConfigList() []*SystemConfig {
+	return make([]*SystemConfig, 0)
 }
 
-// GetConfigList 获取配置列表
-func GetConfigList(db *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*Config, int64, error) {
-	qs := db.Where("delete_time = 0")
+func (m *SystemConfig) BeforeCreate(tx *gorm.DB) (err error) {
+	now := time.Now().Unix()
+	m.CreateTime = now
+	m.UpdateTime = now
+	return nil
+}
+
+func CreateSystemConfig(tx *gorm.DB, obj *SystemConfig) (*SystemConfig, error) {
+	err := tx.Create(&obj).Error
+	if err != nil {
+		log.GetLogger().Errorf("model.SystemConfig.CreateSystemConfig Error ==> %v", err)
+		return nil, err
+	}
+	return obj, nil
+}
+
+func UpdateSystemConfig(tx *gorm.DB, obj *SystemConfig) error {
+	err := tx.Save(&obj).Error
+	if err != nil {
+		log.GetLogger().Errorf("model.SystemConfig.UpdateSystemConfig Error ==> %v", err)
+	}
+	return err
+}
+
+func DeleteSystemConfig(tx *gorm.DB, id int64) error {
+	err := tx.Model(NewSystemConfig()).Where("id = ?", id).UpdateColumns(map[string]interface{}{
+		"delete_time": time.Now().Unix(),
+	}).Error
+	if err != nil {
+		log.GetLogger().Errorf("model.SystemConfig.DeleteSystemConfig Error ==> %v", err)
+	}
+	return err
+}
+
+func GetSystemConfigInstance(tx *gorm.DB, conditions map[string]interface{}) (*SystemConfig, error) {
+	result := NewSystemConfig()
+	err := tx.Where(conditions).Take(&result).Error
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			log.GetLogger().Infof("model.SystemConfig.GetSystemConfigInstance conditions ==> %v", conditions)
+			log.GetLogger().Errorf("model.SystemConfig.GetSystemConfigInstance Error ==> %v", err)
+		}
+		return nil, err
+	}
+	return result, nil
+}
+
+func GetSystemConfigList(tx *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*SystemConfig, int64, error) {
+	qs := tx.Model(NewSystemConfig()).Where("delete_time == 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}
-	var count int64
-	err := qs.Count(&count).Error
+	var total int64
+	err := qs.Count(&total).Error
 	if err != nil {
-		return nil, 0, err
-	}
-	if err != nil {
-		log.GetLogger().Errorf("model.system_config.GetConfigList Count Error ==> %s", err)
+		log.GetLogger().Errorf("model.SystemConfig.GetSystemConfigList Count Error ==> %v", err)
 		return nil, 0, err
 	}
 	if page > 0 && size > 0 {
 		offset := (page - 1) * size
 		qs = qs.Limit(size).Offset(offset)
 	}
-	result := NewConfigList()
+	result := NewSystemConfigList()
 	err = qs.Find(&result).Error
 	if err != nil {
-		log.GetLogger().Errorf("model.system_config.GetConfigList Query Error ==> %s", err)
+		log.GetLogger().Errorf("model.SystemConfig.GetSystemConfigList Query Error ==> %v", err)
 		return nil, 0, err
 	}
-	return result, count, nil
+	return result, total, nil
 }
 
-// CreateConfig 创建配置
-func CreateConfig(db *gorm.DB, cfg *Config) (*Config, error) {
-	err := db.Create(&cfg).Error
+func GetAllSystemConfig(tx *gorm.DB) ([]*SystemConfig, error) {
+	result := NewSystemConfigList()
+	err := tx.Where("delete_time == 0").Find(&result).Error
 	if err != nil {
-		log.GetLogger().Errorf("model.system_config.CreateConfig Error ==> %v", err)
-		return nil, err
-	}
-	return cfg, nil
-}
-
-// UpdateConfig 更新配置
-func UpdateConfig(db *gorm.DB, id int64, data map[string]interface{}) error {
-	err := db.Model(NewConfig()).Where("id = ?", id).UpdateColumns(data).Error
-	if err != nil {
-		log.GetLogger().Errorf("model.system_config.UpdateConfig Error ==> %v", err)
-	}
-	return err
-}
-
-// DeleteConfig 删除配置，逻辑删除
-func DeleteConfig(db *gorm.DB, id int64) error {
-	return UpdateConfig(db, id, map[string]interface{}{"delete_time": time.Now().Unix()})
-}
-
-// GetConfigById 根据ID获取单个配置数据
-func GetConfigById(db *gorm.DB, id int64) (*Config, error) {
-	result := NewConfig()
-	err := db.Model(NewConfig()).Where("id = ?", id).Limit(1).First(&result).Error
-	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		log.GetLogger().Errorf("model.system_config.CreateConfig Error ==> %v", err)
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			log.GetLogger().Errorf("model.SystemConfig.GetAllSystemConfig Error ==> %v", err)
+		}
 		return nil, err
 	}
 	return result, nil
