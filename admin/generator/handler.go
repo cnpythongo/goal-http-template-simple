@@ -38,7 +38,7 @@ func NewGeneratorHandler(svc IGeneratorService) IGeneratorHandler {
 // @Param data query ReqGenTableList false "请求体"
 // @Success 200 {object} render.JsonDataResp{data=render.RespPageJson{result=[]RespGenTableItem}} "code不为0时表示有错误"
 // @Failure 500
-// // @Security AdminAuth
+// @Security AdminAuth
 // @Router /system/generator/list [get]
 func (h *generatorHandler) List(c *gin.Context) {
 	var req ReqGenTableList
@@ -71,7 +71,7 @@ func (h *generatorHandler) List(c *gin.Context) {
 // @Param data query ReqDbTableList false "请求体"
 // @Success 200 {object} render.JsonDataResp{data=render.RespPageJson{result=[]RespDbTable}} "code不为0时表示有错误"
 // @Failure 500
-// // @Security AdminAuth
+// @Security AdminAuth
 // @Router /system/generator/tables [get]
 func (h *generatorHandler) GetDbTableList(c *gin.Context) {
 	var req ReqDbTableList
@@ -104,7 +104,7 @@ func (h *generatorHandler) GetDbTableList(c *gin.Context) {
 // @Param data body ReqGenTableCreate false "请求体"
 // @Success 200 {object} render.JsonDataResp{data=string} "code不为0时表示有错误"
 // @Failure 500
-// // @Security AdminAuth
+// @Security AdminAuth
 // @Router /system/generator/create [post]
 func (h *generatorHandler) Create(c *gin.Context) {
 	var req ReqGenTableCreate
@@ -130,7 +130,7 @@ func (h *generatorHandler) Create(c *gin.Context) {
 // @Param data body ReqPreview false "请求体"
 // @Success 200 {object} render.JsonDataResp{data=string} "code不为0时表示有错误"
 // @Failure 500
-// // @Security AdminAuth
+// @Security AdminAuth
 // @Router /system/generator/update [post]
 func (h *generatorHandler) Update(c *gin.Context) {
 	var req ReqUpdateGenTable
@@ -156,7 +156,7 @@ func (h *generatorHandler) Update(c *gin.Context) {
 // @Param data body ReqDelTable false "请求体"
 // @Success 200 {object} render.JsonDataResp{data=string} "code不为0时表示有错误"
 // @Failure 500
-// // @Security AdminAuth
+// @Security AdminAuth
 // @Router /system/generator/delete [post]
 func (h *generatorHandler) Delete(c *gin.Context) {
 	var req ReqDelTable
@@ -182,7 +182,7 @@ func (h *generatorHandler) Delete(c *gin.Context) {
 // @Param data query ReqPreview false "请求体"
 // @Success 200 {object} render.JsonDataResp{data=[]RespPreviewItem} "code不为0时表示有错误"
 // @Failure 500
-// // @Security AdminAuth
+// @Security AdminAuth
 // @Router /system/generator/preview [get]
 func (h *generatorHandler) Preview(c *gin.Context) {
 	var req ReqPreview
@@ -208,7 +208,7 @@ func (h *generatorHandler) Preview(c *gin.Context) {
 // @Param data query ReqGenCode false "请求体"
 // @Success 200 {object} render.JsonDataResp{data=string} "code不为0时表示有错误"
 // @Failure 500
-// // @Security AdminAuth
+// @Security AdminAuth
 // @Router /system/generator/gencode [post]
 func (h *generatorHandler) GenCode(c *gin.Context) {
 	var payload ReqGenCode
@@ -236,7 +236,7 @@ func (h *generatorHandler) GenCode(c *gin.Context) {
 // @Param id path int64 true "表格ID"
 // @Success 200 {object} render.JsonDataResp{data=[]RespGenColumn} "code不为0时表示有错误"
 // @Failure 500
-// // @Security AdminAuth
+// @Security AdminAuth
 // @Router /system/generator/tables/{id}/columns [get]
 func (h *generatorHandler) GetGenColumnList(c *gin.Context) {
 	var req ReqPreview
@@ -261,7 +261,7 @@ func (h *generatorHandler) GetGenColumnList(c *gin.Context) {
 // @Param id path int64 true "表格ID"
 // @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
-// // @Security AdminAuth
+// @Security AdminAuth
 // @Router /system/generator/tables/{id}/columns/update [post]
 func (h *generatorHandler) UpdateGenColumn(c *gin.Context) {
 	var req ReqUpdateGenColumn
@@ -286,7 +286,7 @@ func (h *generatorHandler) UpdateGenColumn(c *gin.Context) {
 // @Param data body ReqDelGenTableColumn false "请求体"
 // @Success 200 {object} render.JsonDataResp{data=string} "code不为0时表示有错误"
 // @Failure 500
-// // @Security AdminAuth
+// @Security AdminAuth
 // @Router /system/generator/tables/{id}/columns/delete [post]
 func (h *generatorHandler) DeleteGenTableColumns(c *gin.Context) {
 	var req ReqDelGenTableColumn

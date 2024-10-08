@@ -807,6 +807,11 @@ const docTemplate = `{
         },
         "/system/generator/create": {
             "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "向 gen_tables 表中导入数据表信息",
                 "consumes": [
                     "application/json"
@@ -855,6 +860,11 @@ const docTemplate = `{
         },
         "/system/generator/delete": {
             "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "删除代码生成配置表数据",
                 "consumes": [
                     "application/json"
@@ -903,6 +913,11 @@ const docTemplate = `{
         },
         "/system/generator/gencode": {
             "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "生成代码文件",
                 "consumes": [
                     "application/json"
@@ -950,6 +965,11 @@ const docTemplate = `{
         },
         "/system/generator/list": {
             "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "获取已导入的数据表列表",
                 "consumes": [
                     "application/x-www-form-urlencoded"
@@ -1045,6 +1065,11 @@ const docTemplate = `{
         },
         "/system/generator/preview": {
             "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "预览代码生成内容",
                 "consumes": [
                     "application/x-www-form-urlencoded"
@@ -1095,6 +1120,11 @@ const docTemplate = `{
         },
         "/system/generator/tables": {
             "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "获取数据库表名称列表",
                 "consumes": [
                     "application/x-www-form-urlencoded"
@@ -1190,6 +1220,11 @@ const docTemplate = `{
         },
         "/system/generator/tables/{id}/columns": {
             "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "获取数据库表每个列的信息",
                 "consumes": [
                     "application/x-www-form-urlencoded"
@@ -1240,6 +1275,11 @@ const docTemplate = `{
         },
         "/system/generator/tables/{id}/columns/delete": {
             "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "删除代码生成配置表的行属性数据",
                 "consumes": [
                     "application/json"
@@ -1288,6 +1328,11 @@ const docTemplate = `{
         },
         "/system/generator/tables/{id}/columns/update": {
             "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "更新生成代码表列信息",
                 "consumes": [
                     "application/json"
@@ -1323,6 +1368,11 @@ const docTemplate = `{
         },
         "/system/generator/update": {
             "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "更新代码生成配置表数据",
                 "consumes": [
                     "application/json"
