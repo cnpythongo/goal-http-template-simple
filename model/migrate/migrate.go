@@ -22,6 +22,7 @@ func MigrateTables(conf *config.Configuration) {
 		model.NewSystemMenu(),
 		model.NewGenTable(),
 		model.NewGenTableColumn(),
+		model.NewSystemLog(),
 	)
 	if err != nil {
 		panic(err)

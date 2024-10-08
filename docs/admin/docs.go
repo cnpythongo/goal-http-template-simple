@@ -1419,6 +1419,362 @@ const docTemplate = `{
                 }
             }
         },
+        "/system/logs/create": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "创建系统日志",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统日志"
+                ],
+                "summary": "创建系统日志",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemlog.ReqSystemLogCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_systemlog.RespSystemLogItem"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/logs/delete": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "删除系统日志",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统日志"
+                ],
+                "summary": "删除系统日志",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/logs/detail": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "系统日志详情",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统日志"
+                ],
+                "summary": "系统日志详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "流水ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemlog.RespSystemLogItem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/logs/list": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "系统日志列表",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统日志"
+                ],
+                "summary": "系统日志列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "'请求Body'",
+                        "name": "body",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'手机号'",
+                        "name": "cellphone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'客户端IP'",
+                        "name": "client_ip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "数据创建结束区间",
+                        "name": "create_time_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "数据创建开始区间",
+                        "name": "create_time_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "'请求结束时间'",
+                        "name": "end_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'请求耗时'",
+                        "name": "latency_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'用户名'",
+                        "name": "member_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'操作标题'",
+                        "name": "operate_title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "example": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'请求触发页面'",
+                        "name": "page_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'请求路径'",
+                        "name": "path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'请求携带的Referer'",
+                        "name": "referer",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "'请求开始时间'",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "'状态码'",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'请求UA'",
+                        "name": "user_agent",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'用户ID'",
+                        "name": "user_uuid",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/goal-app_pkg_render.RespPageJson"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "result": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/admin_systemlog.RespSystemLogItem"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/logs/update": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "更新系统日志",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统日志"
+                ],
+                "summary": "更新系统日志",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemlog.ReqSystemLogUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_systemlog.RespSystemLogItem"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/system/menus/create": {
             "post": {
                 "security": [
@@ -1699,6 +2055,11 @@ const docTemplate = `{
         },
         "/system/menus/tree": {
             "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "菜单管理树结构数据",
                 "consumes": [
                     "application/json"
@@ -1791,6 +2152,11 @@ const docTemplate = `{
         },
         "/system/orgs/create": {
             "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "创建组织机构",
                 "consumes": [
                     "application/json"
@@ -1840,6 +2206,11 @@ const docTemplate = `{
         },
         "/system/orgs/delete": {
             "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "删除组织机构",
                 "consumes": [
                     "application/json"
@@ -1877,6 +2248,11 @@ const docTemplate = `{
         },
         "/system/orgs/tree": {
             "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "获取组织机构树结构数据",
                 "consumes": [
                     "application/json"
@@ -1915,6 +2291,11 @@ const docTemplate = `{
         },
         "/system/orgs/update": {
             "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "description": "更新组织机构",
                 "consumes": [
                     "application/json"
@@ -2453,6 +2834,205 @@ const docTemplate = `{
                 },
                 "value": {
                     "description": "配置值",
+                    "type": "string"
+                }
+            }
+        },
+        "admin_systemlog.ReqSystemLogCreate": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "description": "'请求Body'",
+                    "type": "string"
+                },
+                "cellphone": {
+                    "description": "'手机号'",
+                    "type": "string"
+                },
+                "client_ip": {
+                    "description": "'客户端IP'",
+                    "type": "string"
+                },
+                "end_time": {
+                    "description": "'请求结束时间'",
+                    "type": "integer"
+                },
+                "latency_time": {
+                    "description": "'请求耗时'",
+                    "type": "string"
+                },
+                "member_name": {
+                    "description": "'用户名'",
+                    "type": "string"
+                },
+                "operate_title": {
+                    "description": "'操作标题'",
+                    "type": "string"
+                },
+                "page": {
+                    "description": "'请求触发页面'",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "'请求路径'",
+                    "type": "string"
+                },
+                "referer": {
+                    "description": "'请求携带的Referer'",
+                    "type": "string"
+                },
+                "start_time": {
+                    "description": "'请求开始时间'",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "'状态码'",
+                    "type": "integer"
+                },
+                "user_agent": {
+                    "description": "'请求UA'",
+                    "type": "string"
+                },
+                "user_uuid": {
+                    "description": "'用户ID'",
+                    "type": "string"
+                }
+            }
+        },
+        "admin_systemlog.ReqSystemLogUpdate": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "description": "'请求Body'",
+                    "type": "string"
+                },
+                "cellphone": {
+                    "description": "'手机号'",
+                    "type": "string"
+                },
+                "client_ip": {
+                    "description": "'客户端IP'",
+                    "type": "string"
+                },
+                "end_time": {
+                    "description": "'请求结束时间'",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "流水ID",
+                    "type": "integer"
+                },
+                "latency_time": {
+                    "description": "'请求耗时'",
+                    "type": "string"
+                },
+                "member_name": {
+                    "description": "'用户名'",
+                    "type": "string"
+                },
+                "operate_title": {
+                    "description": "'操作标题'",
+                    "type": "string"
+                },
+                "page": {
+                    "description": "'请求触发页面'",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "'请求路径'",
+                    "type": "string"
+                },
+                "referer": {
+                    "description": "'请求携带的Referer'",
+                    "type": "string"
+                },
+                "start_time": {
+                    "description": "'请求开始时间'",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "'状态码'",
+                    "type": "integer"
+                },
+                "user_agent": {
+                    "description": "'请求UA'",
+                    "type": "string"
+                },
+                "user_uuid": {
+                    "description": "'用户ID'",
+                    "type": "string"
+                }
+            }
+        },
+        "admin_systemlog.RespSystemLogItem": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "description": "'请求Body'",
+                    "type": "string"
+                },
+                "cellphone": {
+                    "description": "'手机号'",
+                    "type": "string"
+                },
+                "client_ip": {
+                    "description": "'客户端IP'",
+                    "type": "string"
+                },
+                "create_time": {
+                    "description": "数据创建时间",
+                    "type": "integer"
+                },
+                "end_time": {
+                    "description": "'请求结束时间'",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "流水ID",
+                    "type": "integer"
+                },
+                "latency_time": {
+                    "description": "'请求耗时'",
+                    "type": "string"
+                },
+                "member_name": {
+                    "description": "'用户名'",
+                    "type": "string"
+                },
+                "operate_title": {
+                    "description": "'操作标题'",
+                    "type": "string"
+                },
+                "page": {
+                    "description": "'请求触发页面'",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "'请求路径'",
+                    "type": "string"
+                },
+                "referer": {
+                    "description": "'请求携带的Referer'",
+                    "type": "string"
+                },
+                "start_time": {
+                    "description": "'请求开始时间'",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "'状态码'",
+                    "type": "integer"
+                },
+                "update_time": {
+                    "description": "数据更新时间",
+                    "type": "integer"
+                },
+                "user_agent": {
+                    "description": "'请求UA'",
+                    "type": "string"
+                },
+                "user_uuid": {
+                    "description": "'用户ID'",
                     "type": "string"
                 }
             }

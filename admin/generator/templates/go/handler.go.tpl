@@ -176,6 +176,7 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) delete(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} render.JsonDataResp{data=Resp{{{ .EntityName }}}Tree} "code不为0时表示有错误"
 // @Failure 500
+// @Security AdminAuth
 // @Router {{{ .GenPath }}}/tree [get]
 func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) tree(c *gin.Context) {
 	var req Req{{{ .EntityName }}}Tree

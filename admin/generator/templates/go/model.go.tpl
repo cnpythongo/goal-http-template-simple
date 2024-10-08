@@ -22,7 +22,7 @@ type {{{ .EntityName }}} struct {
 }
 
 func (m *{{{ .EntityName }}}) TableName() string {
-	return "{{{ toSnakeCase .EntityName }}}"
+	return "{{{ .Name }}}"
 }
 
 func New{{{ .EntityName }}}() *{{{ .EntityName }}} {

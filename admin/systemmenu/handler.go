@@ -65,6 +65,7 @@ func (h *SystemMenusHandler) list(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} render.JsonDataResp{data=RespSystemMenuTree} "code不为0时表示有错误"
 // @Failure 500
+// @Security AdminAuth
 // @Router /system/menus/tree [get]
 func (h *SystemMenusHandler) tree(c *gin.Context) {
 	var req ReqSystemMenuTree

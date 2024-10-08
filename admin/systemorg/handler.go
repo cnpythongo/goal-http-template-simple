@@ -30,6 +30,7 @@ func NewSystemOrgHandler(svc ISystemOrgService) ISystemOrgHandler {
 // @Produce json
 // @Success 200 {object} render.JsonDataResp{data=RespSystemOrgTree} "code不为0时表示有错误"
 // @Failure 500
+// @Security AdminAuth
 // @Router /system/orgs/tree [get]
 func (h *systemOrgHandler) GetTreeData(c *gin.Context) {
 	tree, err := h.svc.GetTreeData()
@@ -49,6 +50,7 @@ func (h *systemOrgHandler) GetTreeData(c *gin.Context) {
 // @Param data body ReqSystemOrgCreate true "请求体"
 // @Success 200 {object} render.JsonDataResp{data=RespSystemOrgDetail} "code不为0时表示有错误"
 // @Failure 500
+// @Security AdminAuth
 // @Router /system/orgs/create [post]
 func (h *systemOrgHandler) Create(c *gin.Context) {
 	var payload ReqSystemOrgCreate
@@ -82,6 +84,7 @@ func (h *systemOrgHandler) Create(c *gin.Context) {
 // @Param data body ReqSystemOrgUpdate true "请求体"
 // @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
+// @Security AdminAuth
 // @Router /system/orgs/update [post]
 func (h *systemOrgHandler) Update(c *gin.Context) {
 	var payload ReqSystemOrgUpdate
@@ -106,6 +109,7 @@ func (h *systemOrgHandler) Update(c *gin.Context) {
 // @Param data body ReqSystemOrgId true "请求体"
 // @Success 200 {object} render.JsonDataResp "code不为0时表示有错误"
 // @Failure 500
+// @Security AdminAuth
 // @Router /system/orgs/delete [post]
 func (h *systemOrgHandler) Delete(c *gin.Context) {
 	var payload ReqSystemOrgIds

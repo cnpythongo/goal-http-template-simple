@@ -364,6 +364,153 @@ definitions:
         description: 配置值
         type: string
     type: object
+  admin_systemlog.ReqSystemLogCreate:
+    properties:
+      body:
+        description: '''请求Body'''
+        type: string
+      cellphone:
+        description: '''手机号'''
+        type: string
+      client_ip:
+        description: '''客户端IP'''
+        type: string
+      end_time:
+        description: '''请求结束时间'''
+        type: integer
+      latency_time:
+        description: '''请求耗时'''
+        type: string
+      member_name:
+        description: '''用户名'''
+        type: string
+      operate_title:
+        description: '''操作标题'''
+        type: string
+      page:
+        description: '''请求触发页面'''
+        type: string
+      path:
+        description: '''请求路径'''
+        type: string
+      referer:
+        description: '''请求携带的Referer'''
+        type: string
+      start_time:
+        description: '''请求开始时间'''
+        type: integer
+      status:
+        description: '''状态码'''
+        type: integer
+      user_agent:
+        description: '''请求UA'''
+        type: string
+      user_uuid:
+        description: '''用户ID'''
+        type: string
+    type: object
+  admin_systemlog.ReqSystemLogUpdate:
+    properties:
+      body:
+        description: '''请求Body'''
+        type: string
+      cellphone:
+        description: '''手机号'''
+        type: string
+      client_ip:
+        description: '''客户端IP'''
+        type: string
+      end_time:
+        description: '''请求结束时间'''
+        type: integer
+      id:
+        description: 流水ID
+        type: integer
+      latency_time:
+        description: '''请求耗时'''
+        type: string
+      member_name:
+        description: '''用户名'''
+        type: string
+      operate_title:
+        description: '''操作标题'''
+        type: string
+      page:
+        description: '''请求触发页面'''
+        type: string
+      path:
+        description: '''请求路径'''
+        type: string
+      referer:
+        description: '''请求携带的Referer'''
+        type: string
+      start_time:
+        description: '''请求开始时间'''
+        type: integer
+      status:
+        description: '''状态码'''
+        type: integer
+      user_agent:
+        description: '''请求UA'''
+        type: string
+      user_uuid:
+        description: '''用户ID'''
+        type: string
+    type: object
+  admin_systemlog.RespSystemLogItem:
+    properties:
+      body:
+        description: '''请求Body'''
+        type: string
+      cellphone:
+        description: '''手机号'''
+        type: string
+      client_ip:
+        description: '''客户端IP'''
+        type: string
+      create_time:
+        description: 数据创建时间
+        type: integer
+      end_time:
+        description: '''请求结束时间'''
+        type: integer
+      id:
+        description: 流水ID
+        type: integer
+      latency_time:
+        description: '''请求耗时'''
+        type: string
+      member_name:
+        description: '''用户名'''
+        type: string
+      operate_title:
+        description: '''操作标题'''
+        type: string
+      page:
+        description: '''请求触发页面'''
+        type: string
+      path:
+        description: '''请求路径'''
+        type: string
+      referer:
+        description: '''请求携带的Referer'''
+        type: string
+      start_time:
+        description: '''请求开始时间'''
+        type: integer
+      status:
+        description: '''状态码'''
+        type: integer
+      update_time:
+        description: 数据更新时间
+        type: integer
+      user_agent:
+        description: '''请求UA'''
+        type: string
+      user_uuid:
+        description: '''用户ID'''
+        type: string
+    type: object
   admin_systemmenu.ReqSystemMenuCreate:
     properties:
       auth_tag:
@@ -1512,6 +1659,223 @@ paths:
       summary: 更新代码生成配置表数据
       tags:
       - 系统管理--代码生成器
+  /system/logs/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建系统日志
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemlog.ReqSystemLogCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemlog.RespSystemLogItem'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 创建系统日志
+      tags:
+      - 系统日志
+  /system/logs/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除系统日志
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 删除系统日志
+      tags:
+      - 系统日志
+  /system/logs/detail:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 系统日志详情
+      parameters:
+      - description: 流水ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_systemlog.RespSystemLogItem'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 系统日志详情
+      tags:
+      - 系统日志
+  /system/logs/list:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 系统日志列表
+      parameters:
+      - description: '''请求Body'''
+        in: query
+        name: body
+        type: string
+      - description: '''手机号'''
+        in: query
+        name: cellphone
+        type: string
+      - description: '''客户端IP'''
+        in: query
+        name: client_ip
+        type: string
+      - description: 数据创建结束区间
+        in: query
+        name: create_time_end
+        type: integer
+      - description: 数据创建开始区间
+        in: query
+        name: create_time_start
+        type: integer
+      - description: '''请求结束时间'''
+        in: query
+        name: end_time
+        type: integer
+      - description: '''请求耗时'''
+        in: query
+        name: latency_time
+        type: string
+      - default: 10
+        description: 每页数量
+        example: 10
+        in: query
+        name: limit
+        type: integer
+      - description: '''用户名'''
+        in: query
+        name: member_name
+        type: string
+      - description: '''操作标题'''
+        in: query
+        name: operate_title
+        type: string
+      - default: 1
+        description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: '''请求触发页面'''
+        in: query
+        name: page_name
+        type: string
+      - description: '''请求路径'''
+        in: query
+        name: path
+        type: string
+      - description: '''请求携带的Referer'''
+        in: query
+        name: referer
+        type: string
+      - description: '''请求开始时间'''
+        in: query
+        name: start_time
+        type: integer
+      - description: '''状态码'''
+        in: query
+        name: status
+        type: integer
+      - description: '''请求UA'''
+        in: query
+        name: user_agent
+        type: string
+      - description: '''用户ID'''
+        in: query
+        name: user_uuid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/goal-app_pkg_render.RespPageJson'
+                  - properties:
+                      result:
+                        items:
+                          $ref: '#/definitions/admin_systemlog.RespSystemLogItem'
+                        type: array
+                    type: object
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 系统日志列表
+      tags:
+      - 系统日志
+  /system/logs/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新系统日志
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemlog.ReqSystemLogUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemlog.RespSystemLogItem'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 更新系统日志
+      tags:
+      - 系统日志
   /system/menus/create:
     post:
       consumes:
@@ -1701,6 +2065,8 @@ paths:
               type: object
         "500":
           description: Internal Server Error
+      security:
+      - AdminAuth: []
       summary: 菜单管理树结构数据
       tags:
       - 菜单管理
@@ -1761,6 +2127,8 @@ paths:
               type: object
         "500":
           description: Internal Server Error
+      security:
+      - AdminAuth: []
       summary: 创建组织机构
       tags:
       - 组织管理
@@ -1785,6 +2153,8 @@ paths:
             $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "500":
           description: Internal Server Error
+      security:
+      - AdminAuth: []
       summary: 删除组织机构
       tags:
       - 组织管理
@@ -1807,6 +2177,8 @@ paths:
               type: object
         "500":
           description: Internal Server Error
+      security:
+      - AdminAuth: []
       summary: 获取组织机构树结构数据
       tags:
       - 组织管理
@@ -1831,6 +2203,8 @@ paths:
             $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
         "500":
           description: Internal Server Error
+      security:
+      - AdminAuth: []
       summary: 更新组织机构
       tags:
       - 组织管理
