@@ -16,7 +16,7 @@ func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
 	r.POST("/update", h.Update)
 	r.POST("/delete", h.Delete)
 	r.GET("/preview", h.Preview)
-	r.GET("/gencode", h.GenCode)
+	r.POST("/gencode", h.GenCode)
 
 	r.GET("/tables/:id/columns", h.GetGenColumnList)
 	r.POST("/tables/:id/columns/update", h.UpdateGenColumn)

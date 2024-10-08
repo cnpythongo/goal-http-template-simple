@@ -195,10 +195,7 @@ func (t *templateUtil) Render(tplPath string, tplVars TplVars) (res string, e er
 
 // GetGenPath 获取生成路径
 func (t *templateUtil) GetGenPath(table *model.GenTable) string {
-	if table.GenPath == "/" {
-		return path.Join(config.GetConfig().App.RootPath, GenConfig.GenRootPath)
-	}
-	return table.GenPath
+	return path.Join(config.GetConfig().App.RootPath, GenConfig.GenRootPath, table.GenPath)
 }
 
 // GetFilePaths 获取生成文件相对路径

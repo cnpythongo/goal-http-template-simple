@@ -106,7 +106,7 @@ type RespPreviewItem struct {
 
 // ReqGenCode 生成代码参数
 type ReqGenCode struct {
-	Tables string `form:"tables" binding:"required"` // 生成的表, 用","分隔
+	Tables string `json:"tables" binding:"required"` // 生成的表, 用","分隔
 }
 
 // RespDbTable 数据表单条返回信息

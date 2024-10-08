@@ -16,8 +16,6 @@ import (
 	"goal-app/pkg/status"
 	"goal-app/pkg/wrapper"
 	"net/http"
-	"path"
-	"runtime"
 	"syscall"
 	"time"
 )
@@ -60,13 +58,6 @@ func (app *Application) Init(env svc.Environment) error {
 	if err != nil {
 		return err
 	}
-	// 设置app的运行根目录
-	var rootPath string
-	if _, filename, _, ok := runtime.Caller(0); ok {
-		rootPath = path.Dir(path.Dir(path.Dir(path.Dir(filename))))
-	}
-	cfg.App.RootPath = rootPath
-	fmt.Println("cfg.App.RootPath:", cfg.App.RootPath)
 
 	logger := log.Init(&cfg.Logger, "admin")
 	logger.Info(cfg)

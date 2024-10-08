@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"goal-app/pkg/log"
 	"goal-app/pkg/render"
+	"strings"
 )
 
 type IGeneratorHandler interface {
@@ -200,16 +201,29 @@ func (h *generatorHandler) Preview(c *gin.Context) {
 
 // GenCode 生成代码文件
 // @Tags 系统管理--代码生成器
-// @Summary 预览代码生成内容
-// @Description 预览代码生成内容
-// @Accept x-www-form-urlencoded
+// @Summary 生成代码文件
+// @Description 生成代码文件
+// @Accept json
 // @Produce json
-// @Param data query ReqPreview false "请求体"
+// @Param data query ReqGenCode false "请求体"
 // @Success 200 {object} render.JsonDataResp{data=string} "code不为0时表示有错误"
 // @Failure 500
 // // @Security AdminAuth
-// @Router /system/generator/gencode [get]
+// @Router /system/generator/gencode [post]
 func (h *generatorHandler) GenCode(c *gin.Context) {
+	var payload ReqGenCode
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		log.GetLogger().Errorln(err)
+		render.Json(c, render.ParamsError, nil)
+		return
+	}
+	for _, table := range strings.Split(payload.Tables, ",") {
+		code, err := h.svc.GenCode(table)
+		if err != nil {
+			render.Json(c, code, err)
+			return
+		}
+	}
 	render.Json(c, render.OK, "")
 }
 

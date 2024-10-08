@@ -19,7 +19,7 @@ type IGeneratorService interface {
 	Update(req *ReqUpdateGenTable) (int, error)
 	Delete(req *ReqDelTable) (int, error)
 	Preview(req *ReqPreview) ([]*RespPreviewItem, int, error)
-	GenCode(req *ReqGenCode) (int, error)
+	GenCode(tableName string) (int, error)
 
 	GetGenColumnList(tableId int64) ([]*RespGenColumn, int, error)
 	UpdateGenColumn(req *ReqUpdateGenColumn) (int, error)
@@ -216,7 +216,26 @@ func (s *generatorService) Preview(req *ReqPreview) ([]*RespPreviewItem, int, er
 	return result, render.OK, nil
 }
 
-func (s *generatorService) GenCode(req *ReqGenCode) (int, error) {
+func (s *generatorService) GenCode(tableName string) (int, error) {
+	genTable, err := model.GetGenTableInstance(model.GetDB(), map[string]interface{}{"name": tableName})
+	if err != nil {
+		log.GetLogger().Error(err)
+		return render.QueryError, err
+	}
+	//获取模板内容
+	tplCodeMap, err := s.renderCodeByTable(genTable)
+	if err != nil {
+		log.GetLogger().Errorf("generator.service.GenCode renderCodeByTable Error ==> %v", err)
+		return render.Error, err
+	}
+	//获取生成根路径
+	basePath := util.TemplateUtil.GetGenPath(genTable)
+	// 生成代码文件
+	err = util.TemplateUtil.GenCodeFiles(tplCodeMap, genTable.ModuleName, basePath)
+	if err != nil {
+		log.GetLogger().Errorf("generator.service.GenCode GenCodeFiles Error ==> %v", err)
+		return render.Error, err
+	}
 	return render.OK, nil
 }
 

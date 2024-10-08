@@ -1,6 +1,9 @@
 package config
 
 import (
+	"fmt"
+	"path"
+	"runtime"
 	"sync"
 	"time"
 
@@ -90,6 +93,13 @@ func Load(file *string) (Configuration, error) {
 	if err != nil {
 		return Configuration{}, err
 	}
+	// 设置app的运行根目录
+	var rootPath string
+	if _, filename, _, ok := runtime.Caller(0); ok {
+		rootPath = path.Dir(path.Dir(path.Dir(filename)))
+	}
+	Cfg.App.RootPath = rootPath
+	fmt.Println("Cfg.App.RootPath:", Cfg.App.RootPath)
 	return Cfg, err
 }
 

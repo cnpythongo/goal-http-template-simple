@@ -298,6 +298,72 @@ definitions:
       name:
         type: string
     type: object
+  admin_systemconfig.ReqSystemConfigCreate:
+    properties:
+      desc:
+        description: 配置说明
+        type: string
+      enabled:
+        description: 是否启用,0-否,1-是
+        type: integer
+      name:
+        description: 配置名称
+        type: string
+      scope:
+        description: 作用域,global-全局,admin-管理后台,app-前台应用
+        type: string
+      value:
+        description: 配置值
+        type: string
+    type: object
+  admin_systemconfig.ReqSystemConfigUpdate:
+    properties:
+      desc:
+        description: 配置说明
+        type: string
+      enabled:
+        description: 是否启用,0-否,1-是
+        type: integer
+      id:
+        description: 流水ID
+        type: integer
+      name:
+        description: 配置名称
+        type: string
+      scope:
+        description: 作用域,global-全局,admin-管理后台,app-前台应用
+        type: string
+      value:
+        description: 配置值
+        type: string
+    type: object
+  admin_systemconfig.RespSystemConfigItem:
+    properties:
+      create_time:
+        description: 数据创建时间
+        type: integer
+      desc:
+        description: 配置说明
+        type: string
+      enabled:
+        description: 是否启用,0-否,1-是
+        type: integer
+      id:
+        description: 流水ID
+        type: integer
+      name:
+        description: 配置名称
+        type: string
+      scope:
+        description: 作用域,global-全局,admin-管理后台,app-前台应用
+        type: string
+      update_time:
+        description: 数据更新时间
+        type: integer
+      value:
+        description: 配置值
+        type: string
+    type: object
   admin_systemmenu.ReqSystemMenuCreate:
     properties:
       auth_tag:
@@ -906,6 +972,187 @@ paths:
       summary: 删除用户
       tags:
       - 用户管理
+  /system/config/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建系统配置项
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemconfig.ReqSystemConfigCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemconfig.RespSystemConfigItem'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 创建系统配置项
+      tags:
+      - 系统配置项
+  /system/config/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除系统配置项
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 删除系统配置项
+      tags:
+      - 系统配置项
+  /system/config/detail:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 系统配置项详情
+      parameters:
+      - description: 流水ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_systemconfig.RespSystemConfigItem'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 系统配置项详情
+      tags:
+      - 系统配置项
+  /system/config/list:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 系统配置项列表
+      parameters:
+      - description: 数据创建结束区间
+        in: query
+        name: create_time_end
+        type: integer
+      - description: 数据创建开始区间
+        in: query
+        name: create_time_start
+        type: integer
+      - description: 配置说明
+        in: query
+        name: desc
+        type: string
+      - description: 是否启用,0-否,1-是
+        in: query
+        name: enabled
+        type: integer
+      - default: 10
+        description: 每页数量
+        example: 10
+        in: query
+        name: limit
+        type: integer
+      - description: 配置名称
+        in: query
+        name: name
+        type: string
+      - default: 1
+        description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 作用域,global-全局,admin-管理后台,app-前台应用
+        in: query
+        name: scope
+        type: string
+      - description: 配置值
+        in: query
+        name: value
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/goal-app_pkg_render.RespPageJson'
+                  - properties:
+                      result:
+                        items:
+                          $ref: '#/definitions/admin_systemconfig.RespSystemConfigItem'
+                        type: array
+                    type: object
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 系统配置项列表
+      tags:
+      - 系统配置项
+  /system/config/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新系统配置项
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemconfig.ReqSystemConfigUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemconfig.RespSystemConfigItem'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 更新系统配置项
+      tags:
+      - 系统配置项
   /system/generator/create:
     post:
       consumes:
@@ -963,16 +1210,16 @@ paths:
       tags:
       - 系统管理--代码生成器
   /system/generator/gencode:
-    get:
+    post:
       consumes:
-      - application/x-www-form-urlencoded
-      description: 预览代码生成内容
+      - application/json
+      description: 生成代码文件
       parameters:
-      - description: 主键
+      - description: 生成的表, 用","分隔
         in: query
-        name: id
+        name: tables
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -987,7 +1234,7 @@ paths:
               type: object
         "500":
           description: Internal Server Error
-      summary: 预览代码生成内容
+      summary: 生成代码文件
       tags:
       - 系统管理--代码生成器
   /system/generator/list:
