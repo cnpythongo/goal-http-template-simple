@@ -25,7 +25,7 @@ type SystemMenu struct {
 }
 
 func (m *SystemMenu) TableName() string {
-	return "system_menu"
+	return "system_menus"
 }
 
 func NewSystemMenu() *SystemMenu {
