@@ -305,14 +305,15 @@ export default function {{{.EntityName}}}Page() {
         </div>
         <div className="">
           <Table
+              key={treeData.length}
               pagination={false}
               size="middle"
               columns={columns}
               rowSelection={{ ...rowSelection }}
               dataSource={treeData}
               rowKey={record => record.id}
-              indentSize={35}
               expandable={{
+                indentSize: 35,
                 defaultExpandAllRows: true,
                 expandIcon: ({ expanded, onExpand, record }) => {
                   if (record && record?.children && record.children.length > 0) {
@@ -363,6 +364,7 @@ export default function {{{.EntityName}}}Page() {
         >
         {{{- if and (ne $.Table.TreeParent "") (eq .GoField $.Table.TreeParent) }}}
             <TreeSelect
+              key={treeData.length}
               treeDefaultExpandAll={true}
               treeLine={true}
               treeData={treeData}
