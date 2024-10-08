@@ -1069,7 +1069,12 @@ const docTemplate = `{
         },
         "/system/menus/create": {
             "post": {
-                "description": "创建菜单",
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "创建菜单管理",
                 "consumes": [
                     "application/json"
                 ],
@@ -1077,9 +1082,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "组织管理"
+                    "菜单管理"
                 ],
-                "summary": "创建菜单",
+                "summary": "创建菜单管理",
                 "parameters": [
                     {
                         "description": "请求体",
@@ -1093,7 +1098,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "code不为0时表示有错误",
+                        "description": "code不为0时表示错误",
                         "schema": {
                             "allOf": [
                                 {
@@ -1103,7 +1108,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/admin_systemmenu.RespSystemMenuDetail"
+                                            "$ref": "#/definitions/admin_systemmenu.RespSystemMenuItem"
                                         }
                                     }
                                 }
@@ -1118,7 +1123,12 @@ const docTemplate = `{
         },
         "/system/menus/delete": {
             "post": {
-                "description": "删除菜单",
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "删除菜单管理",
                 "consumes": [
                     "application/json"
                 ],
@@ -1126,25 +1136,207 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "组织管理"
+                    "菜单管理"
                 ],
-                "summary": "删除菜单",
+                "summary": "删除菜单管理",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/menus/detail": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "菜单管理详情",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单管理"
+                ],
+                "summary": "菜单管理详情",
                 "parameters": [
                     {
-                        "description": "请求体",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
+                        "type": "integer",
+                        "description": "流水ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_systemmenu.ReqSystemMenuIds"
+                            "$ref": "#/definitions/admin_systemmenu.RespSystemMenuItem"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/menus/list": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "菜单管理列表",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单管理"
+                ],
+                "summary": "菜单管理列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "'权限标识'",
+                        "name": "auth_tag",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'前端组件'",
+                        "name": "component",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "数据创建结束区间",
+                        "name": "create_time_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "数据创建开始区间",
+                        "name": "create_time_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'菜单图标'",
+                        "name": "icon",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'权限类型: dir=目录，menu=菜单，button=按钮''",
+                        "name": "kind",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'菜单名称'",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "example": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'路由参数'",
+                        "name": "params",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "'上级菜单ID'",
+                        "name": "parent_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'路由地址'",
+                        "name": "route",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "'菜单排序'",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'状态: disable=停用, enable=启用'",
+                        "name": "status",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "code不为0时表示有错误",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/goal-app_pkg_render.RespPageJson"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "result": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/admin_systemmenu.RespSystemMenuItem"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
@@ -1155,7 +1347,7 @@ const docTemplate = `{
         },
         "/system/menus/tree": {
             "get": {
-                "description": "获取菜单树结构数据",
+                "description": "菜单管理树结构数据",
                 "consumes": [
                     "application/json"
                 ],
@@ -1163,9 +1355,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "组织管理"
+                    "菜单管理"
                 ],
-                "summary": "获取菜单树结构数据",
+                "summary": "菜单管理树结构数据",
                 "responses": {
                     "200": {
                         "description": "code不为0时表示有错误",
@@ -1193,7 +1385,12 @@ const docTemplate = `{
         },
         "/system/menus/update": {
             "post": {
-                "description": "更新菜单",
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "更新菜单管理",
                 "consumes": [
                     "application/json"
                 ],
@@ -1201,9 +1398,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "组织管理"
+                    "菜单管理"
                 ],
-                "summary": "更新菜单",
+                "summary": "更新菜单管理",
                 "parameters": [
                     {
                         "description": "请求体",
@@ -1217,9 +1414,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "code不为0时表示有错误",
+                        "description": "code不为0时表示错误",
                         "schema": {
-                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_systemmenu.RespSystemMenuItem"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
@@ -1807,175 +2016,152 @@ const docTemplate = `{
         },
         "admin_systemmenu.ReqSystemMenuCreate": {
             "type": "object",
-            "required": [
-                "kind",
-                "name"
-            ],
             "properties": {
                 "auth_tag": {
-                    "description": "权限标识",
+                    "description": "'权限标识'",
                     "type": "string"
                 },
                 "component": {
-                    "description": "前端组件",
+                    "description": "'前端组件'",
                     "type": "string"
                 },
                 "icon": {
-                    "description": "菜单图标",
+                    "description": "'菜单图标'",
                     "type": "string"
                 },
                 "kind": {
-                    "description": "菜单类别",
+                    "description": "'权限类型: dir=目录，menu=菜单，button=按钮''",
                     "type": "string"
                 },
                 "name": {
-                    "description": "菜单名称",
+                    "description": "'菜单名称'",
                     "type": "string"
                 },
                 "params": {
-                    "description": "路由参数",
+                    "description": "'路由参数'",
                     "type": "string"
                 },
                 "parent_id": {
-                    "description": "父ID",
-                    "type": "integer",
-                    "minimum": 0
+                    "description": "'上级菜单ID'",
+                    "type": "integer"
                 },
                 "route": {
-                    "description": "路由地址",
+                    "description": "'路由地址'",
                     "type": "string"
                 },
                 "sort": {
-                    "description": "菜单排序",
+                    "description": "'菜单排序'",
                     "type": "integer"
                 },
                 "status": {
-                    "description": "状态: disable=停用, enable=启用",
+                    "description": "'状态: disable=停用, enable=启用'",
                     "type": "string"
-                }
-            }
-        },
-        "admin_systemmenu.ReqSystemMenuIds": {
-            "type": "object",
-            "required": [
-                "ids"
-            ],
-            "properties": {
-                "ids": {
-                    "description": "菜单ID",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
                 }
             }
         },
         "admin_systemmenu.ReqSystemMenuUpdate": {
             "type": "object",
-            "required": [
-                "id",
-                "kind",
-                "name"
-            ],
             "properties": {
                 "auth_tag": {
-                    "description": "权限标识",
+                    "description": "'权限标识'",
                     "type": "string"
                 },
                 "component": {
-                    "description": "前端组件",
+                    "description": "'前端组件'",
                     "type": "string"
                 },
                 "icon": {
-                    "description": "菜单图标",
+                    "description": "'菜单图标'",
                     "type": "string"
                 },
                 "id": {
-                    "description": "菜单ID",
-                    "type": "integer",
-                    "minimum": 0
+                    "description": "流水ID",
+                    "type": "integer"
                 },
                 "kind": {
-                    "description": "菜单类别",
+                    "description": "'权限类型: dir=目录，menu=菜单，button=按钮''",
                     "type": "string"
                 },
                 "name": {
-                    "description": "菜单名称",
+                    "description": "'菜单名称'",
                     "type": "string"
                 },
                 "params": {
-                    "description": "路由参数",
+                    "description": "'路由参数'",
                     "type": "string"
                 },
                 "parent_id": {
-                    "description": "父ID",
-                    "type": "integer",
-                    "minimum": 0
+                    "description": "'上级菜单ID'",
+                    "type": "integer"
                 },
                 "route": {
-                    "description": "路由地址",
+                    "description": "'路由地址'",
                     "type": "string"
                 },
                 "sort": {
-                    "description": "菜单排序",
+                    "description": "'菜单排序'",
                     "type": "integer"
                 },
                 "status": {
-                    "description": "状态: disable=停用, enable=启用",
+                    "description": "'状态: disable=停用, enable=启用'",
                     "type": "string"
                 }
             }
         },
-        "admin_systemmenu.RespSystemMenuDetail": {
+        "admin_systemmenu.RespSystemMenuItem": {
             "type": "object",
             "properties": {
                 "auth_tag": {
-                    "description": "权限标识",
+                    "description": "'权限标识'",
                     "type": "string"
                 },
                 "component": {
-                    "description": "前端组件",
+                    "description": "'前端组件'",
                     "type": "string"
                 },
+                "create_time": {
+                    "description": "数据创建时间",
+                    "type": "integer"
+                },
                 "icon": {
-                    "description": "菜单图标",
+                    "description": "'菜单图标'",
                     "type": "string"
                 },
                 "id": {
-                    "description": "菜单ID",
+                    "description": "流水ID",
                     "type": "integer"
                 },
                 "kind": {
-                    "description": "菜单类别",
+                    "description": "'权限类型: dir=目录，menu=菜单，button=按钮''",
                     "type": "string"
                 },
                 "name": {
-                    "description": "菜单名称",
+                    "description": "'菜单名称'",
                     "type": "string"
                 },
                 "params": {
-                    "description": "路由参数",
+                    "description": "'路由参数'",
                     "type": "string"
                 },
                 "parent_id": {
-                    "description": "父ID",
+                    "description": "'上级菜单ID'",
                     "type": "integer"
                 },
-                "parent_name": {
-                    "description": "父名称",
-                    "type": "string"
-                },
                 "route": {
-                    "description": "路由地址",
+                    "description": "'路由地址'",
                     "type": "string"
                 },
                 "sort": {
-                    "description": "菜单排序",
+                    "description": "'菜单排序'",
                     "type": "integer"
                 },
                 "status": {
-                    "description": "状态: disable=停用, enable=启用",
+                    "description": "'状态: disable=停用, enable=启用'",
                     "type": "string"
+                },
+                "update_time": {
+                    "description": "数据更新时间",
+                    "type": "integer"
                 }
             }
         },
@@ -1983,7 +2169,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "auth_tag": {
-                    "description": "权限标识",
+                    "description": "'权限标识'",
                     "type": "string"
                 },
                 "children": {
@@ -1994,48 +2180,56 @@ const docTemplate = `{
                     }
                 },
                 "component": {
-                    "description": "前端组件",
+                    "description": "'前端组件'",
                     "type": "string"
                 },
+                "create_time": {
+                    "description": "数据创建时间",
+                    "type": "integer"
+                },
                 "icon": {
-                    "description": "菜单图标",
+                    "description": "'菜单图标'",
                     "type": "string"
                 },
                 "id": {
-                    "description": "菜单ID",
+                    "description": "流水ID",
                     "type": "integer"
                 },
                 "kind": {
-                    "description": "菜单类别",
+                    "description": "'权限类型: dir=目录，menu=菜单，button=按钮''",
                     "type": "string"
                 },
                 "name": {
-                    "description": "菜单名称",
+                    "description": "'菜单名称'",
                     "type": "string"
                 },
                 "params": {
-                    "description": "路由参数",
+                    "description": "'路由参数'",
                     "type": "string"
                 },
                 "parent_id": {
-                    "description": "父ID",
+                    "description": "'上级菜单ID'",
                     "type": "integer"
                 },
                 "parent_name": {
-                    "description": "父名称",
+                    "description": "'父级名称'",
                     "type": "string"
                 },
                 "route": {
-                    "description": "路由地址",
+                    "description": "'路由地址'",
                     "type": "string"
                 },
                 "sort": {
-                    "description": "菜单排序",
+                    "description": "'菜单排序'",
                     "type": "integer"
                 },
                 "status": {
-                    "description": "状态: disable=停用, enable=启用",
+                    "description": "'状态: disable=停用, enable=启用'",
                     "type": "string"
+                },
+                "update_time": {
+                    "description": "数据更新时间",
+                    "type": "integer"
                 }
             }
         },

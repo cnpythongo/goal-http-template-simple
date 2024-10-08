@@ -20,7 +20,7 @@ type IUserService interface {
 	GetUserByPhone(phone string) (*model.User, int, error)
 	GetUserByUUID(uuid string) (*model.User, int, error)
 	GetUserByEmail(email string) (*model.User, int, error)
-	GetUserProfile(userId uint64) (*model.UserProfile, int, error)
+	GetUserProfile(userId int64) (*model.UserProfile, int, error)
 	UpdateUserProfile(payload *ReqUpdateUserProfile) (int, error)
 }
 
@@ -209,7 +209,7 @@ func (s *userService) UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int
 	return render.OK, nil
 }
 
-func (s *userService) GetUserProfile(userId uint64) (*model.UserProfile, int, error) {
+func (s *userService) GetUserProfile(userId int64) (*model.UserProfile, int, error) {
 	pf, err := model.GetUserProfileByUserId(model.GetDB(), userId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

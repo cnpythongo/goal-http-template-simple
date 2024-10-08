@@ -94,7 +94,7 @@ func ToCamelCase(s string) string {
 // ToCamelCaseWithoutFirst 转驼峰名称,首字母除外
 func ToCamelCaseWithoutFirst(s string) string {
 	words := strings.Split(s, "_")
-	for i := 1; i < len(words); i++ {
+	for i := 0; i < len(words); i++ {
 		words[i] = strings.Title(words[i])
 	}
 	return strings.Join(words, "")
@@ -122,4 +122,12 @@ func UpperFirst(s string) string {
 		return ""
 	}
 	return strings.ToUpper(s[:1]) + s[1:]
+}
+
+// LowerFirst 首字母小写
+func LowerFirst(s string) string {
+	if s == "" {
+		return ""
+	}
+	return strings.ToLower(s[:1]) + s[1:]
 }

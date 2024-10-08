@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Attachment struct {
 	BaseModel
-	UserId uint64 `json:"user_id" gorm:"column:user_id;type:int(11);not null;comment:'用户ID'"` // 用户ID
+	UserId int64  `json:"user_id" gorm:"column:user_id;type:int(11);not null;comment:'用户ID'"` // 用户ID
 	UUID   string `json:"uuid" gorm:"column:uuid;type:varchar(64);not null;comment:'文件UUID'"` // 文件UUID
 	Name   string `json:"name" gorm:"column:name;type:varchar(256);not null;comment:'文件名'"`   // 文件名
 	Ext    string `json:"ext" gorm:"column:ext;type:varchar(32);not null;comment:'文件扩展名'"`    // 文件扩展名
@@ -22,7 +22,7 @@ func NewAttachment() *Attachment {
 	return &Attachment{}
 }
 
-func GetAttachmentByUserIdAndMd5(db *gorm.DB, userId uint64, md5 string) (*Attachment, error) {
+func GetAttachmentByUserIdAndMd5(db *gorm.DB, userId int64, md5 string) (*Attachment, error) {
 	var result *Attachment
 	err := db.Model(&Attachment{}).Where(
 		"user_id = ? and md5 = ? and delete_time = 0", userId, md5,
@@ -33,7 +33,7 @@ func GetAttachmentByUserIdAndMd5(db *gorm.DB, userId uint64, md5 string) (*Attac
 	return result, nil
 }
 
-func GetAttachmentListByUserId(db *gorm.DB, page, limit int, userId uint64) ([]*Attachment, int64, error) {
+func GetAttachmentListByUserId(db *gorm.DB, page, limit int, userId int64) ([]*Attachment, int64, error) {
 	total := int64(0)
 	result := make([]*Attachment, 0)
 	query := db.Model(&Attachment{}).Where("user_id = ? and delete_time = 0", userId)

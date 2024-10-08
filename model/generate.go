@@ -43,7 +43,7 @@ func NewGenTableList() []*GenTable {
 // GenTableColumn 代码生成表列实体
 type GenTableColumn struct {
 	BaseModel
-	GenTableID    uint64 `json:"gen_table_id" gorm:"column:gen_table_id;not null;default:0;comment:'表外键'"`
+	GenTableID    int64  `json:"gen_table_id" gorm:"column:gen_table_id;not null;default:0;comment:'表外键'"`
 	ColumnName    string `json:"column_name" gorm:"column:column_name;not null;default:'';comment:'列名称'"`
 	ColumnComment string `json:"column_comment" gorm:"column:column_comment;not null;default:'';comment:'列描述'"`
 	ColumnLength  int64  `json:"column_length" gorm:"column:column_length;not null;default:0;comment:'列长度'"`
@@ -113,11 +113,11 @@ func GetGenTableInstance(tx *gorm.DB, conditions map[string]interface{}) (*GenTa
 }
 
 func UpdateGenTable(db *gorm.DB, table *GenTable) error {
-	table.UpdateTime = uint64(time.Now().Unix())
+	table.UpdateTime = int64(time.Now().Unix())
 	return db.Save(&table).Error
 }
 
-func GetGenTableColumnList(db *gorm.DB, tableId uint64) ([]*GenTableColumn, error) {
+func GetGenTableColumnList(db *gorm.DB, tableId int64) ([]*GenTableColumn, error) {
 	result := NewGenTableColumnList()
 	err := db.Where("gen_table_id = ?", tableId).Order("sort").Find(&result).Error
 	if err != nil {
@@ -126,7 +126,7 @@ func GetGenTableColumnList(db *gorm.DB, tableId uint64) ([]*GenTableColumn, erro
 	return result, nil
 }
 
-func GetGenTableColumnInstance(db *gorm.DB, id uint64) (*GenTableColumn, error) {
+func GetGenTableColumnInstance(db *gorm.DB, id int64) (*GenTableColumn, error) {
 	result := NewGenTableColumn()
 	err := db.Where("id = ?", id).Take(&result).Error
 	if err != nil {
@@ -136,6 +136,6 @@ func GetGenTableColumnInstance(db *gorm.DB, id uint64) (*GenTableColumn, error) 
 }
 
 func UpdateGenTableColumn(db *gorm.DB, column *GenTableColumn) error {
-	column.UpdateTime = uint64(time.Now().Unix())
+	column.UpdateTime = int64(time.Now().Unix())
 	return db.Save(&column).Error
 }

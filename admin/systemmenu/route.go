@@ -9,9 +9,11 @@ func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
 	h := NewSystemMenuHandler(svc)
 
 	r := route.Group("/api/v1/system/menus")
-	r.GET("/tree", h.GetTreeData)
-	r.POST("/create", h.Create)
-	r.POST("/update", h.Update)
-	r.POST("/delete", h.Delete)
+	r.GET("/list", h.list)
+	r.GET("/tree", h.tree)
+	r.GET("/detail", h.detail)
+	r.POST("/create", h.create)
+	r.POST("/update", h.update)
+	r.POST("/delete", h.delete)
 	return r
 }

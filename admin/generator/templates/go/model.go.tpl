@@ -36,8 +36,8 @@ func New{{{ title (toCamelCase .EntityName) }}}List() []*{{{ title (toCamelCase 
 
 func (m *{{{ title (toCamelCase .EntityName) }}}) BeforeCreate(tx *gorm.DB) (err error) {
 	now := time.Now().Unix()
-	m.CreateTime = uint64(now)
-	m.UpdateTime = uint64(now)
+	m.CreateTime = now
+	m.UpdateTime = now
 	return nil
 }
 
@@ -50,18 +50,22 @@ func Create{{{ title (toCamelCase .EntityName) }}}(tx *gorm.DB, obj *{{{ title (
     return obj, nil
 }
 
-func Update{{{ title (toCamelCase .EntityName) }}}(tx *gorm.DB, id int64, data map[string]interface{}) error {
-    err := tx.Model(New{{{ title (toCamelCase .EntityName) }}}()).Where("id = ?", id).UpdateColumns(data).Error
-    if err != nil {
-        log.GetLogger().Errorf("model.{{{ title (toCamelCase .EntityName) }}}.Update{{{ title (toCamelCase .EntityName) }}} Error ==> %v", err)
-    }
-    return err
+func Update{{{ title (toCamelCase .EntityName) }}}(tx *gorm.DB, obj *SystemMenu) error {
+	err := tx.Save(&obj).Error
+	if err != nil {
+		log.GetLogger().Errorf("model.{{{ title (toCamelCase .EntityName) }}}.Update{{{ title (toCamelCase .EntityName) }}} Error ==> %v", err)
+	}
+	return err
 }
 
 func Delete{{{ title (toCamelCase .EntityName) }}}(tx *gorm.DB, id int64) error {
-	return Update{{{ title (toCamelCase .EntityName) }}}(tx, id, map[string]interface{}{
-		"delete_time": time.Now().Unix(),
-	})
+	err := tx.Model(New{{{ title (toCamelCase .EntityName) }}}()).Where("id = ?", id).UpdateColumns(map[string]interface{}{
+        "delete_time": time.Now().Unix(),
+    }).Error
+    if err != nil {
+        log.GetLogger().Errorf("model.{{{ title (toCamelCase .EntityName) }}}.Delete{{{ title (toCamelCase .EntityName) }}} Error ==> %v", err)
+    }
+    return err
 }
 
 func Get{{{ title (toCamelCase .EntityName) }}}Instance(tx *gorm.DB, conditions map[string]interface{}) (*{{{ title (toCamelCase .EntityName) }}}, error) {
@@ -118,7 +122,7 @@ func GetAll{{{ title (toCamelCase .EntityName) }}}(tx *gorm.DB) ([]*{{{ title (t
 func Build{{{ title (toCamelCase .EntityName) }}}Tree(rows []*{{{ title (toCamelCase .EntityName) }}}) *{{{ title (toCamelCase .EntityName) }}} {
 	rootNode := New{{{ title (toCamelCase .EntityName) }}}()
 
-	tmpMap := make(map[uint64]*{{{ title (toCamelCase .EntityName) }}})
+	tmpMap := make(map[int64]*{{{ title (toCamelCase .EntityName) }}})
 	for _, r := range rows {
 		r.Children = make([]*{{{ title (toCamelCase .EntityName) }}}, 0)
 		tmpMap[r.ID] = r

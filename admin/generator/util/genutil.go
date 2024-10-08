@@ -69,7 +69,7 @@ func (g *genUtil) CreateGenTable(table *model.GenTable) model.GenTable {
 }
 
 // CreateGenColumn 初始化字段列
-func (g *genUtil) CreateGenColumn(tableId uint64, column *model.GenTableColumn) *model.GenTableColumn {
+func (g *genUtil) CreateGenColumn(tableId int64, column *model.GenTableColumn) *model.GenTableColumn {
 	columnType := g.GetDbType(column.ColumnType)
 	columnLen := g.GetColumnLength(column.ColumnType)
 	col := &model.GenTableColumn{

@@ -29,13 +29,13 @@ func New{{{ .EntityName }}}Handler(svc I{{{ .EntityName }}}Service) I{{{ .Entity
 // @Description {{{ .FunctionName }}}列表
 // @Accept x-www-form-urlencoded
 // @Produce json
-// @Param data query {{{ .EntityName }}}ListReq false "请求体"
-// @Success 200 {object} render.JsonDataResp{data=render.RespPageJson{result=[]{{{ .EntityName }}}ItemResp}} "code不为0时表示有错误"
+// @Param data query Req{{{ .EntityName }}}List false "请求体"
+// @Success 200 {object} render.JsonDataResp{data=render.RespPageJson{result=[]Resp{{{ .EntityName }}}Item}} "code不为0时表示有错误"
 // @Failure 500
 // @Security AdminAuth
 // @Router {{{ .GenPath }}}/list [get]
 func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) list(c *gin.Context) {
-	var req {{{ .EntityName }}}ListReq
+	var req Req{{{ .EntityName }}}List
 	if err := c.ShouldBindQuery(&req); err != nil {
         log.GetLogger().Errorln(err)
         render.Json(c, render.PayloadError, nil)
@@ -63,11 +63,11 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) list(c *gin.Context) {
 // @Description {{{ .FunctionName }}}树结构数据
 // @Accept json
 // @Produce json
-// @Success 200 {object} render.JsonDataResp{data={{{ .EntityName }}}TreeResp} "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp{data=Resp{{{ .EntityName }}}Tree} "code不为0时表示有错误"
 // @Failure 500
 // @Router {{{ .GenPath }}}/tree [get]
 func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) tree(c *gin.Context) {
-	var req {{{ .EntityName }}}TreeReq
+	var req Req{{{ .EntityName }}}Tree
 	if err := c.ShouldBindQuery(&req); err != nil {
         log.GetLogger().Errorln(err)
         render.Json(c, render.PayloadError, nil)
@@ -88,13 +88,13 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) tree(c *gin.Context) {
 // @Description {{{ .FunctionName }}}详情
 // @Accept x-www-form-urlencoded
 // @Produce json
-// @Param data query {{{ .EntityName }}}DetailReq true "请求体"
-// @Success 200 {object} {{{ .EntityName }}}ItemResp
+// @Param data query Req{{{ .EntityName }}}Detail true "请求体"
+// @Success 200 {object} Resp{{{ .EntityName }}}Item
 // @Failure 400 {object} render.JsonDataResp
 // @Security AdminAuth
 // @Router {{{ .GenPath }}}/detail [get]
 func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) detail(c *gin.Context) {
-	var req {{{ .EntityName }}}DetailReq
+	var req Req{{{ .EntityName }}}Detail
 	if err := c.ShouldBindQuery(&req); err != nil {
         log.GetLogger().Errorln(err)
         render.Json(c, render.PayloadError, nil)
@@ -115,14 +115,14 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) detail(c *gin.Context) {
 // @Description 创建{{{ .FunctionName }}}
 // @Accept json
 // @Produce json
-// @Param data body {{{ .EntityName }}}CreateReq true "请求体"
-// @Success 200 {object} render.JsonDataResp{data={{{ .EntityName }}}ItemResp} "code不为0时表示错误"
+// @Param data body Req{{{ .EntityName }}}Create true "请求体"
+// @Success 200 {object} render.JsonDataResp{data=Resp{{{ .EntityName }}}Item} "code不为0时表示错误"
 // @Failure 500
 // @Security AdminAuth
 // @Router {{{ .GenPath }}}/create [post]
 func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) create(c *gin.Context) {
-	var payload {{{ .EntityName }}}CreateReq
-	if err := c.ShouldBindJson(&req); err != nil {
+	var payload Req{{{ .EntityName }}}Create
+	if err := c.ShouldBindJSON(&payload); err != nil {
         log.GetLogger().Errorln(err)
         render.Json(c, render.PayloadError, nil)
         return
@@ -142,14 +142,14 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) create(c *gin.Context) {
 // @Description 更新{{{ .FunctionName }}}
 // @Accept json
 // @Produce json
-// @Param data body {{{ .EntityName }}}UpdateReq true "请求体"
-// @Success 200 {object} render.JsonDataResp{data={{{ .EntityName }}}ItemResp} "code不为0时表示错误"
+// @Param data body Req{{{ .EntityName }}}Update true "请求体"
+// @Success 200 {object} render.JsonDataResp{data=Resp{{{ .EntityName }}}Item} "code不为0时表示错误"
 // @Failure 500
 // @Security AdminAuth
 // @Router {{{ .GenPath }}}/update [post]
 func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) update(c *gin.Context) {
-	var payload {{{ .EntityName }}}UpdateReq
-    if err := c.ShouldBindJson(&req); err != nil {
+	var payload Req{{{ .EntityName }}}Update
+    if err := c.ShouldBindJSON(&payload); err != nil {
         log.GetLogger().Errorln(err)
         render.Json(c, render.PayloadError, nil)
         return
@@ -174,8 +174,8 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) update(c *gin.Context) {
 // @Security AdminAuth
 // @Router {{{ .GenPath }}}/delete [post]
 func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) delete(c *gin.Context) {
-	var payload {{{ .EntityName }}}DeleteReq
-    if err := c.ShouldBindJson(&req); err != nil {
+	var payload Req{{{ .EntityName }}}Delete
+    if err := c.ShouldBindJSON(&payload); err != nil {
         log.GetLogger().Errorln(err)
         render.Json(c, render.PayloadError, nil)
         return

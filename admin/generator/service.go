@@ -21,7 +21,7 @@ type IGeneratorService interface {
 	Preview(req *ReqPreview) ([]*RespPreviewItem, int, error)
 	GenCode(req *ReqGenCode) (int, error)
 
-	GetGenColumnList(tableId uint64) ([]*RespGenColumn, int, error)
+	GetGenColumnList(tableId int64) ([]*RespGenColumn, int, error)
 	UpdateGenColumn(req *ReqUpdateGenColumn) (int, error)
 	DeleteGenTableColumns(req *ReqDelGenTableColumn) (int, error)
 }
@@ -258,7 +258,7 @@ func (s *generatorService) Delete(req *ReqDelTable) (int, error) {
 	return render.OK, nil
 }
 
-func (s *generatorService) GetGenColumnList(tableId uint64) ([]*RespGenColumn, int, error) {
+func (s *generatorService) GetGenColumnList(tableId int64) ([]*RespGenColumn, int, error) {
 	genTable, err := model.GetGenTableInstance(model.GetDB(), map[string]interface{}{"id": tableId})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

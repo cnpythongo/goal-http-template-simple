@@ -9,10 +9,10 @@ import (
 
 type ISystemOrgService interface {
 	Create(payload *ReqSystemOrgCreate) (*model.SystemOrg, int, error)
-	GetInstance(id uint64) (*model.SystemOrg, error)
+	GetInstance(id int64) (*model.SystemOrg, error)
 	GetAllInstances() ([]*model.SystemOrg, int, error)
 	Update(payload *ReqSystemOrgUpdate) (int, error)
-	Delete(ids []uint64) error
+	Delete(ids []int64) error
 	GetTreeData() (*RespSystemOrgTree, error)
 }
 
@@ -39,14 +39,14 @@ func (s *systemOrgService) Create(payload *ReqSystemOrgCreate) (*model.SystemOrg
 	return org, render.OK, err
 }
 
-func (s *systemOrgService) GetInstance(id uint64) (*model.SystemOrg, error) {
+func (s *systemOrgService) GetInstance(id int64) (*model.SystemOrg, error) {
 	return model.GetOrg(model.GetDB(), id)
 }
 
 func (s *systemOrgService) GetAllInstances() ([]*model.SystemOrg, int, error) {
 	orgs, err := model.GetAllOrgs(model.GetDB())
 	if err != nil {
-		return nil, 0, err
+		return nil, render.QueryError, err
 	}
 	return orgs, len(orgs), err
 }
@@ -69,7 +69,7 @@ func (s *systemOrgService) Update(payload *ReqSystemOrgUpdate) (int, error) {
 	return render.OK, err
 }
 
-func (s *systemOrgService) Delete(ids []uint64) error {
+func (s *systemOrgService) Delete(ids []int64) error {
 	return model.DeleteOrgs(model.GetDB(), ids)
 }
 

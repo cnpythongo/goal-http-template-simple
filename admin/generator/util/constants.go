@@ -14,8 +14,8 @@ var GenConstants = genConstants{
 var GoConstants = goConstants{
 	TypeString:   "string",  //字符串类型
 	TypeFloat:    "float64", //浮点型
-	TypeInt:      "int",     //整型
-	TypeDateTime: "uint64",  //时间类型
+	TypeInt:      "int64",   //整型
+	TypeDateTime: "int64",   //时间类型
 }
 
 // SqlConstants 数据库相关常量

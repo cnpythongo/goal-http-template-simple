@@ -2,7 +2,7 @@ package attachment
 
 type (
 	AttachmentAddReq struct {
-		UserId   uint64 `json:"-" form:"-"` // 用户ID
+		UserId   int64  `json:"-" form:"-"` // 用户ID
 		UserUuid string `json:"-" form:"-"` // 用户UUID
 		IP       string `json:"-" form:"-"` // 用户IP
 	}

@@ -11,7 +11,7 @@ type ReqGenTableList struct {
 
 // RespGenTableItem 待生成代码的数据表返回信息
 type RespGenTableItem struct {
-	ID           uint64 `json:"id"`            // 主键
+	ID           int64  `json:"id"`            // 主键
 	Name         string `json:"name"`          // 表名称
 	TableComment string `json:"table_comment"` // 表描述
 	GenTpl       string `json:"gen_tpl"`       // 生成模板方式: [crud=单表, tree=树表]
@@ -22,8 +22,8 @@ type RespGenTableItem struct {
 	TreePrimary  string `json:"tree_primary"`  // 树主键字段
 	TreeParent   string `json:"tree_parent"`   // 树父级字段
 	TreeName     string `json:"tree_name"`     // 树显示字段
-	CreateTime   uint64 `json:"create_time"`   // 创建时间
-	UpdateTime   uint64 `json:"update_time"`   // 更新时间
+	CreateTime   int64  `json:"create_time"`   // 创建时间
+	UpdateTime   int64  `json:"update_time"`   // 更新时间
 }
 
 // ReqDbTableList 库表列表参数
@@ -35,7 +35,7 @@ type ReqDbTableList struct {
 
 // ReqDetailTable 生成详情参数
 type ReqDetailTable struct {
-	ID uint64 `form:"id" binding:"required,gt=0"` // 主键
+	ID int64 `form:"id" binding:"required,gt=0"` // 主键
 }
 
 // ReqGenTableCreate 导入表结构参数
@@ -45,12 +45,12 @@ type ReqGenTableCreate struct {
 
 // ReqSyncTable 同步表结构参数
 type ReqSyncTable struct {
-	ID uint64 `form:"id" binding:"required,gt=0"` // 主键
+	ID int64 `form:"id" binding:"required,gt=0"` // 主键
 }
 
 // ReqUpdateGenTable 编辑表结构参数
 type ReqUpdateGenTable struct {
-	ID           uint64 `json:"id" binding:"required,gt=0"`                     // 主键
+	ID           int64  `json:"id" binding:"required,gt=0"`                     // 主键
 	Name         string `json:"name" binding:"required,min=1,max=200"`          // 表名称
 	TableComment string `json:"table_comment" binding:"required,min=1,max=200"` // 表描述
 	EntityName   string `json:"entity_name" binding:"required,min=1,max=200"`   // 实体名称
@@ -70,7 +70,7 @@ type ReqUpdateGenTable struct {
 
 // ReqUpdateGenColumn 表编辑列
 type ReqUpdateGenColumn struct {
-	ID            uint64 `json:"id" binding:"required,gt=0"`                // 主键
+	ID            int64  `json:"id" binding:"required,gt=0"`                // 主键
 	ColumnName    string `json:"column_name" binding:"required,max=200"`    // 列描述
 	ColumnComment string `json:"column_comment" binding:"required,max=200"` // 列描述
 	GoType        string `json:"go_type" binding:"max=100"`                 // 字段
@@ -87,14 +87,14 @@ type ReqUpdateGenColumn struct {
 
 // ReqDelTable 删除表结构参数
 type ReqDelTable struct {
-	Ids []uint64 `json:"ids" binding:"required"` // 主键
+	Ids []int64 `json:"ids" binding:"required"` // 主键
 }
 
 type ReqDelGenTableColumn ReqDelTable
 
 // ReqPreview 预览代码参数
 type ReqPreview struct {
-	ID uint64 `form:"id" uri:"id" binding:"required,gt=0"` // 主键
+	ID int64 `form:"id" uri:"id" binding:"required,gt=0"` // 主键
 }
 
 // RespPreviewItem 预览代码返回值
@@ -113,13 +113,13 @@ type ReqGenCode struct {
 type RespDbTable struct {
 	Name         string `json:"name"`          // 表名称
 	TableComment string `json:"table_comment"` // 表描述
-	CreateTime   uint64 `json:"create_time"`   // 创建时间
-	UpdateTime   uint64 `json:"update_time"`   // 更新时间
+	CreateTime   int64  `json:"create_time"`   // 创建时间
+	UpdateTime   int64  `json:"update_time"`   // 更新时间
 }
 
 // RespGenColumn 生成列返回信息
 type RespGenColumn struct {
-	ID            uint64 `json:"id"`             // 字段主键
+	ID            int64  `json:"id"`             // 字段主键
 	ColumnName    string `json:"column_name"`    // 字段名称
 	ColumnComment string `json:"column_comment"` // 字段描述
 	ColumnLength  int    `json:"column_length"`  // 字段长度
@@ -134,6 +134,6 @@ type RespGenColumn struct {
 	QueryType     string `json:"query_type"`     // 查询方式: [等于、不等于、大于、小于、范围]
 	HtmlType      string `json:"html_type"`      // 显示类型: [文本框、文本域、下拉框、复选框、单选框、日期控件]
 	DictType      string `json:"dict_type"`      // 字典类型
-	CreateTime    uint64 `json:"create_time"`    // 创建时间
-	UpdateTime    uint64 `json:"update_time"`    // 更新时间
+	CreateTime    int64  `json:"create_time"`    // 创建时间
+	UpdateTime    int64  `json:"update_time"`    // 更新时间
 }

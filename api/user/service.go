@@ -14,8 +14,8 @@ type IUserService interface {
 	GetUserByPhone(phone string) (*model.User, error)
 	GetUserByUUID(uuid string) (*model.User, int, error)
 	GetUserByEmail(email string) (*model.User, int, error)
-	GetUserByID(id uint64) (*model.User, int, error)
-	GetUserProfile(userId uint64) (*model.UserProfile, int, error)
+	GetUserByID(id int64) (*model.User, int, error)
+	GetUserProfile(userId int64) (*model.UserProfile, int, error)
 	UpdateUserProfile(payload *UpdateUserProfileReq) (int, error)
 	UpdateUser(payload *UpdateUserReq) (int, error)
 	UpdateUserPassword(payload *UpdateUserPasswordReq) (int, error)
@@ -49,7 +49,7 @@ func (s *userService) GetUserByEmail(email string) (*model.User, int, error) {
 	return user, render.OK, nil
 }
 
-func (s *userService) GetUserByID(id uint64) (*model.User, int, error) {
+func (s *userService) GetUserByID(id int64) (*model.User, int, error) {
 	user, err := model.GetUserByConditions(model.GetDB(), map[string]interface{}{"id": id})
 	if err != nil {
 		return nil, render.QueryError, err
@@ -57,7 +57,7 @@ func (s *userService) GetUserByID(id uint64) (*model.User, int, error) {
 	return user, render.OK, nil
 }
 
-func (s *userService) GetUserProfile(userId uint64) (*model.UserProfile, int, error) {
+func (s *userService) GetUserProfile(userId int64) (*model.UserProfile, int, error) {
 	pf, err := model.GetUserProfileByUserId(model.GetDB(), userId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

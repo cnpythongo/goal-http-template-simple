@@ -1,95 +1,228 @@
 package systemmenu
 
 import (
+	"errors"
 	"github.com/jinzhu/copier"
 	"goal-app/model"
 	"goal-app/pkg/log"
 	"goal-app/pkg/render"
+	"gorm.io/gorm"
+	"time"
 )
 
 type ISystemMenuService interface {
-	Create(payload *ReqSystemMenuCreate) (*model.SystemMenu, int, error)
-	GetInstance(id uint64) (*model.SystemMenu, error)
-	GetAllInstances() ([]*model.SystemMenu, int, error)
-	Update(payload *ReqSystemMenuUpdate) error
-	Delete(ids []uint64) error
-	BuildTree() (*RespSystemMenuTree, error)
+	List(req *ReqSystemMenuList) (res []*RespSystemMenuItem, total int64, code int, err error)
+	Detail(req *ReqSystemMenuDetail) (res *RespSystemMenuItem, code int, err error)
+	Create(payload *ReqSystemMenuCreate) (res *RespSystemMenuItem, code int, err error)
+	Update(payload *ReqSystemMenuUpdate) (res *RespSystemMenuItem, code int, err error)
+	Delete(payload *ReqSystemMenuDelete) (code int, e error)
+	Tree(req *ReqSystemMenuTree) (res *RespSystemMenuTree, code int, err error)
+	GetAllSystemMenu() ([]*model.SystemMenu, error)
+	ConvertSystemMenuTreeToJSON(root *model.SystemMenu, parent *model.SystemMenu) *RespSystemMenuTree
 }
 
-type systemMenuService struct {
-}
+// systemMenuService 菜单管理服务实现类
+type systemMenuService struct{}
 
+// NewSystemMenuService 初始化
 func NewSystemMenuService() ISystemMenuService {
 	return &systemMenuService{}
 }
 
-func (s *systemMenuService) Create(payload *ReqSystemMenuCreate) (*model.SystemMenu, int, error) {
-	menu := model.NewSystemMenu()
-	err := copier.Copy(menu, payload)
+// List 菜单管理列表
+func (s *systemMenuService) List(req *ReqSystemMenuList) (res []*RespSystemMenuItem, total int64, code int, err error) {
+	// 分页信息
+	limit := req.Page
+	offset := req.Limit * (req.Page - 1)
+	// 查询
+	query := model.GetDB().Model(&model.SystemMenu{})
+	if req.ParentID >= 0 {
+		query = query.Where("parent_id = ?", req.ParentID)
+	}
+	if req.Kind != "" {
+		query = query.Where("kind = ?", req.Kind)
+	}
+	if req.Name != "" {
+		query = query.Where("name like ?", "%"+req.Name+"%")
+	}
+	if req.Icon != "" {
+		query = query.Where("icon = ?", req.Icon)
+	}
+	if req.Sort >= 0 {
+		query = query.Where("sort = ?", req.Sort)
+	}
+	if req.AuthTag != "" {
+		query = query.Where("auth_tag = ?", req.AuthTag)
+	}
+	if req.Route != "" {
+		query = query.Where("route = ?", req.Route)
+	}
+	if req.Component != "" {
+		query = query.Where("component = ?", req.Component)
+	}
+	if req.Params != "" {
+		query = query.Where("params = ?", req.Params)
+	}
+	if req.Status != "" {
+		query = query.Where("status = ?", req.Status)
+	}
+	// 总数
+	err = query.Count(&total).Error
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, total, render.QueryError, err
+	}
+	// 数据
+	var objs []*model.SystemMenu
+	err = query.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, total, render.QueryError, err
+	}
+	err = copier.Copy(&res, objs)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, total, render.DBAttributesCopyError, err
+	}
+	return res, total, render.OK, nil
+}
+
+// Detail 菜单管理详情
+func (s *systemMenuService) Detail(req *ReqSystemMenuDetail) (res *RespSystemMenuItem, code int, err error) {
+	// var obj *model.SystemMenu
+	obj, err := model.GetSystemMenuInstance(
+		model.GetDB(),
+		map[string]interface{}{
+			"id":          req.ID,
+			"delete_time": 0,
+		},
+	)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, render.DataNotExistError, err
+		}
+		return nil, render.QueryError, err
+	}
+	err = copier.Copy(&res, obj)
 	if err != nil {
 		log.GetLogger().Error(err)
 		return nil, render.DBAttributesCopyError, err
 	}
-	err = model.CreateSystemMenu(model.GetDB(), menu)
+	return
+}
+
+// Create 菜单管理创建
+func (s *systemMenuService) Create(payload *ReqSystemMenuCreate) (res *RespSystemMenuItem, code int, err error) {
+	obj := model.NewSystemMenu()
+	err = copier.Copy(&obj, &payload)
 	if err != nil {
 		log.GetLogger().Error(err)
+		return nil, render.DBAttributesCopyError, err
+	}
+	obj, err = model.CreateSystemMenu(model.GetDB(), obj)
+	if err != nil {
 		return nil, render.CreateError, err
 	}
-	return menu, render.OK, err
-}
-
-func (s *systemMenuService) GetInstance(id uint64) (*model.SystemMenu, error) {
-	return model.GetSystemMenuById(model.GetDB(), id)
-}
-
-func (s *systemMenuService) GetAllInstances() ([]*model.SystemMenu, int, error) {
-	result, err := model.GetAllSystemMenus(model.GetDB())
+	err = copier.Copy(&res, obj)
 	if err != nil {
-		return nil, 0, err
+		log.GetLogger().Error(err)
+		return nil, render.DBAttributesCopyError, err
 	}
-	return result, len(result), err
+	return res, render.OK, nil
 }
 
-func (s *systemMenuService) Update(payload *ReqSystemMenuUpdate) error {
-	obj, err := model.GetSystemMenuById(model.GetDB(), payload.ID)
+// Update 菜单管理更新
+func (s *systemMenuService) Update(payload *ReqSystemMenuUpdate) (res *RespSystemMenuItem, code int, err error) {
+	obj, err := model.GetSystemMenuInstance(
+		model.GetDB(),
+		map[string]interface{}{
+			"id":          payload.ID,
+			"delete_time": 0,
+		},
+	)
 	if err != nil {
-		return err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, render.DataNotExistError, err
+		}
+		return nil, render.QueryError, err
 	}
-	data := map[string]interface{}{
-		"name":      payload.Name,
-		"parent_id": payload.ParentID,
+	// 更新
+	err = copier.Copy(&obj, &payload)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, render.DBAttributesCopyError, err
 	}
-	return model.UpdateSystemMenu(model.GetDB(), obj.ID, data)
+	obj.UpdateTime = time.Now().Unix()
+	err = model.UpdateSystemMenu(model.GetDB(), obj)
+	if err != nil {
+		return nil, render.UpdateError, err
+	}
+	err = copier.Copy(&res, &obj)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, render.DBAttributesCopyError, err
+	}
+	return res, render.OK, nil
 }
 
-func (s *systemMenuService) Delete(ids []uint64) error {
-	return model.DeleteOrgs(model.GetDB(), ids)
+// Delete 菜单管理删除
+func (s *systemMenuService) Delete(payload *ReqSystemMenuDelete) (code int, e error) {
+	_, err := model.GetSystemMenuInstance(
+		model.GetDB(),
+		map[string]interface{}{
+			"id":          payload.ID,
+			"delete_time": 0,
+		},
+	)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return render.DataNotExistError, err
+		}
+		return render.QueryError, err
+	}
+	// 删除
+	err = model.DeleteSystemMenu(model.GetDB(), payload.ID)
+	if err != nil {
+		return render.DeleteError, err
+	}
+	return render.OK, nil
 }
 
-func (s *systemMenuService) ConvertTreeToJSON(menu *model.SystemMenu, parent *model.SystemMenu) *RespSystemMenuTree {
+// Tree 菜单管理树
+func (s *systemMenuService) Tree(req *ReqSystemMenuTree) (res *RespSystemMenuTree, code int, err error) {
+	rows, err := s.GetAllSystemMenu()
+	if err != nil {
+		return nil, render.QueryError, err
+	}
+	root := model.BuildSystemMenuTree(rows)
+	result := s.ConvertSystemMenuTreeToJSON(root, nil)
+	return result, render.OK, nil
+}
+
+// GetAllSystemMenu 菜单管理获取所有有效数据
+func (s *systemMenuService) GetAllSystemMenu() ([]*model.SystemMenu, error) {
+	result, err := model.GetAllSystemMenu(model.GetDB())
+	if err != nil {
+		return nil, err
+	}
+	return result, err
+}
+
+// ConvertSystemMenuTreeToJSON 行模型数据转成JSON树结构
+func (s *systemMenuService) ConvertSystemMenuTreeToJSON(root *model.SystemMenu, parent *model.SystemMenu) *RespSystemMenuTree {
 	pName := ""
 	if parent != nil {
 		pName = parent.Name
 	}
 	result := &RespSystemMenuTree{
-		ID:         menu.ID,
-		ParentID:   menu.ParentID,
+		ID:         root.ID,
+		ParentID:   root.ParentID,
 		ParentName: pName,
-		Children:   make([]*RespSystemMenuTree, len(menu.Children)),
+		Children:   make([]*RespSystemMenuTree, len(root.Children)),
 	}
 
-	for i, child := range menu.Children {
-		result.Children[i] = s.ConvertTreeToJSON(child, menu)
+	for i, child := range root.Children {
+		result.Children[i] = s.ConvertSystemMenuTreeToJSON(child, root)
 	}
 	return result
-}
-
-func (s *systemMenuService) BuildTree() (*RespSystemMenuTree, error) {
-	orgs, _, err := s.GetAllInstances()
-	if err != nil {
-		return nil, err
-	}
-	root := model.BuildSystemMenuTree(orgs)
-	result := s.ConvertTreeToJSON(root, nil)
-	return result, nil
 }

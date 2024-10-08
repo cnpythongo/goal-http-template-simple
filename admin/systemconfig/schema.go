@@ -21,7 +21,7 @@ type (
 	}
 
 	ReqUpdateSystemConfig struct {
-		ID      uint64 `json:"id" binding:"required" example:"1"`         // ID
+		ID      int64  `json:"id" binding:"required" example:"1"`         // ID
 		Scope   string `json:"scope" binding:"required" example:"global"` // 作用域,global-全局,admin-管理后台,app-前台应用
 		Name    string `json:"name" binding:"required" example:"test"`    // 配置名称
 		Value   string `json:"value" binding:"required" example:"test"`   // 配置值
@@ -30,6 +30,6 @@ type (
 	}
 
 	ReqDeleteSystemConfig struct {
-		IDs []uint64 `json:"ids" binding:"required"` // ID列表
+		IDs []int64 `json:"ids" binding:"required"` // ID列表
 	}
 )

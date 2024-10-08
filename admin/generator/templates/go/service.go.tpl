@@ -1,6 +1,7 @@
 package {{{ .PackageName }}}
 
 import (
+    "errors"
     "github.com/jinzhu/copier"
     "goal-app/model"
     "goal-app/pkg/log"
@@ -8,92 +9,92 @@ import (
 )
 
 type I{{{ .EntityName }}}Service interface {
-	List(req *{{{ .EntityName }}}ListReq) (res []*{{{ .EntityName }}}ItemResp, total int64, code int, err error)
-	Detail(req *{{{ .EntityName }}}DetailReq) (res *{{{ .EntityName }}}ItemResp, code int, err error)
-	Create(payload *{{{ .EntityName }}}CreateReq) (res *{{{ .EntityName }}}ItemResp, code int, err error)
-	Update(payload *{{{ .EntityName }}}UpdateReq) (res *{{{ .EntityName }}}ItemResp, code int, err error)
-	Delete(payload *{{{ .EntityName }}}DeleteReq) (code int, e error)
-	Tree(req *{{{ .EntityName }}}TreeReq) (res *{{{ .EntityName }}}TreeResp, code int, err error)
-	GetAll{{{ title (toCamelCase .EntityName) }}}() ([]*model.{{{ title (toCamelCase .EntityName) }}}, error)
-    Build{{{ title (toCamelCase .EntityName) }}}Tree(rows []*{{{ toCamelCaseWithoutFirst .EntityName }}}.{{{ .EntityName }}}) *{{{ toCamelCaseWithoutFirst .EntityName }}}.{{{ .EntityName }}}
-    Convert{{{ title (toCamelCase .EntityName) }}}TreeToJSON(root *model.{{{ title (toCamelCase .EntityName) }}}, parent *model.{{{ title (toCamelCase .EntityName) }}}) *{{{ .EntityName }}}TreeResp
+	List(req *Req{{{ .EntityName }}}List) (res []*Resp{{{ .EntityName }}}Item, total int64, code int, err error)
+	Detail(req *Req{{{ .EntityName }}}Detail) (res *Resp{{{ .EntityName }}}Item, code int, err error)
+	Create(payload *Req{{{ .EntityName }}}Create) (res *Resp{{{ .EntityName }}}Item, code int, err error)
+	Update(payload *Req{{{ .EntityName }}}Update) (res *Resp{{{ .EntityName }}}Item, code int, err error)
+	Delete(payload *Req{{{ .EntityName }}}Delete) (code int, e error)
+	Tree(req *Req{{{ .EntityName }}}Tree) (res *Resp{{{ .EntityName }}}Tree, code int, err error)
+	GetAll{{{ .EntityName }}}() ([]*model.{{{ .EntityName }}}, error)
+    Convert{{{ .EntityName }}}TreeToJSON(root *model.{{{ .EntityName }}}, parent *model.{{{ .EntityName }}}) *Resp{{{ .EntityName }}}Tree
 }
 
-// {{{ .EntityName }}}Service {{{ .FunctionName }}}服务实现类
-type {{{ .EntityName }}}Service struct {}
+// {{{ lowerFirst .EntityName }}}Service {{{ .FunctionName }}}服务实现类
+type {{{ lowerFirst .EntityName }}}Service struct {}
 
 // New{{{ .EntityName }}}Service 初始化
 func New{{{ .EntityName }}}Service() I{{{ .EntityName }}}Service {
-	return &{{{ .EntityName }}}Service{}
+	return &{{{ lowerFirst .EntityName }}}Service{}
 }
 
 
 // List {{{ .FunctionName }}}列表
-func (svc *{{{ toCamelCaseWithoutFirst .EntityName }}}Service) List(req {{{ .EntityName }}}ListReq) (resp Resp{{{ .EntityName }}}List, total int64, code int, err error) {
+func (s *{{{ lowerFirst .EntityName }}}Service) List(req *Req{{{ .EntityName }}}List) (res []*Resp{{{ .EntityName }}}Item, total int64, code int, err error) {
 	// 分页信息
-	limit := page.PageSize
-	offset := page.PageSize * (page.PageNo - 1)
+	limit := req.Page
+	offset := req.Limit * (req.Page - 1)
 	// 查询
-	model := model.GetDB().Model(&{{{ toCamelCaseWithoutFirst .EntityName }}}.{{{ .EntityName }}}{})
+	query := model.GetDB().Model(&model.{{{ .EntityName }}}{})
 	{{{- range .Columns }}}
 	{{{- if .IsQuery }}}
 	{{{- $queryOpr := index $.ModelOprMap .QueryType }}}
 	{{{- if and (eq .GoType "string") (eq $queryOpr "like") }}}
-	if payload.{{{ title (toCamelCase .ColumnName) }}} != "" {
-        model = model.Where("{{{ .ColumnName }}} like ?", "%"+payload.{{{ title (toCamelCase .ColumnName) }}}+"%")
+	if req.{{{ title (toCamelCase .ColumnName) }}} != "" {
+        query = query.Where("{{{ .ColumnName }}} like ?", "%" + req.{{{ title (toCamelCase .ColumnName) }}} + "%")
     }
     {{{- else }}}
-    if payload.{{{ title (toCamelCase .ColumnName) }}} {{{ if eq .GoType "string" }}}!= ""{{{ else }}}>=0{{{ end }}} {
-        model = model.Where("{{{ .ColumnName }}} = ?", payload.{{{ title (toCamelCase .ColumnName) }}})
+    if req.{{{ title (toCamelCase .ColumnName) }}} {{{ if eq .GoType "string" }}}!= ""{{{ else }}}>=0{{{ end }}} {
+        query = query.Where("{{{ .ColumnName }}} = ?", req.{{{ title (toCamelCase .ColumnName) }}})
     }
     {{{- end }}}
     {{{- end }}}
     {{{- end }}}
 	{{{- if contains .AllFields "is_delete" }}}
-	model = model.Where("is_delete = ?", 0)
+	query = query.Where("is_delete = ?", 0)
 	{{{- end }}}
 	// 总数
-	var total int64
-	err := model.Count(&count).Error
-	if e = response.CheckErr(err, "List Count err"); e != nil {
-		return
-	}
+	err = query.Count(&total).Error
+    if err != nil {
+        log.GetLogger().Error(err)
+        return nil, total, render.QueryError, err
+    }
 	// 数据
-	var objs []*{{{ toCamelCaseWithoutFirst .EntityName }}}.{{{ .EntityName }}}
-	err = model.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
-		return
+	var objs []*model.{{{ .EntityName }}}
+	err = query.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	if err != nil {
+	    log.GetLogger().Error(err)
+		return nil, total, render.QueryError, err
 	}
-	result := make([]*resp.{{{ .EntityName }}}Resp, 0)
-	response.Copy(&result, objs)
-	return resp.{{{ .EntityName }}}ListResp{
-	    PageResp: response.PageResp{
-            PageNo:   page.PageNo,
-            PageSize: page.PageSize,
-            Count:    count,
-        },
-	    Lists:    result,
-	}, nil
+	err = copier.Copy(&res, objs)
+    if err != nil {
+        log.GetLogger().Error(err)
+        return nil, total, render.DBAttributesCopyError, err
+    }
+    return res, total, render.OK, nil
 }
 
 // Detail {{{ .FunctionName }}}详情
-func (svc *{{{ toCamelCaseWithoutFirst .EntityName }}}Service) Detail(req {{{ .EntityName }}}DetailReq) (res *{{{ .EntityName }}}ItemResp, code int, err error) {
-	// var obj *{{{ toCamelCaseWithoutFirst .EntityName }}}.{{{ .EntityName }}}
-	obj, err := model.Get{{{ title (toCamelCase .EntityName) }}}Instance(
+func (s *{{{ lowerFirst .EntityName }}}Service) Detail(req *Req{{{ .EntityName }}}Detail) (res *Resp{{{ .EntityName }}}Item, code int, err error) {
+	// var obj *model.{{{ .EntityName }}}
+	obj, err := model.Get{{{ .EntityName }}}Instance(
 	    model.GetDB(),
 	    map[string]interface{}{
-	        {{{ $.PrimaryKey }}}: req.ID,
+	        "{{{ $.PrimaryKey }}}": req.ID,
 	        {{{ if contains .AllFields "delete_time" }}}"delete_time": 0,{{{ end }}}
-	    }
+	    },
     )
 	if err != nil {
 	    if errors.Is(err, gorm.ErrRecordNotFound) {
 	        return nil, render.DataNotExistError, err
 	    }
-		return nil, render.QueryErr, err
+		return nil, render.QueryError, err
 	}
-	response.Copy(&res, obj)
-	{{{- range .Columns }}}
+	err = copier.Copy(&res, obj)
+    if err != nil {
+        log.GetLogger().Error(err)
+        return nil, render.DBAttributesCopyError, err
+    }
+    {{{- range .Columns }}}
     {{{- if and .IsEdit (contains (slice "image" "avatar" "logo" "img") .GoField) }}}
     res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
     {{{- end }}}
@@ -102,98 +103,117 @@ func (svc *{{{ toCamelCaseWithoutFirst .EntityName }}}Service) Detail(req {{{ .E
 }
 
 // Create {{{ .FunctionName }}}创建
-func (svc *{{{ toCamelCaseWithoutFirst .EntityName }}}Service) Create(payload {{{ .EntityName }}}CreateReq) (res *{{{ .EntityName }}}ItemResp, code int, err error) {
+func (s *{{{ lowerFirst .EntityName }}}Service) Create(payload *Req{{{ .EntityName }}}Create) (res *Resp{{{ .EntityName }}}Item, code int, err error) {
 	obj := model.New{{{ .EntityName }}}()
-	copier.Copy(&obj, payload)
-	err := model.Create{{{ title (toCamelCase .EntityName) }}}(&obj).Error
-	if err != nil {
-		return nil, render.CreateErr, err
-	}
-	return obj, render.OK, nil
+    err = copier.Copy(&obj, &payload)
+    if err != nil {
+        log.GetLogger().Error(err)
+        return nil, render.DBAttributesCopyError, err
+    }
+    obj, err = model.Create{{{ .EntityName }}}(model.GetDB(), obj)
+    if err != nil {
+        return nil, render.CreateError, err
+    }
+    err = copier.Copy(&res, obj)
+    if err != nil {
+        log.GetLogger().Error(err)
+        return nil, render.DBAttributesCopyError, err
+    }
+    return res, render.OK, nil
 }
 
 // Update {{{ .FunctionName }}}更新
-func (svc *{{{ toCamelCaseWithoutFirst .EntityName }}}Service) Update(payload {{{ .EntityName }}}UpdateReq) (res *{{{ .EntityName }}}ItemResp, code int, err error) {
-	obj, err := model.Get{{{ title (toCamelCase .EntityName) }}}Instance(
+func (s *{{{ lowerFirst .EntityName }}}Service) Update(payload *Req{{{ .EntityName }}}Update) (res *Resp{{{ .EntityName }}}Item, code int, err error) {
+	obj, err := model.Get{{{ .EntityName }}}Instance(
         model.GetDB(),
         map[string]interface{}{
-            {{{ $.PrimaryKey }}}: req.ID,
+            "{{{ $.PrimaryKey }}}": payload.ID,
             {{{ if contains .AllFields "delete_time" }}}"delete_time": 0,{{{ end }}}
-        }
+        },
     )
     if err != nil {
         if errors.Is(err, gorm.ErrRecordNotFound) {
             return nil, render.DataNotExistError, err
         }
-        return nil, render.QueryErr, err
+        return nil, render.QueryError, err
     }
-	// 更新
-	err := model.Update{{{ title (toCamelCase .EntityName) }}}(model.GetDB(), id, *payload)
-	if err != nil {
-		return nil, render.UpdateErr, err
-	}
-	return obj, render.OK, nil
+    // 更新
+    err = copier.Copy(&obj, &payload)
+    if err != nil {
+        log.GetLogger().Error(err)
+        return nil, render.DBAttributesCopyError, err
+    }
+    obj.UpdateTime = time.Now().Unix()
+    err = model.Update{{{ .EntityName }}}(model.GetDB(), obj)
+    if err != nil {
+        return nil, render.UpdateError, err
+    }
+    err = copier.Copy(&res, &obj)
+    if err != nil {
+        log.GetLogger().Error(err)
+        return nil, render.DBAttributesCopyError, err
+    }
+    return res, render.OK, nil
 }
 
-// Del {{{ .FunctionName }}}删除
-func (svc *{{{ toCamelCaseWithoutFirst .EntityName }}}Service) Delete(payload {{{ .EntityName }}}DeleteReq) (code int, e error) {
-	obj, err := model.Get{{{ title (toCamelCase .EntityName) }}}Instance(
+// Delete {{{ .FunctionName }}}删除
+func (s *{{{ lowerFirst .EntityName }}}Service) Delete(payload *Req{{{ .EntityName }}}Delete) (code int, e error) {
+	_, err := model.Get{{{ .EntityName }}}Instance(
         model.GetDB(),
         map[string]interface{}{
-            {{{ $.PrimaryKey }}}: req.ID,
+            "{{{ $.PrimaryKey }}}": payload.ID,
             {{{ if contains .AllFields "delete_time" }}}"delete_time": 0,{{{ end }}}
-        }
+        },
     )
     if err != nil {
         if errors.Is(err, gorm.ErrRecordNotFound) {
-            return nil, render.DataNotExistError, err
+            return render.DataNotExistError, err
         }
-        return render.QueryErr, err
+        return render.QueryError, err
     }
     // 删除
-    obj.DeleteTime = time.Now().Unix()
-    err = model.GetDB().Save(&obj).Error
+    err = model.Delete{{{ .EntityName }}}(model.GetDB(), payload.ID)
     if err != nil {
         return render.DeleteError, err
     }
-	return render.OK, nil
+    return render.OK, nil
 }
 
 // Tree {{{ .FunctionName }}}树
-func (s *{{{ toCamelCaseWithoutFirst .EntityName }}}Service) Tree(req {{{ .EntityName }}}TreeReq) (res *{{{ .EntityName }}}TreeResp, code int, err error) {
-	rows, _, err := s.GetAllInstances()
+func (s *{{{ lowerFirst .EntityName }}}Service) Tree(req *Req{{{ .EntityName }}}Tree) (res *Resp{{{ .EntityName }}}Tree, code int, err error) {
+	rows, err := s.GetAll{{{ .EntityName }}}()
     if err != nil {
-        return nil, render.DBError, err
+        return nil, render.QueryError, err
     }
-    root := s.Build{{{ title (toCamelCase .EntityName) }}}Tree(rows)
-    result := s.Convert{{{ title (toCamelCase .EntityName) }}}TreeToJSON(root, nil)
+    root := model.Build{{{ .EntityName }}}Tree(rows)
+    result := s.Convert{{{ .EntityName }}}TreeToJSON(root, nil)
 	return result, render.OK, nil
 }
 
-// GetAll{{{ title (toCamelCase .EntityName) }}} {{{ .FunctionName }}}获取所有有效数据
-func (s *{{{ toCamelCaseWithoutFirst .EntityName }}}Service) GetAll{{{ title (toCamelCase .EntityName) }}}() ([]*model.{{{ title (toCamelCase .EntityName) }}}, error) {
-	result, err := model.GetAll{{{ title (toCamelCase .EntityName) }}}(model.GetDB())
+// GetAll{{{ .EntityName }}} {{{ .FunctionName }}}获取所有有效数据
+func (s *{{{ lowerFirst .EntityName }}}Service) GetAll{{{ .EntityName }}}() ([]*model.{{{ .EntityName }}}, error) {
+	result, err := model.GetAll{{{ .EntityName }}}(model.GetDB())
 	if err != nil {
 		return nil, err
 	}
 	return result, err
 }
 
-// Convert{{{ title (toCamelCase .EntityName) }}}TreeToJSON 行模型数据转成JSON树结构
-func (s *{{{ toCamelCaseWithoutFirst .EntityName }}}Service) Convert{{{ title (toCamelCase .EntityName) }}}TreeToJSON(root *model.{{{ title (toCamelCase .EntityName) }}}, parent *model.{{{ title (toCamelCase .EntityName) }}}) *{{{ .EntityName }}}TreeResp {
+// Convert{{{ .EntityName }}}TreeToJSON 行模型数据转成JSON树结构
+func (s *{{{ lowerFirst .EntityName }}}Service) Convert{{{ .EntityName }}}TreeToJSON(root *model.{{{ .EntityName }}}, parent *model.{{{ .EntityName }}}) *Resp{{{ .EntityName }}}Tree {
 	pName := ""
 	if parent != nil {
 		pName = parent.Name
 	}
-	result := &RespSystemOrgTree{
+	result := &Resp{{{ .EntityName }}}Tree{
 		ID:         root.ID,
 		ParentID:   root.ParentID,
 		ParentName: pName,
-		Children:   make([]*{{{ .EntityName }}}TreeResp, len(root.Children)),
+		Children:   make([]*Resp{{{ .EntityName }}}Tree, len(root.Children)),
 	}
 
 	for i, child := range root.Children {
-		result.Children[i] = s.Convert{{{ title (toCamelCase .EntityName) }}}TreeToJSON(child, root)
+		result.Children[i] = s.Convert{{{ .EntityName }}}TreeToJSON(child, root)
 	}
 	return result
 }

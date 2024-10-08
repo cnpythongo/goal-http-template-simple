@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type SystemOrg struct {
 	BaseModel
-	ParentID uint64       `json:"parent_id" gorm:"column:parent_id;type:int(11);null;default:null;comment:父节点ID"`
+	ParentID int64        `json:"parent_id" gorm:"column:parent_id;type:int(11);null;default:null;comment:父节点ID"`
 	Name     string       `json:"name" gorm:"column:name;type:varchar(100);not null;default:'';comment:部门名称"`
 	Manager  string       `json:"manager" gorm:"column:manager;type:varchar(100);not null;default:'';comment:负责人名称"`
 	Phone    string       `json:"phone"  gorm:"column:phone;type:varchar(100);not null;default:'';comment:负责人电话"`
@@ -15,7 +15,7 @@ func NewSystemOrg() *SystemOrg {
 	return &SystemOrg{}
 }
 
-func GetOrg(db *gorm.DB, id uint64) (*SystemOrg, error) {
+func GetOrg(db *gorm.DB, id int64) (*SystemOrg, error) {
 	var org SystemOrg
 	err := db.First(&org, id).Error
 	if err != nil {
@@ -50,14 +50,14 @@ func UpdateOrg(db *gorm.DB, org *SystemOrg) error {
 	return err
 }
 
-func DeleteOrgs(db *gorm.DB, ids []uint64) error {
+func DeleteOrgs(db *gorm.DB, ids []int64) error {
 	return db.Delete(&SystemOrg{}, ids).Error
 }
 
 func BuildOrgTree(orgs []*SystemOrg) *SystemOrg {
 	rootNode := NewSystemOrg()
 
-	orgMap := make(map[uint64]*SystemOrg)
+	orgMap := make(map[int64]*SystemOrg)
 	for _, org := range orgs {
 		org.Children = make([]*SystemOrg, 0)
 		orgMap[org.ID] = org

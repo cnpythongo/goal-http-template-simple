@@ -67,7 +67,7 @@ func CreateConfig(db *gorm.DB, cfg *Config) (*Config, error) {
 }
 
 // UpdateConfig 更新配置
-func UpdateConfig(db *gorm.DB, id uint64, data map[string]interface{}) error {
+func UpdateConfig(db *gorm.DB, id int64, data map[string]interface{}) error {
 	err := db.Model(NewConfig()).Where("id = ?", id).UpdateColumns(data).Error
 	if err != nil {
 		log.GetLogger().Errorf("model.system_config.UpdateConfig Error ==> %v", err)
@@ -76,12 +76,12 @@ func UpdateConfig(db *gorm.DB, id uint64, data map[string]interface{}) error {
 }
 
 // DeleteConfig 删除配置，逻辑删除
-func DeleteConfig(db *gorm.DB, id uint64) error {
+func DeleteConfig(db *gorm.DB, id int64) error {
 	return UpdateConfig(db, id, map[string]interface{}{"delete_time": time.Now().Unix()})
 }
 
 // GetConfigById 根据ID获取单个配置数据
-func GetConfigById(db *gorm.DB, id uint64) (*Config, error) {
+func GetConfigById(db *gorm.DB, id int64) (*Config, error) {
 	result := NewConfig()
 	err := db.Model(NewConfig()).Where("id = ?", id).Limit(1).First(&result).Error
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
