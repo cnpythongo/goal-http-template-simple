@@ -8,6 +8,7 @@ import api, {
   {{{.EntityName}}}CreateBody,
   {{{.EntityName}}}UpdateBody
 } from '@/api{{{.GenPath}}}';
+import dayjs from 'dayjs';
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -45,10 +46,24 @@ export default function {{{.EntityName}}}Page() {
   const [searchForm] = Form.useForm();
   const [editForm] = Form.useForm();
   const [editRecord, setEditRecord] = useState<any>(null);
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showDataModal, setShowDataModal] = useState<boolean>(false);
+  const getDateInterval = (days: number) => {
+      return [dayjs().subtract(days, 'days').unix(), dayjs().unix()];
+    };
+    const [initial_start, initial_end] = getDateInterval(30);
+    const [total, setTotal] = useState(0);
+    const [page, setPage] = useState(1);
+    const [pageLimit, setPageLimit] = useState(10);
+    const [dateFilter, setDateFilter] = useState({
+      create_time_start: initial_start,
+      create_time_end: initial_end
+    });
+
   // 数据表格属性定义
   const [tableData, setTableData] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
   // 上传组件
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
@@ -74,10 +89,11 @@ export default function {{{.EntityName}}}Page() {
     );
     
   // 请求参数定义
-  const [params, setParams] = useState<{{{.EntityName}}}ListParams>({
-    page: 1,
-    limit: 10
-  });
+  const [params, setParams] = useState<SystemLogListParams>({
+      ...dateFilter,
+      page,
+      limit: pageLimit
+    });
 
   // 事件定义
   // 复选框事件
@@ -91,8 +107,24 @@ export default function {{{.EntityName}}}Page() {
     onChange: onSelectChange
   };
 
+  const onSearchDateChange = (_, dateStrings) => {
+      setDateFilter({
+        create_time_start: dayjs(dateStrings[0]).unix(),
+        create_time_end: dayjs(dateStrings[1]).unix()
+      });
+    };
+
   // 查询
-  const onSearch = () => {};
+  const onSearch = () => {
+      const formValues = searchForm.getFieldsValues();
+      setParams({
+        ...params,
+        ...formValues,
+        ...dateFilter,
+        page: 1,
+        limit: pageLimit
+      });
+    };
 
   // 详情
   const onDetail = (record: {{{.EntityName}}}Item) => {
@@ -127,7 +159,7 @@ export default function {{{.EntityName}}}Page() {
     if (record) {
       editForm.setFieldsValue({ ...record });
     }
-    setShowDataModal(true);
+    setShowEditModal(true);
   };
 
   const handleDataFormOk = () => {
@@ -136,11 +168,11 @@ export default function {{{.EntityName}}}Page() {
     } else {
       create();
     }
-    setShowDataModal(false);
+    setShowEditModal(false);
   };
 
   const handleDataFormCancel = () => {
-    setShowDataModal(false);
+    setShowEditModal(false);
   };
 
   // http请求
@@ -211,6 +243,18 @@ export default function {{{.EntityName}}}Page() {
   }, []);
 
   // 列内容定义
+  const paginationParams = {
+      total,
+      current: page,
+      pageLimit,
+      showTotal: (v: any) => `共${v}条记录`,
+      onChange: (pNumber: any, pSize: any) => {
+        setPage(pNumber);
+        setPageLimit(pSize);
+        setParams({ ...params, page: pNumber, limit: pSize });
+      }
+    };
+
   const columns: TableColumns = [
     {{{- range .Columns }}}
     {{{- if .IsList }}}
@@ -305,6 +349,7 @@ export default function {{{.EntityName}}}Page() {
             rowSelection={rowSelection}
             rowKey={record => record.id}
             dataSource={tableData}
+            pagination={paginationParams}
           />
         </div>
       </div>
@@ -313,7 +358,7 @@ export default function {{{.EntityName}}}Page() {
         title={editRecord ? '编辑数据' : '新增数据'}
         centered={true}
         maskClosable={false}
-        open={showDataModal}
+        open={showEditModal}
         onOk={handleDataFormOk}
         onCancel={handleDataFormCancel}
         width={600}
@@ -363,15 +408,18 @@ export default function {{{.EntityName}}}Page() {
         <DatePicker onChange={onChange} />
         <RangePicker showTime />
         {{{- else if eq .HtmlType "datetime" }}}
-        <RangePicker
-          showTime={{ format: 'HH:mm' }}
-          format="YYYY-MM-DD HH:mm"
-          onChange={(value, dateString) => {
-            console.log('Selected Time: ', value);
-            console.log('Formatted Selected Time: ', dateString);
-          }}
-          onOk={onOk}
-        />
+        <Form.Item label="选择日期">
+          <RangePicker
+            onChange={onSearchDateChange}
+            allowClear
+            value={[
+              dayjs.unix(dateFilter.create_time_start),
+              dayjs.unix(dateFilter.create_time_end)
+            ]}
+            format="YYYY-MM-DD"
+            separator="~"
+          />
+        </Form.Item>
         {{{- else if eq .HtmlType "imageUpload" }}}
         <Upload
             name="avatar"
@@ -390,6 +438,28 @@ export default function {{{.EntityName}}}Page() {
         {{{- end }}}
         </Form>
       </Modal>
+      
+      <Modal
+          title={'数据详情'}
+          centered={true}
+          maskClosable={false}
+          open={showDataModal}
+          onCancel={() => {
+            setShowDataModal(false);
+          }}
+          width={600}
+        >
+        {detailRecord && (
+        <>
+        {{{- range .Columns }}}
+          <div className="flex flex-row mb-[1px]">
+            <div className="basis-1/4 text-right bg-slate-200">{{{ .ColumnComment }}}：</div>
+            <div className="basis-3/4">{detailRecord.{{{ .ColumnName }}}}</div>
+          </div>
+        {{{- end }}}
+        </>
+        )}
+        </Modal>
     </>
   );
 }

@@ -2,20 +2,27 @@ import { get, post } from '@/request';
 import { PageParams, PageList } from '@/api/types';
 
 export interface {{{.EntityName}}}ListParams extends PageParams {
-  user_id?: number;
-  name?: string;
+  {{{- range .Columns }}}
+  {{{- if .IsQuery }}}
+  {{{ toSnakeCase .ColumnName }}}: {{{- if eq .HtmlType "number" }}}number{{{- else }}}string{{{- end }}};
+  {{{- end }}}
+  {{{- end }}}
 }
 
 export interface {{{.EntityName}}}CreateBody {
-  tables: string;
+{{{- range .Columns }}}
+{{{- if .IsInsert }}}
+{{{ toSnakeCase .ColumnName }}}: {{{- if eq .HtmlType "number" }}}number{{{- else }}}string{{{- end }}};
+{{{- end }}}
+{{{- end }}}
 }
 
 export interface {{{.EntityName}}}UpdateBody {
-  id: number;
-  parent_id: number | null;
-  name: string;
-  manager: string;
-  phone: string;
+  {{{- range .Columns }}}
+  {{{- if .IsEdit }}}
+  {{{ toSnakeCase .ColumnName }}}: {{{- if eq .HtmlType "number" }}}number{{{- else }}}string{{{- end }}};
+  {{{- end }}}
+  {{{- end }}}
 }
 
 export interface {{{.EntityName}}}DeleteBody {
@@ -23,13 +30,11 @@ export interface {{{.EntityName}}}DeleteBody {
 }
 
 export interface {{{.EntityName}}}Item {
-  id: number;
-  name: string;
-  table_comment: string;
-  gen_type: number;
-  gen_tpl: string;
-  create_time: number;
-  update_time: number;
+  {{{- range .Columns }}}
+  {{{- if .IsList }}}
+  {{{ toSnakeCase .ColumnName }}}: {{{- if eq .HtmlType "number" }}}number{{{- else }}}string{{{- end }}};
+  {{{- end }}}
+  {{{- end }}}
   children?: Array<{{{.EntityName}}}Item>;
 }
 

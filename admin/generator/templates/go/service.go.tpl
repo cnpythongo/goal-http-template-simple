@@ -77,7 +77,7 @@ func (s *{{{ lowerFirst .EntityName }}}Service) List(req *Req{{{ .EntityName }}}
 
 // Detail {{{ .FunctionName }}}详情
 func (s *{{{ lowerFirst .EntityName }}}Service) Detail(req *Req{{{ .EntityName }}}Detail) (res *Resp{{{ .EntityName }}}Item, code int, err error) {
-	// var obj *model.{{{ .EntityName }}}
+	res = &Resp{{{ .EntityName }}}Item{}
 	obj, err := model.Get{{{ .EntityName }}}Instance(
 	    model.GetDB(),
 	    map[string]interface{}{
@@ -91,7 +91,7 @@ func (s *{{{ lowerFirst .EntityName }}}Service) Detail(req *Req{{{ .EntityName }
 	    }
 		return nil, render.QueryError, err
 	}
-	err = copier.Copy(&res, obj)
+	err = copier.Copy(&res, &obj)
     if err != nil {
         log.GetLogger().Error(err)
         return nil, render.DBAttributesCopyError, err

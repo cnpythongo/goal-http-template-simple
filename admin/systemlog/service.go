@@ -63,7 +63,7 @@ func (s *systemLogService) List(req *ReqSystemLogList) (res []*RespSystemLogItem
 
 // Detail 系统日志详情
 func (s *systemLogService) Detail(req *ReqSystemLogDetail) (res *RespSystemLogItem, code int, err error) {
-	// var obj *model.SystemLog
+	res = &RespSystemLogItem{}
 	obj, err := model.GetSystemLogInstance(
 		model.GetDB(),
 		map[string]interface{}{
@@ -77,7 +77,7 @@ func (s *systemLogService) Detail(req *ReqSystemLogDetail) (res *RespSystemLogIt
 		}
 		return nil, render.QueryError, err
 	}
-	err = copier.Copy(&res, obj)
+	err = copier.Copy(&res, &obj)
 	if err != nil {
 		log.GetLogger().Error(err)
 		return nil, render.DBAttributesCopyError, err
