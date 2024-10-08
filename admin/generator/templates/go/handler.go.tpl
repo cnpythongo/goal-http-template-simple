@@ -23,10 +23,10 @@ func New{{{ .EntityName }}}Handler(svc I{{{ .EntityName }}}Service) I{{{ .Entity
 	return &{{{ toCamelCaseWithoutFirst .Name }}}Handler{svc: svc}
 }
 
-// list {{{ .EntityName }}}列表
-// @Tags {{{ .EntityName }}}
-// @Summary {{{ .EntityName }}}列表
-// @Description {{{ .EntityName }}}列表
+// list {{{ .FunctionName }}}列表
+// @Tags {{{ .FunctionName }}}
+// @Summary {{{ .FunctionName }}}列表
+// @Description {{{ .FunctionName }}}列表
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param data query {{{ .EntityName }}}ListReq false "请求体"
@@ -57,10 +57,10 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) list(c *gin.Context) {
     render.Json(c, render.OK, resp)
 }
 
-// tree {{{ .EntityName }}}树结构数据
-// @Tags {{{ .EntityName }}}
-// @Summary {{{ .EntityName }}}树结构数据
-// @Description {{{ .EntityName }}}树结构数据
+// tree {{{ .FunctionName }}}树结构数据
+// @Tags {{{ .FunctionName }}}
+// @Summary {{{ .FunctionName }}}树结构数据
+// @Description {{{ .FunctionName }}}树结构数据
 // @Accept json
 // @Produce json
 // @Success 200 {object} render.JsonDataResp{data={{{ .EntityName }}}TreeResp} "code不为0时表示有错误"
@@ -82,10 +82,10 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) tree(c *gin.Context) {
     render.Json(c, render.OK, tree)
 }
 
-// detail {{{ .EntityName }}}详情
-// @Tags {{{ .EntityName }}}
-// @Summary {{{ .EntityName }}}详情
-// @Description {{{ .EntityName }}}详情
+// detail {{{ .FunctionName }}}详情
+// @Tags {{{ .FunctionName }}}
+// @Summary {{{ .FunctionName }}}详情
+// @Description {{{ .FunctionName }}}详情
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param data query {{{ .EntityName }}}DetailReq true "请求体"
@@ -109,10 +109,10 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) detail(c *gin.Context) {
 	render.Json(c, render.OK, result)
 }
 
-// create 创建{{{ .EntityName }}}
-// @Tags {{{ .EntityName }}}
-// @Summary 创建{{{ .EntityName }}}
-// @Description 创建{{{ .EntityName }}}
+// create 创建{{{ .FunctionName }}}
+// @Tags {{{ .FunctionName }}}
+// @Summary 创建{{{ .FunctionName }}}
+// @Description 创建{{{ .FunctionName }}}
 // @Accept json
 // @Produce json
 // @Param data body {{{ .EntityName }}}CreateReq true "请求体"
@@ -136,10 +136,10 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) create(c *gin.Context) {
     render.Json(c, render.OK, result)
 }
 
-// update 更新{{{ .EntityName }}}
-// @Tags {{{ .EntityName }}}
-// @Summary 更新{{{ .EntityName }}}
-// @Description 更新{{{ .EntityName }}}
+// update 更新{{{ .FunctionName }}}
+// @Tags {{{ .FunctionName }}}
+// @Summary 更新{{{ .FunctionName }}}
+// @Description 更新{{{ .FunctionName }}}
 // @Accept json
 // @Produce json
 // @Param data body {{{ .EntityName }}}UpdateReq true "请求体"
@@ -163,10 +163,10 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) update(c *gin.Context) {
     render.Json(c, render.OK, result)
 }
 
-// delete 删除{{{ .EntityName }}}
-// @Tags {{{ .EntityName }}}
-// @Summary 删除{{{ .EntityName }}}
-// @Description 删除{{{ .EntityName }}}
+// delete 删除{{{ .FunctionName }}}
+// @Tags {{{ .FunctionName }}}
+// @Summary 删除{{{ .FunctionName }}}
+// @Description 删除{{{ .FunctionName }}}
 // @Accept json
 // @Produce json
 // @Success 200 {object} render.JsonDataResp

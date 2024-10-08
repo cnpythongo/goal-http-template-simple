@@ -16,6 +16,9 @@ type {{{ title (toCamelCase .EntityName) }}} struct {
     {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `gorm:"{{{ if .IsPk }}}primarykey;{{{ end }}}comment:'{{{ .ColumnComment }}}'"` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
+    {{{- if eq .GenTpl "tree"}}}
+    Children []*{{{ title (toCamelCase .EntityName) }}} `gorm:"foreignKey:parent_id;references:id" json:"children,omitempty"`
+    {{{- end }}}
 }
 
 func (m *{{{ title (toCamelCase .EntityName) }}}) TableName() string {
@@ -33,15 +36,15 @@ func New{{{ title (toCamelCase .EntityName) }}}List() []*{{{ title (toCamelCase 
 
 func (m *{{{ title (toCamelCase .EntityName) }}}) BeforeCreate(tx *gorm.DB) (err error) {
 	now := time.Now().Unix()
-	m.CreateTime = now
-	m.UpdateTime = now
+	m.CreateTime = uint64(now)
+	m.UpdateTime = uint64(now)
 	return nil
 }
 
-func Create{{{ title (toCamelCase .EntityName) }}}(tx *gorm.DB, obj *{{{ title (toCamelCase .EntityName) }}}) (obj *{{{ title (toCamelCase .EntityName) }}}, err error) {
+func Create{{{ title (toCamelCase .EntityName) }}}(tx *gorm.DB, obj *{{{ title (toCamelCase .EntityName) }}}) (*{{{ title (toCamelCase .EntityName) }}}, error) {
     err := tx.Create(&obj).Error
     if err != nil {
-        log.GetLogger().Errorf("model.{{{ .FunctionName }}}.Create{{{ title (toCamelCase .EntityName) }}} Error ==> %v", err)
+        log.GetLogger().Errorf("model.{{{ title (toCamelCase .EntityName) }}}.Create{{{ title (toCamelCase .EntityName) }}} Error ==> %v", err)
         return nil, err
     }
     return obj, nil
@@ -50,7 +53,7 @@ func Create{{{ title (toCamelCase .EntityName) }}}(tx *gorm.DB, obj *{{{ title (
 func Update{{{ title (toCamelCase .EntityName) }}}(tx *gorm.DB, id int64, data map[string]interface{}) error {
     err := tx.Model(New{{{ title (toCamelCase .EntityName) }}}()).Where("id = ?", id).UpdateColumns(data).Error
     if err != nil {
-        log.GetLogger().Errorf("model.{{{ .FunctionName }}}.Update{{{ title (toCamelCase .EntityName) }}} Error ==> %v", err)
+        log.GetLogger().Errorf("model.{{{ title (toCamelCase .EntityName) }}}.Update{{{ title (toCamelCase .EntityName) }}} Error ==> %v", err)
     }
     return err
 }
@@ -66,8 +69,8 @@ func Get{{{ title (toCamelCase .EntityName) }}}Instance(tx *gorm.DB, conditions 
 	err := tx.Where(conditions).Take(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			log.GetLogger().Infof("model.{{{ .FunctionName }}}.Get{{{ title (toCamelCase .EntityName) }}}Instance conditions ==> %v", conditions)
-			log.GetLogger().Errorf("model.{{{ .FunctionName }}}.Get{{{ title (toCamelCase .EntityName) }}}Instance Error ==> %v", err)
+			log.GetLogger().Infof("model.{{{ title (toCamelCase .EntityName) }}}.Get{{{ title (toCamelCase .EntityName) }}}Instance conditions ==> %v", conditions)
+			log.GetLogger().Errorf("model.{{{ title (toCamelCase .EntityName) }}}.Get{{{ title (toCamelCase .EntityName) }}}Instance Error ==> %v", err)
 		}
 		return nil, err
 	}
@@ -83,7 +86,7 @@ func Get{{{ title (toCamelCase .EntityName) }}}List(tx *gorm.DB, page, size int,
 	var total int64
 	err := qs.Count(&total).Error
 	if err != nil {
-		log.GetLogger().Errorf("model.{{{ .FunctionName }}}.Get{{{ title (toCamelCase .EntityName) }}}List Count Error ==> %v", err)
+		log.GetLogger().Errorf("model.{{{ title (toCamelCase .EntityName) }}}.Get{{{ title (toCamelCase .EntityName) }}}List Count Error ==> %v", err)
 		return nil, 0, err
 	}
 	if page > 0 && size > 0 {
@@ -93,7 +96,7 @@ func Get{{{ title (toCamelCase .EntityName) }}}List(tx *gorm.DB, page, size int,
 	result := New{{{ title (toCamelCase .EntityName) }}}List()
 	err = qs.Find(&result).Error
 	if err != nil {
-		log.GetLogger().Errorf("model.{{{ .FunctionName }}}.Get{{{ title (toCamelCase .EntityName) }}}List Query Error ==> %v", err)
+		log.GetLogger().Errorf("model.{{{ title (toCamelCase .EntityName) }}}.Get{{{ title (toCamelCase .EntityName) }}}List Query Error ==> %v", err)
 		return nil, 0, err
 	}
 	return result, total, nil
@@ -104,7 +107,7 @@ func GetAll{{{ title (toCamelCase .EntityName) }}}(tx *gorm.DB) ([]*{{{ title (t
 	err := tx.Where("delete_time == 0").Find(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			log.GetLogger().Errorf("model.{{{ .FunctionName }}}.GetAll{{{ title (toCamelCase .EntityName) }}} Error ==> %v", err)
+			log.GetLogger().Errorf("model.{{{ title (toCamelCase .EntityName) }}}.GetAll{{{ title (toCamelCase .EntityName) }}} Error ==> %v", err)
 		}
 		return nil, err
 	}

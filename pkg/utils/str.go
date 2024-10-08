@@ -85,7 +85,7 @@ func UUID() string {
 // ToCamelCase 转驼峰名称
 func ToCamelCase(s string) string {
 	words := strings.Split(s, "_")
-	for i := 0; i < len(words); i++ {
+	for i := 1; i < len(words); i++ {
 		words[i] = strings.Title(words[i])
 	}
 	return strings.Join(words, "")
