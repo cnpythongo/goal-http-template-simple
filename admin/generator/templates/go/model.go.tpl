@@ -119,8 +119,8 @@ func GetAll{{{ .EntityName }}}(tx *gorm.DB) ([]*{{{ .EntityName }}}, error) {
 }
 
 {{{- if eq .GenTpl "tree" }}}
-func Build{{{ .EntityName }}}Tree(rows []*{{{ .EntityName }}}) *{{{ .EntityName }}} {
-	rootNode := New{{{ .EntityName }}}()
+func Build{{{ .EntityName }}}Tree(rows []*{{{ .EntityName }}}) []*{{{ .EntityName }}} {
+	rootNodes := New{{{ .EntityName }}}List()
 
 	tmpMap := make(map[int64]*{{{ .EntityName }}})
 	for _, r := range rows {
@@ -130,7 +130,7 @@ func Build{{{ .EntityName }}}Tree(rows []*{{{ .EntityName }}}) *{{{ .EntityName 
 
 	for _, r := range rows {
 		if r.ParentID == 0 {
-			rootNode = r
+			rootNodes = append(rootNodes, r)
 		} else {
 			parent, ok := tmpMap[r.ParentID]
 			if ok && parent != nil {
@@ -138,7 +138,6 @@ func Build{{{ .EntityName }}}Tree(rows []*{{{ .EntityName }}}) *{{{ .EntityName 
 			}
 		}
 	}
-
-	return rootNode
+	return rootNodes
 }
 {{{- end }}}

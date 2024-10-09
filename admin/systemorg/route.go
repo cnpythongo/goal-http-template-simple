@@ -9,7 +9,7 @@ func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
 	h := NewSystemOrgHandler(svc)
 
 	r := route.Group("/api/v1/system/orgs")
-	r.GET("/tree", h.GetTreeData)
+	r.GET("/tree", h.Tree)
 	r.POST("/create", h.Create)
 	r.POST("/update", h.Update)
 	r.POST("/delete", h.Delete)

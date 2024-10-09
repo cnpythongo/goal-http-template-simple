@@ -1570,20 +1570,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "'请求Body'",
-                        "name": "body",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "'手机号'",
                         "name": "cellphone",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "'客户端IP'",
-                        "name": "client_ip",
                         "in": "query"
                     },
                     {
@@ -1596,18 +1584,6 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "数据创建开始区间",
                         "name": "create_time_start",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "'请求结束时间'",
-                        "name": "end_time",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "'请求耗时'",
-                        "name": "latency_time",
                         "in": "query"
                     },
                     {
@@ -1625,59 +1601,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "'操作标题'",
-                        "name": "operate_title",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "default": 1,
                         "example": 1,
                         "description": "页码",
                         "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "'请求触发页面'",
-                        "name": "page_name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "'请求路径'",
-                        "name": "path",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "'请求携带的Referer'",
-                        "name": "referer",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "'请求开始时间'",
-                        "name": "start_time",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "'状态码'",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "'请求UA'",
-                        "name": "user_agent",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "'用户ID'",
-                        "name": "user_uuid",
                         "in": "query"
                     }
                 ],
@@ -2083,7 +2011,10 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/admin_systemmenu.RespSystemMenuTree"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/admin_systemmenu.RespSystemMenuTree"
+                                            }
                                         }
                                     }
                                 }
@@ -2276,7 +2207,10 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/admin_systemorg.RespSystemOrgTree"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/admin_systemorg.RespSystemOrgTree"
+                                            }
                                         }
                                     }
                                 }

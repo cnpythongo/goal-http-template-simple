@@ -63,7 +63,7 @@ func (h *SystemMenusHandler) list(c *gin.Context) {
 // @Description 菜单管理树结构数据
 // @Accept json
 // @Produce json
-// @Success 200 {object} render.JsonDataResp{data=RespSystemMenuTree} "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp{data=[]RespSystemMenuTree} "code不为0时表示有错误"
 // @Failure 500
 // @Security AdminAuth
 // @Router /system/menus/tree [get]

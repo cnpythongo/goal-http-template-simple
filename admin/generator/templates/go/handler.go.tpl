@@ -186,7 +186,7 @@ func (h *{{{ toCamelCaseWithoutFirst .Name }}}Handler) tree(c *gin.Context) {
         return
     }
 
-    tree, code, err := h.svc.Tree(&req)
+    tree, code, err := h.svc.Tree()
     if err != nil {
         render.Json(c, code, err)
         return

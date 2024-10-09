@@ -8,7 +8,7 @@ import (
 )
 
 type ISystemOrgHandler interface {
-	GetTreeData(c *gin.Context)
+	Tree(c *gin.Context)
 	Create(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
@@ -22,20 +22,20 @@ func NewSystemOrgHandler(svc ISystemOrgService) ISystemOrgHandler {
 	return &systemOrgHandler{svc: svc}
 }
 
-// GetTreeData 获取组织机构树结构数据
+// Tree 获取组织机构树结构数据
 // @Tags 组织管理
 // @Summary 获取组织机构树结构数据
 // @Description 获取组织机构树结构数据
 // @Accept json
 // @Produce json
-// @Success 200 {object} render.JsonDataResp{data=RespSystemOrgTree} "code不为0时表示有错误"
+// @Success 200 {object} render.JsonDataResp{data=[]RespSystemOrgTree} "code不为0时表示有错误"
 // @Failure 500
 // @Security AdminAuth
 // @Router /system/orgs/tree [get]
-func (h *systemOrgHandler) GetTreeData(c *gin.Context) {
-	tree, err := h.svc.GetTreeData()
+func (h *systemOrgHandler) Tree(c *gin.Context) {
+	tree, code, err := h.svc.Tree()
 	if err != nil {
-		render.Json(c, render.Error, err)
+		render.Json(c, code, err)
 		return
 	}
 	render.Json(c, render.OK, tree)

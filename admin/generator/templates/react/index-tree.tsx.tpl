@@ -179,7 +179,7 @@ export default function {{{.EntityName}}}Page() {
       .create({ ...editForm.getFieldsValue() })
       .then(res => {
         console.log(res);
-        list();
+        getTreeData();
       })
       .catch(err => {
         console.log(err);
@@ -192,7 +192,7 @@ export default function {{{.EntityName}}}Page() {
       .update({ ...editRecord, ...editForm.getFieldsValue() })
       .then(res => {
         console.log(res);
-        list();
+        getTreeData();
       })
       .catch(err => {
         console.log(err);
@@ -212,7 +212,7 @@ export default function {{{.EntityName}}}Page() {
   };
 
   useEffect(() => {
-    list();
+    getTreeData();
   }, []);
 
   // 列内容定义
@@ -222,7 +222,7 @@ export default function {{{.EntityName}}}Page() {
     {
       title: '{{{ .ColumnComment }}}',
       dataIndex: '{{{ .GoField }}}',
-      key: '{{{ .ColumnComment }}}'
+      key: '{{{ .GoField }}}'
     },
     {{{- end }}}
     {{{- end }}}
@@ -360,14 +360,14 @@ export default function {{{.EntityName}}}Page() {
         <Form.Item
           name="{{{.ColumnName}}}"
           label="{{{.ColumnComment}}}"
-          rules={[{ required: { required: treeData && treeData.length > 0, message: '请选择上级节点' }, message: '请输入{{{.ColumnComment}}}' }]}
+          rules={[{ required: {{{- if .IsRequired }}}true{{{- else }}}false{{{- end }}}, message: '请输入{{{.ColumnComment}}}' }]}
         >
         {{{- if and (ne $.Table.TreeParent "") (eq .GoField $.Table.TreeParent) }}}
             <TreeSelect
               key={treeData.length}
               treeDefaultExpandAll={true}
               treeLine={true}
-              treeData={treeData}
+              treeData={[{ id: 0, name: '顶级', children: treeData }]}
               disabled={disableTreeSelect}
               fieldNames={{
                 label: 'name',
@@ -376,7 +376,7 @@ export default function {{{.EntityName}}}Page() {
               }}
               treeTitleRender={node => {
                   if (node.value === 0) {
-                    return '无上级节点';
+                    return '顶级';
                   }
                   return node.name;
                 }}
@@ -392,7 +392,7 @@ export default function {{{.EntityName}}}Page() {
         {{{- else if eq .HtmlType "select" }}}
         <Select options={[]} />
         {{{- else if eq .HtmlType "radio" }}}
-        <Radio.Group onChange={onUpdateGenTpl}>
+        <Radio.Group onChange={onUpdate{{{ title .ColumnName }}}}>
           <Radio value={'crud'}>单表</Radio>
           <Radio value={'tree'}>树表</Radio>
         </Radio.Group>

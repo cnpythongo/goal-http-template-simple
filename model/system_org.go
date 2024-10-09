@@ -11,8 +11,16 @@ type SystemOrg struct {
 	Children []*SystemOrg `gorm:"foreignKey:parent_id;references:id" json:"children,omitempty"`
 }
 
+func (m *SystemOrg) TableName() string {
+	return "system_orgs"
+}
+
 func NewSystemOrg() *SystemOrg {
 	return &SystemOrg{}
+}
+
+func NewSystemOrgList() []*SystemOrg {
+	return make([]*SystemOrg, 0)
 }
 
 func GetOrg(db *gorm.DB, id int64) (*SystemOrg, error) {
@@ -54,18 +62,18 @@ func DeleteOrgs(db *gorm.DB, ids []int64) error {
 	return db.Delete(&SystemOrg{}, ids).Error
 }
 
-func BuildOrgTree(orgs []*SystemOrg) *SystemOrg {
-	rootNode := NewSystemOrg()
+func BuildOrgTree(rows []*SystemOrg) []*SystemOrg {
+	rootNodes := NewSystemOrgList()
 
 	orgMap := make(map[int64]*SystemOrg)
-	for _, org := range orgs {
+	for _, org := range rows {
 		org.Children = make([]*SystemOrg, 0)
 		orgMap[org.ID] = org
 	}
 
-	for _, org := range orgs {
+	for _, org := range rows {
 		if org.ParentID == 0 {
-			rootNode = org
+			rootNodes = append(rootNodes, org)
 		} else {
 			parent, ok := orgMap[org.ParentID]
 			if ok && parent != nil {
@@ -74,5 +82,5 @@ func BuildOrgTree(orgs []*SystemOrg) *SystemOrg {
 		}
 	}
 
-	return rootNode
+	return rootNodes
 }

@@ -50,8 +50,8 @@ export default {
   update: (data: {{{.EntityName}}}UpdateBody) => post<any>('{{{.GenPath}}}/update', data),
   // {{{.EntityName}}}删除
   delete: (data: {{{.EntityName}}}DeleteBody) => post<any>('{{{.GenPath}}}/delete', data),
-  {{{- if eq .GenTpl "tree" -}}}}
+  {{{- if eq .GenTpl "tree" }}}
   // 获取树结构数据
   getTreeData: () => get<Array<{{{.EntityName}}}Item>>('{{{.GenPath}}}/tree'),
-  {{{- end -}}}}
+  {{{- end }}}
 };

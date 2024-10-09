@@ -14,10 +14,10 @@ type I{{{ .EntityName }}}Service interface {
 	Create(payload *Req{{{ .EntityName }}}Create) (res *Resp{{{ .EntityName }}}Item, code int, err error)
 	Update(payload *Req{{{ .EntityName }}}Update) (res *Resp{{{ .EntityName }}}Item, code int, err error)
 	Delete(payload *Req{{{ .EntityName }}}Delete) (code int, e error)
-	GetAll{{{ .EntityName }}}() ([]*model.{{{ .EntityName }}}, error)
+	GetAll{{{ .EntityName }}}() ([]*model.{{{ .EntityName }}}, int, error)
 	{{{- if eq .GenTpl "tree" }}}
-	Tree(req *Req{{{ .EntityName }}}Tree) (res *Resp{{{ .EntityName }}}Tree, code int, err error)
-    Convert{{{ .EntityName }}}TreeToJSON(root *model.{{{ .EntityName }}}, parent *model.{{{ .EntityName }}}) *Resp{{{ .EntityName }}}Tree
+	Tree(req *Req{{{ .EntityName }}}Tree) ([]*Resp{{{ .EntityName }}}Tree, int, error)
+    Convert{{{ .EntityName }}}TreeToJSON(nodes []*model.{{{ .EntityName }}}, parent *model.{{{ .EntityName }}}) ([]*Resp{{{ .EntityName }}}Tree, int, error)
     {{{- end }}}
 }
 
@@ -182,43 +182,54 @@ func (s *{{{ lowerFirst .EntityName }}}Service) Delete(payload *Req{{{ .EntityNa
 }
 
 // GetAll{{{ .EntityName }}} {{{ .FunctionName }}}获取所有有效数据
-func (s *{{{ lowerFirst .EntityName }}}Service) GetAll{{{ .EntityName }}}() ([]*model.{{{ .EntityName }}}, error) {
+func (s *{{{ lowerFirst .EntityName }}}Service) GetAll{{{ .EntityName }}}() ([]*model.{{{ .EntityName }}}, int, error) {
 	result, err := model.GetAll{{{ .EntityName }}}(model.GetDB())
 	if err != nil {
-		return nil, err
+		return nil, render.QueryError, err
 	}
-	return result, err
+	return result, render.OK, err
 }
+
 
 {{{- if eq .GenTpl "tree" }}}
 // Tree {{{ .FunctionName }}}树
-func (s *{{{ lowerFirst .EntityName }}}Service) Tree(req *Req{{{ .EntityName }}}Tree) (res *Resp{{{ .EntityName }}}Tree, code int, err error) {
-	rows, err := s.GetAll{{{ .EntityName }}}()
+func (s *{{{ lowerFirst .EntityName }}}Service) Tree(req *Req{{{ .EntityName }}}Tree) ([]*Resp{{{ .EntityName }}}Tree, int, error) {
+	rows, code, err := s.GetAll{{{ .EntityName }}}()
     if err != nil {
-        return nil, render.QueryError, err
+        return nil, code, err
     }
-    root := model.Build{{{ .EntityName }}}Tree(rows)
-    result := s.Convert{{{ .EntityName }}}TreeToJSON(root, nil)
-	return result, render.OK, nil
+    roots := model.Build{{{ .EntityName }}}Tree(rows)
+    result, code, err := s.Convert{{{ .EntityName }}}TreeToJSON(roots, nil)
+	return result, code, err
 }
 
 
 // Convert{{{ .EntityName }}}TreeToJSON 行模型数据转成JSON树结构
-func (s *{{{ lowerFirst .EntityName }}}Service) Convert{{{ .EntityName }}}TreeToJSON(root *model.{{{ .EntityName }}}, parent *model.{{{ .EntityName }}}) *Resp{{{ .EntityName }}}Tree {
+func (s *{{{ lowerFirst .EntityName }}}Service) Convert{{{ .EntityName }}}TreeToJSON(nodes []*model.{{{ .EntityName }}}, parent *model.{{{ .EntityName }}}) ([]*Resp{{{ .EntityName }}}Tree, int, error) {
+	result := make([]*Resp{{{ .EntityName }}}Tree, 0)
+	if len(nodes) == 0 {
+		return result, render.OK, nil
+	}
 	pName := ""
 	if parent != nil {
 		pName = parent.Name
 	}
-	result := &Resp{{{ .EntityName }}}Tree{
-		ID:         root.ID,
-		ParentID:   root.ParentID,
-		ParentName: pName,
-		Children:   make([]*Resp{{{ .EntityName }}}Tree, len(root.Children)),
-	}
-
-	for i, child := range root.Children {
-		result.Children[i] = s.Convert{{{ .EntityName }}}TreeToJSON(child, root)
-	}
-	return result
+	for _, node := range nodes {
+        children, code, err := s.Convert{{{ .EntityName }}}TreeToJSON(node.Children, node)
+        if err != nil {
+            return nil, code, err
+        }
+        item := &Resp{{{ .EntityName }}}Tree{
+            ParentName: pName,
+            Children:   children,
+        }
+        err = copier.Copy(&item, &node)
+        if err != nil {
+            log.GetLogger().Error(err)
+            return nil, render.DBAttributesCopyError, err
+        }
+        result = append(result, item)
+    }
+    return result, render.OK, nil
 }
 {{{- end }}}

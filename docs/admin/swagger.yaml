@@ -1743,17 +1743,9 @@ paths:
       - application/x-www-form-urlencoded
       description: 系统日志列表
       parameters:
-      - description: '''请求Body'''
-        in: query
-        name: body
-        type: string
       - description: '''手机号'''
         in: query
         name: cellphone
-        type: string
-      - description: '''客户端IP'''
-        in: query
-        name: client_ip
         type: string
       - description: 数据创建结束区间
         in: query
@@ -1763,14 +1755,6 @@ paths:
         in: query
         name: create_time_start
         type: integer
-      - description: '''请求结束时间'''
-        in: query
-        name: end_time
-        type: integer
-      - description: '''请求耗时'''
-        in: query
-        name: latency_time
-        type: string
       - default: 10
         description: 每页数量
         example: 10
@@ -1781,44 +1765,12 @@ paths:
         in: query
         name: member_name
         type: string
-      - description: '''操作标题'''
-        in: query
-        name: operate_title
-        type: string
       - default: 1
         description: 页码
         example: 1
         in: query
         name: page
         type: integer
-      - description: '''请求触发页面'''
-        in: query
-        name: page_name
-        type: string
-      - description: '''请求路径'''
-        in: query
-        name: path
-        type: string
-      - description: '''请求携带的Referer'''
-        in: query
-        name: referer
-        type: string
-      - description: '''请求开始时间'''
-        in: query
-        name: start_time
-        type: integer
-      - description: '''状态码'''
-        in: query
-        name: status
-        type: integer
-      - description: '''请求UA'''
-        in: query
-        name: user_agent
-        type: string
-      - description: '''用户ID'''
-        in: query
-        name: user_uuid
-        type: string
       produces:
       - application/json
       responses:
@@ -2061,7 +2013,9 @@ paths:
             - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
             - properties:
                 data:
-                  $ref: '#/definitions/admin_systemmenu.RespSystemMenuTree'
+                  items:
+                    $ref: '#/definitions/admin_systemmenu.RespSystemMenuTree'
+                  type: array
               type: object
         "500":
           description: Internal Server Error
@@ -2173,7 +2127,9 @@ paths:
             - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
             - properties:
                 data:
-                  $ref: '#/definitions/admin_systemorg.RespSystemOrgTree'
+                  items:
+                    $ref: '#/definitions/admin_systemorg.RespSystemOrgTree'
+                  type: array
               type: object
         "500":
           description: Internal Server Error

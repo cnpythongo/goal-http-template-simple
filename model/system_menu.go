@@ -109,7 +109,7 @@ func GetSystemMenuList(tx *gorm.DB, page, size int, query interface{}, args []in
 
 func GetAllSystemMenu(tx *gorm.DB) ([]*SystemMenu, error) {
 	result := NewSystemMenuList()
-	err := tx.Where("delete_time == 0").Find(&result).Error
+	err := tx.Where("delete_time = 0").Find(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.GetLogger().Errorf("model.SystemMenu.GetAllSystemMenu Error ==> %v", err)
@@ -119,8 +119,8 @@ func GetAllSystemMenu(tx *gorm.DB) ([]*SystemMenu, error) {
 	return result, nil
 }
 
-func BuildSystemMenuTree(rows []*SystemMenu) *SystemMenu {
-	rootNode := NewSystemMenu()
+func BuildSystemMenuTree(rows []*SystemMenu) []*SystemMenu {
+	rootNodes := NewSystemMenuList()
 
 	tmpMap := make(map[int64]*SystemMenu)
 	for _, r := range rows {
@@ -130,7 +130,7 @@ func BuildSystemMenuTree(rows []*SystemMenu) *SystemMenu {
 
 	for _, r := range rows {
 		if r.ParentID == 0 {
-			rootNode = r
+			rootNodes = append(rootNodes, r)
 		} else {
 			parent, ok := tmpMap[r.ParentID]
 			if ok && parent != nil {
@@ -139,5 +139,5 @@ func BuildSystemMenuTree(rows []*SystemMenu) *SystemMenu {
 		}
 	}
 
-	return rootNode
+	return rootNodes
 }

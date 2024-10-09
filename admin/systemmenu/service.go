@@ -16,9 +16,9 @@ type ISystemMenuService interface {
 	Create(payload *ReqSystemMenuCreate) (res *RespSystemMenuItem, code int, err error)
 	Update(payload *ReqSystemMenuUpdate) (res *RespSystemMenuItem, code int, err error)
 	Delete(payload *ReqSystemMenuDelete) (code int, e error)
-	Tree(req *ReqSystemMenuTree) (res *RespSystemMenuTree, code int, err error)
-	GetAllSystemMenu() ([]*model.SystemMenu, error)
-	ConvertSystemMenuTreeToJSON(root *model.SystemMenu, parent *model.SystemMenu) *RespSystemMenuTree
+	GetAllSystemMenu() ([]*model.SystemMenu, int, error)
+	Tree(req *ReqSystemMenuTree) ([]*RespSystemMenuTree, int, error)
+	ConvertSystemMenuTreeToJSON(nodes []*model.SystemMenu, parent *model.SystemMenu) ([]*RespSystemMenuTree, int, error)
 }
 
 // systemMenuService 菜单管理服务实现类
@@ -188,41 +188,51 @@ func (s *systemMenuService) Delete(payload *ReqSystemMenuDelete) (code int, e er
 	return render.OK, nil
 }
 
-// Tree 菜单管理树
-func (s *systemMenuService) Tree(req *ReqSystemMenuTree) (res *RespSystemMenuTree, code int, err error) {
-	rows, err := s.GetAllSystemMenu()
+// GetAllSystemMenu 菜单管理获取所有有效数据
+func (s *systemMenuService) GetAllSystemMenu() ([]*model.SystemMenu, int, error) {
+	result, err := model.GetAllSystemMenu(model.GetDB())
 	if err != nil {
 		return nil, render.QueryError, err
 	}
-	root := model.BuildSystemMenuTree(rows)
-	result := s.ConvertSystemMenuTreeToJSON(root, nil)
-	return result, render.OK, nil
+	return result, render.OK, err
 }
 
-// GetAllSystemMenu 菜单管理获取所有有效数据
-func (s *systemMenuService) GetAllSystemMenu() ([]*model.SystemMenu, error) {
-	result, err := model.GetAllSystemMenu(model.GetDB())
+// Tree 菜单管理树
+func (s *systemMenuService) Tree(req *ReqSystemMenuTree) ([]*RespSystemMenuTree, int, error) {
+	rows, code, err := s.GetAllSystemMenu()
 	if err != nil {
-		return nil, err
+		return nil, code, err
 	}
-	return result, err
+	roots := model.BuildSystemMenuTree(rows)
+	result, code, err := s.ConvertSystemMenuTreeToJSON(roots, nil)
+	return result, code, err
 }
 
 // ConvertSystemMenuTreeToJSON 行模型数据转成JSON树结构
-func (s *systemMenuService) ConvertSystemMenuTreeToJSON(root *model.SystemMenu, parent *model.SystemMenu) *RespSystemMenuTree {
+func (s *systemMenuService) ConvertSystemMenuTreeToJSON(nodes []*model.SystemMenu, parent *model.SystemMenu) ([]*RespSystemMenuTree, int, error) {
+	result := make([]*RespSystemMenuTree, 0)
+	if len(nodes) == 0 {
+		return result, render.OK, nil
+	}
 	pName := ""
 	if parent != nil {
 		pName = parent.Name
 	}
-	result := &RespSystemMenuTree{
-		ID:         root.ID,
-		ParentID:   root.ParentID,
-		ParentName: pName,
-		Children:   make([]*RespSystemMenuTree, len(root.Children)),
+	for _, node := range nodes {
+		children, code, err := s.ConvertSystemMenuTreeToJSON(node.Children, node)
+		if err != nil {
+			return nil, code, err
+		}
+		item := &RespSystemMenuTree{
+			ParentName: pName,
+			Children:   children,
+		}
+		err = copier.Copy(&item, &node)
+		if err != nil {
+			log.GetLogger().Error(err)
+			return nil, render.DBAttributesCopyError, err
+		}
+		result = append(result, item)
 	}
-
-	for i, child := range root.Children {
-		result.Children[i] = s.ConvertSystemMenuTreeToJSON(child, root)
-	}
-	return result
+	return result, render.OK, nil
 }
