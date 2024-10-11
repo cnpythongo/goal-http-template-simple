@@ -131,3 +131,13 @@ func LowerFirst(s string) string {
 	}
 	return strings.ToLower(s[:1]) + s[1:]
 }
+
+// ToUpperCase 全大写
+func ToUpperCase(s string) string {
+	return strings.ToUpper(s)
+}
+
+// ToLowerCase 全小写
+func ToLowerCase(s string) string {
+	return strings.ToLower(s)
+}

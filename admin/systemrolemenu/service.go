@@ -1,0 +1,163 @@
+package systemrolemenu
+
+import (
+	"errors"
+	"github.com/jinzhu/copier"
+	"goal-app/model"
+	"goal-app/pkg/log"
+	"goal-app/pkg/render"
+	"gorm.io/gorm"
+	"time"
+)
+
+type ISystemRoleMenuService interface {
+	List(req *ReqSystemRoleMenuList) (res []*RespSystemRoleMenuItem, total int64, code int, err error)
+	Detail(req *ReqSystemRoleMenuDetail) (res *RespSystemRoleMenuItem, code int, err error)
+	Create(payload *ReqSystemRoleMenuCreate) (*RespSystemRoleMenuItem, int, error)
+	Update(payload *ReqSystemRoleMenuUpdate) (res *RespSystemRoleMenuItem, code int, err error)
+	Delete(payload *ReqSystemRoleMenuDelete) (int, error)
+	GetAllSystemRoleMenu() ([]*model.SystemRoleMenu, int, error)
+}
+
+// systemRoleMenuService 角色菜单关联服务实现类
+type systemRoleMenuService struct{}
+
+// NewSystemRoleMenuService 初始化
+func NewSystemRoleMenuService() ISystemRoleMenuService {
+	return &systemRoleMenuService{}
+}
+
+// List 角色菜单关联列表
+func (s *systemRoleMenuService) List(req *ReqSystemRoleMenuList) (res []*RespSystemRoleMenuItem, total int64, code int, err error) {
+	// 分页信息
+	limit := req.Page
+	offset := req.Limit * (req.Page - 1)
+	// 查询
+	query := model.GetDB().Model(&model.SystemRoleMenu{})
+	if req.OrgId >= 0 {
+		query = query.Where("org_id = ?", req.OrgId)
+	}
+	if req.RoleId >= 0 {
+		query = query.Where("role_id = ?", req.RoleId)
+	}
+	if req.MenuId >= 0 {
+		query = query.Where("menu_id = ?", req.MenuId)
+	}
+	// 总数
+	err = query.Count(&total).Error
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, total, render.QueryError, err
+	}
+	// 数据
+	var objs []*model.SystemRoleMenu
+	err = query.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, total, render.QueryError, err
+	}
+	err = copier.Copy(&res, objs)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, total, render.DBAttributesCopyError, err
+	}
+	return res, total, render.OK, nil
+}
+
+// Detail 角色菜单关联详情
+func (s *systemRoleMenuService) Detail(req *ReqSystemRoleMenuDetail) (res *RespSystemRoleMenuItem, code int, err error) {
+	res = &RespSystemRoleMenuItem{}
+	obj, err := model.GetSystemRoleMenuInstance(
+		model.GetDB(),
+		map[string]interface{}{
+			"id":          req.ID,
+			"delete_time": 0,
+		},
+	)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, render.DataNotExistError, err
+		}
+		return nil, render.QueryError, err
+	}
+	err = copier.Copy(&res, &obj)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, render.DBAttributesCopyError, err
+	}
+	return
+}
+
+// Create 角色菜单关联创建
+func (s *systemRoleMenuService) Create(payload *ReqSystemRoleMenuCreate) (*RespSystemRoleMenuItem, int, error) {
+	obj := model.NewSystemRoleMenu()
+	err := copier.Copy(&obj, &payload)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, render.DBAttributesCopyError, err
+	}
+	obj, err = model.CreateSystemRoleMenu(model.GetDB(), obj)
+	if err != nil {
+		return nil, render.CreateError, err
+	}
+	res := &RespSystemRoleMenuItem{}
+	err = copier.Copy(&res, obj)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, render.DBAttributesCopyError, err
+	}
+	return res, render.OK, nil
+}
+
+// Update 角色菜单关联更新
+func (s *systemRoleMenuService) Update(payload *ReqSystemRoleMenuUpdate) (res *RespSystemRoleMenuItem, code int, err error) {
+	obj, err := model.GetSystemRoleMenuInstance(
+		model.GetDB(),
+		map[string]interface{}{
+			"id":          payload.ID,
+			"delete_time": 0,
+		},
+	)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, render.DataNotExistError, err
+		}
+		return nil, render.QueryError, err
+	}
+	// 更新
+	err = copier.Copy(&obj, &payload)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, render.DBAttributesCopyError, err
+	}
+	obj.UpdateTime = time.Now().Unix()
+	err = model.UpdateSystemRoleMenu(model.GetDB(), obj)
+	if err != nil {
+		return nil, render.UpdateError, err
+	}
+	err = copier.Copy(&res, &obj)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return nil, render.DBAttributesCopyError, err
+	}
+	return res, render.OK, nil
+}
+
+// Delete 角色菜单关联删除
+func (s *systemRoleMenuService) Delete(payload *ReqSystemRoleMenuDelete) (int, error) {
+	// 删除
+	err := model.DeleteSystemRoleMenu(model.GetDB(), payload.IDs)
+	if err != nil {
+		return render.DeleteError, err
+	}
+	return render.OK, nil
+}
+
+// GetAllSystemRoleMenu 角色菜单关联获取所有有效数据
+func (s *systemRoleMenuService) GetAllSystemRoleMenu() ([]*model.SystemRoleMenu, int, error) {
+	result, err := model.GetAllSystemRoleMenu(model.GetDB())
+	if err != nil {
+		return nil, render.QueryError, err
+	}
+	return result, render.OK, err
+}

@@ -4,7 +4,7 @@ import { PageParams, PageList } from '@/api/types';
 export interface {{{.EntityName}}}ListParams extends PageParams {
   {{{- range .Columns }}}
   {{{- if .IsQuery }}}
-  {{{ toSnakeCase .ColumnName }}}: {{{- if eq .HtmlType "number" }}}number{{{- else }}}string{{{- end }}};
+  {{{ toSnakeCase .ColumnName }}}?: {{{- if eq .HtmlType "number" }}}number{{{- else }}}string{{{- end }}};
   {{{- end }}}
   {{{- end }}}
 }

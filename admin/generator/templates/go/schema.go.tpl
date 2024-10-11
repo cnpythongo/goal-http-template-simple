@@ -24,7 +24,7 @@ type Req{{{ .EntityName }}}Tree struct {
 type Req{{{ .EntityName }}}Detail struct {
     {{{- range .Columns }}}
     {{{- if .IsPk }}}
-    {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `form:"{{{ toSnakeCase .GoField }}}"` // {{{ .ColumnComment }}}
+    {{{ toUpperCase .GoField }}} {{{ .GoType }}} `form:"{{{ toSnakeCase .GoField }}}"` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }
@@ -51,7 +51,7 @@ type Req{{{ .EntityName }}}Update struct {
 type Req{{{ .EntityName }}}Delete struct {
     {{{- range .Columns }}}
     {{{- if .IsPk }}}
-    {{{ title (toCamelCase .GoField) }}}s []{{{ .GoType }}} `json:"{{{ toSnakeCase .GoField }}}s" form:"{{{ toSnakeCase .GoField }}}s"` // {{{ .ColumnComment }}}
+    {{{ toUpperCase .GoField }}}s []{{{ .GoType }}} `json:"{{{ toSnakeCase .GoField }}}s" form:"{{{ toSnakeCase .GoField }}}s"` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }

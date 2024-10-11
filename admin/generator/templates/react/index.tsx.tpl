@@ -89,7 +89,7 @@ export default function {{{.EntityName}}}Page() {
     );
     
   // 请求参数定义
-  const [params, setParams] = useState<SystemLogListParams>({
+  const [params, setParams] = useState<{{{.EntityName}}}ListParams>({
       ...dateFilter,
       page,
       limit: pageLimit
@@ -449,12 +449,12 @@ export default function {{{.EntityName}}}Page() {
           }}
           width={600}
         >
-        {detailRecord && (
+        {editRecord && (
         <>
         {{{- range .Columns }}}
           <div className="flex flex-row mb-[1px]">
             <div className="basis-1/4 text-right bg-slate-200">{{{ .ColumnComment }}}：</div>
-            <div className="basis-3/4">{detailRecord.{{{ .ColumnName }}}}</div>
+            <div className="basis-3/4">{editRecord.{{{ .ColumnName }}}}</div>
           </div>
         {{{- end }}}
         </>

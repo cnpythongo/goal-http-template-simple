@@ -162,7 +162,7 @@ func (s *{{{ lowerFirst .EntityName }}}Service) Update(payload *Req{{{ .EntityNa
 // Delete {{{ .FunctionName }}}删除
 func (s *{{{ lowerFirst .EntityName }}}Service) Delete(payload *Req{{{ .EntityName }}}Delete) (int, error) {
     // 删除
-    err = model.Delete{{{ .EntityName }}}(model.GetDB(), payload.IDs)
+    err := model.Delete{{{ .EntityName }}}(model.GetDB(), payload.IDs)
     if err != nil {
         return render.DeleteError, err
     }

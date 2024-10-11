@@ -62,6 +62,8 @@ var TemplateUtil = &templateUtil{
 			"toCamelCaseWithoutFirst": utils.ToCamelCaseWithoutFirst,
 			"contains":                utils.ToolsUtil.Contains,
 			"lowerFirst":              utils.LowerFirst,
+			"toUpperCase":             utils.ToUpperCase,
+			"toLowerCase":             utils.ToLowerCase,
 		}),
 }
 

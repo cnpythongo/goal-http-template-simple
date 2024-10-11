@@ -779,6 +779,72 @@ definitions:
         description: 负责人电话
         type: string
     type: object
+  admin_systemrole.ReqSystemRoleCreate:
+    properties:
+      desc:
+        description: 角色描述
+        type: string
+      is_deleted:
+        description: 是否被删除, 0-否, 1-是
+        type: integer
+      name:
+        description: 角色名称
+        type: string
+      org_id:
+        description: 组织机构ID
+        type: integer
+      status:
+        description: 角色状态, 0-禁用, 1-启用
+        type: integer
+    type: object
+  admin_systemrole.ReqSystemRoleUpdate:
+    properties:
+      desc:
+        description: 角色描述
+        type: string
+      id:
+        description: 流水ID
+        type: integer
+      is_deleted:
+        description: 是否被删除, 0-否, 1-是
+        type: integer
+      name:
+        description: 角色名称
+        type: string
+      org_id:
+        description: 组织机构ID
+        type: integer
+      status:
+        description: 角色状态, 0-禁用, 1-启用
+        type: integer
+    type: object
+  admin_systemrole.RespSystemRoleItem:
+    properties:
+      create_time:
+        description: 数据创建时间
+        type: integer
+      desc:
+        description: 角色描述
+        type: string
+      id:
+        description: 流水ID
+        type: integer
+      is_deleted:
+        description: 是否被删除, 0-否, 1-是
+        type: integer
+      name:
+        description: 角色名称
+        type: string
+      org_id:
+        description: 组织机构ID
+        type: integer
+      status:
+        description: 角色状态, 0-禁用, 1-启用
+        type: integer
+      update_time:
+        description: 数据更新时间
+        type: integer
+    type: object
   goal-app_pkg_render.JsonDataResp:
     properties:
       code:
@@ -2180,6 +2246,187 @@ paths:
       summary: 更新组织机构
       tags:
       - 组织管理
+  /system/roles/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建角色管理
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemrole.ReqSystemRoleCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemrole.RespSystemRoleItem'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 创建角色管理
+      tags:
+      - 角色管理
+  /system/roles/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除角色管理
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 删除角色管理
+      tags:
+      - 角色管理
+  /system/roles/detail:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 角色管理详情
+      parameters:
+      - description: 流水ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_systemrole.RespSystemRoleItem'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 角色管理详情
+      tags:
+      - 角色管理
+  /system/roles/list:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 角色管理列表
+      parameters:
+      - description: 数据创建结束区间
+        in: query
+        name: create_time_end
+        type: integer
+      - description: 数据创建开始区间
+        in: query
+        name: create_time_start
+        type: integer
+      - description: 角色描述
+        in: query
+        name: desc
+        type: string
+      - description: 是否被删除, 0-否, 1-是
+        in: query
+        name: is_deleted
+        type: integer
+      - default: 10
+        description: 每页数量
+        example: 10
+        in: query
+        name: limit
+        type: integer
+      - description: 角色名称
+        in: query
+        name: name
+        type: string
+      - description: 组织机构ID
+        in: query
+        name: org_id
+        type: integer
+      - default: 1
+        description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 角色状态, 0-禁用, 1-启用
+        in: query
+        name: status
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/goal-app_pkg_render.RespPageJson'
+                  - properties:
+                      result:
+                        items:
+                          $ref: '#/definitions/admin_systemrole.RespSystemRoleItem'
+                        type: array
+                    type: object
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 角色管理列表
+      tags:
+      - 角色管理
+  /system/roles/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新角色管理
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemrole.ReqSystemRoleUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemrole.RespSystemRoleItem'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 更新角色管理
+      tags:
+      - 角色管理
 securityDefinitions:
   AdminAuth:
     description: Type "Bearer" followed by a space and JWT token.
