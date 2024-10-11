@@ -58,8 +58,8 @@ func Update{{{ .EntityName }}}(tx *gorm.DB, obj *{{{ .EntityName }}}) error {
 	return err
 }
 
-func Delete{{{ .EntityName }}}(tx *gorm.DB, id int64) error {
-	err := tx.Model(New{{{ .EntityName }}}()).Where("id = ?", id).UpdateColumns(map[string]interface{}{
+func Delete{{{ .EntityName }}}(tx *gorm.DB, ids []int64) error {
+	err := tx.Model(New{{{ .EntityName }}}()).Where("id in ?", ids).UpdateColumns(map[string]interface{}{
         "delete_time": time.Now().Unix(),
     }).Error
     if err != nil {

@@ -1929,6 +1929,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "选中菜单",
+                        "name": "selected",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "'菜单排序'",
                         "name": "sort",
@@ -3006,6 +3012,10 @@ const docTemplate = `{
                     "description": "'路由地址'",
                     "type": "string"
                 },
+                "selected": {
+                    "description": "选中菜单",
+                    "type": "string"
+                },
                 "sort": {
                     "description": "'菜单排序'",
                     "type": "integer"
@@ -3053,6 +3063,10 @@ const docTemplate = `{
                 },
                 "route": {
                     "description": "'路由地址'",
+                    "type": "string"
+                },
+                "selected": {
+                    "description": "选中菜单",
                     "type": "string"
                 },
                 "sort": {
@@ -3106,6 +3120,10 @@ const docTemplate = `{
                 },
                 "route": {
                     "description": "'路由地址'",
+                    "type": "string"
+                },
+                "selected": {
+                    "description": "选中菜单",
                     "type": "string"
                 },
                 "sort": {
@@ -3174,6 +3192,10 @@ const docTemplate = `{
                 },
                 "route": {
                     "description": "'路由地址'",
+                    "type": "string"
+                },
+                "selected": {
+                    "description": "选中菜单",
                     "type": "string"
                 },
                 "sort": {

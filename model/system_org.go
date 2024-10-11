@@ -4,11 +4,11 @@ import "gorm.io/gorm"
 
 type SystemOrg struct {
 	BaseModel
-	ParentID int64        `json:"parent_id" gorm:"column:parent_id;type:int(11);null;default:null;comment:父节点ID"`
+	ParentID int64        `json:"parent_id" gorm:"column:parent_id;type:int(11);not null;default:0;comment:父节点ID"`
 	Name     string       `json:"name" gorm:"column:name;type:varchar(100);not null;default:'';comment:部门名称"`
 	Manager  string       `json:"manager" gorm:"column:manager;type:varchar(100);not null;default:'';comment:负责人名称"`
 	Phone    string       `json:"phone"  gorm:"column:phone;type:varchar(100);not null;default:'';comment:负责人电话"`
-	Children []*SystemOrg `gorm:"foreignKey:parent_id;references:id" json:"children,omitempty"`
+	Children []*SystemOrg `gorm:"-" json:"children,omitempty"`
 }
 
 func (m *SystemOrg) TableName() string {

@@ -10,18 +10,18 @@ import (
 // SystemMenu 系统菜单
 type SystemMenu struct {
 	BaseModel
-	ParentID  int64  `json:"parent_id" gorm:"column:parent_id;type:int(11);not null;default:0;comment:上级菜单ID"`
-	Kind      string `json:"kind" gorm:"column:kind;type:varchar(100);not null;default:'';comment:权限类型: dir=目录，menu=菜单，button=按钮"`
-	Name      string `json:"name" gorm:"column:name;type:varchar(100);not null;default:'';comment:菜单名称"`
-	Icon      string `json:"icon" gorm:"column:icon;type:varchar(100);not null;default:'';comment:菜单图标"`
-	Sort      int64  `json:"sort" gorm:"column:sort;type:smallint(5);not null;default:0;comment:菜单排序"`
-	AuthTag   string `json:"auth_tag" gorm:"column:auth_tag;type:varchar(200);not null;default:'';comment:权限标识"`
-	Route     string `json:"route" gorm:"column:route;type:varchar(500);not null;default:'';comment:路由地址"`
-	Component string `json:"component" gorm:"column:component;type:varchar(500);not null;default:'';comment:前端组件"`
-	Params    string `json:"params" gorm:"column:params;type:varchar(500);not null;default:'';comment:路由参数"`
-	Status    string `json:"status" gorm:"column:status;type:varchar(20);not null;default:'enable';comment:状态: disable=停用, enable=启用"`
-
-	Children []*SystemMenu `gorm:"foreignKey:parent_id;references:id" json:"children,omitempty"`
+	ParentID  int64         `json:"parent_id" gorm:"column:parent_id;type:int(11);not null;default:0;comment:上级菜单ID"`
+	Kind      string        `json:"kind" gorm:"column:kind;type:varchar(100);not null;default:'';comment:权限类型: dir=目录，menu=菜单，button=按钮"`
+	Name      string        `json:"name" gorm:"column:name;type:varchar(100);not null;default:'';comment:菜单名称"`
+	Icon      string        `json:"icon" gorm:"column:icon;type:varchar(100);not null;default:'';comment:菜单图标"`
+	Sort      int64         `json:"sort" gorm:"column:sort;type:smallint(5);not null;default:0;comment:菜单排序"`
+	AuthTag   string        `json:"auth_tag" gorm:"column:auth_tag;type:varchar(200);not null;default:'';comment:权限标识"`
+	Route     string        `json:"route" gorm:"column:route;type:varchar(500);not null;default:'';comment:路由地址"`
+	Component string        `json:"component" gorm:"column:component;type:varchar(500);not null;default:'';comment:前端组件"`
+	Params    string        `json:"params" gorm:"column:params;type:varchar(500);not null;default:'';comment:路由参数"`
+	Selected  string        `json:"selected" gorm:"column:selected;type:varchar(500);not null;default:'';comment:选中菜单"`
+	Status    string        `json:"status" gorm:"column:status;type:varchar(20);not null;default:'enable';comment:状态: disable=停用, enable=启用"`
+	Children  []*SystemMenu `gorm:"-" json:"children,omitempty"`
 }
 
 func (m *SystemMenu) TableName() string {
@@ -60,8 +60,8 @@ func UpdateSystemMenu(tx *gorm.DB, obj *SystemMenu) error {
 	return err
 }
 
-func DeleteSystemMenu(tx *gorm.DB, id int64) error {
-	err := tx.Model(NewSystemMenu()).Where("id = ?", id).UpdateColumns(map[string]interface{}{
+func DeleteSystemMenu(tx *gorm.DB, ids []int64) error {
+	err := tx.Model(NewSystemMenu()).Where("id in ?", ids).UpdateColumns(map[string]interface{}{
 		"delete_time": time.Now().Unix(),
 	}).Error
 	if err != nil {

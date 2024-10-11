@@ -51,7 +51,7 @@ type Req{{{ .EntityName }}}Update struct {
 type Req{{{ .EntityName }}}Delete struct {
     {{{- range .Columns }}}
     {{{- if .IsPk }}}
-    {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `json:"{{{ toSnakeCase .GoField }}}" form:"{{{ toSnakeCase .GoField }}}"` // {{{ .ColumnComment }}}
+    {{{ title (toCamelCase .GoField) }}}s []{{{ .GoType }}} `json:"{{{ toSnakeCase .GoField }}}s" form:"{{{ toSnakeCase .GoField }}}s"` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }

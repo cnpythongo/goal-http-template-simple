@@ -45,7 +45,7 @@ export default function {{{.EntityName}}}Page() {
   const [searchForm] = Form.useForm();
   const [editForm] = Form.useForm();
   const [editRecord, setEditRecord] = useState<any>(null);
-  const [showDataModal, setShowDataModal] = useState<boolean>(false);
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [disableTreeSelect, setDisableTreeSelect] = useState(false);
   // 数据表格属性定义
   const [treeData, setTreeData] = useState<any>([]);
@@ -128,20 +128,21 @@ export default function {{{.EntityName}}}Page() {
     if (record) {
       editForm.setFieldsValue({ ...record });
     }
-    setShowDataModal(true);
+    setShowEditModal(true);
   };
 
-  const onDataFormOK = () => {
-    if (editRecord) {
-      update();
-    } else {
-      create();
-    }
-    setShowDataModal(false);
+  const onEditFormOK = () => {
+    editForm.validateFields().then(values => {
+        if (editRecord) {
+          update();
+        } else {
+          create();
+        }
+      });
   };
 
-  const onDataFormCancel = () => {
-    setShowDataModal(false);
+  const onEditFormCancel = () => {
+    setShowEditModal(false);
   };
 
   // http请求
@@ -180,6 +181,7 @@ export default function {{{.EntityName}}}Page() {
       .then(res => {
         console.log(res);
         getTreeData();
+        setShowEditModal(false);
       })
       .catch(err => {
         console.log(err);
@@ -193,6 +195,7 @@ export default function {{{.EntityName}}}Page() {
       .then(res => {
         console.log(res);
         getTreeData();
+        setShowEditModal(false);
       })
       .catch(err => {
         console.log(err);
@@ -343,9 +346,9 @@ export default function {{{.EntityName}}}Page() {
         title={editRecord ? '编辑数据' : '新增数据'}
         centered={true}
         maskClosable={false}
-        open={showDataModal}
-        onOk={onDataFormOK}
-        onCancel={onDataFormCancel}
+        open={showEditModal}
+        onOk={onEditFormOK}
+        onCancel={onEditFormCancel}
         width={600}
       >
         <Form

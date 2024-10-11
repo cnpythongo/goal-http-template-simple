@@ -14,6 +14,7 @@ type ReqSystemMenuList struct {
 	Route     string `form:"route"`     // '路由地址'
 	Component string `form:"component"` // '前端组件'
 	Params    string `form:"params"`    // '路由参数'
+	Selected  string `form:"selected"`  // 选中菜单
 	Status    string `form:"status"`    // '状态: disable=停用, enable=启用'
 }
 
@@ -28,6 +29,7 @@ type ReqSystemMenuTree struct {
 	Route     string `form:"route"`     // '路由地址'
 	Component string `form:"component"` // '前端组件'
 	Params    string `form:"params"`    // '路由参数'
+	Selected  string `form:"selected"`  // 选中菜单
 	Status    string `form:"status"`    // '状态: disable=停用, enable=启用'
 }
 
@@ -47,6 +49,7 @@ type ReqSystemMenuCreate struct {
 	Route     string `json:"route" form:"route"`         // '路由地址'
 	Component string `json:"component" form:"component"` // '前端组件'
 	Params    string `json:"params" form:"params"`       // '路由参数'
+	Selected  string `json:"selected" form:"selected"`   // 选中菜单
 	Status    string `json:"status" form:"status"`       // '状态: disable=停用, enable=启用'
 }
 
@@ -62,15 +65,16 @@ type ReqSystemMenuUpdate struct {
 	Route     string `json:"route" form:"route"`         // '路由地址'
 	Component string `json:"component" form:"component"` // '前端组件'
 	Params    string `json:"params" form:"params"`       // '路由参数'
+	Selected  string `json:"selected" form:"selected"`   // 选中菜单
 	Status    string `json:"status" form:"status"`       // '状态: disable=停用, enable=启用'
 }
 
 // ReqSystemMenuDelete 菜单管理删除请求参数
 type ReqSystemMenuDelete struct {
-	ID int64 `json:"id" form:"id"` // 流水ID
+	IDs []int64 `json:"ids" binding:"required"`
 }
 
-// RespSystemMenuItemResp 菜单管理单条详情
+// RespSystemMenuItem 菜单管理单条详情
 type RespSystemMenuItem struct {
 	ID         int64  `json:"id" structs:"id"`                   // 流水ID
 	CreateTime int64  `json:"create_time" structs:"create_time"` // 数据创建时间
@@ -84,6 +88,7 @@ type RespSystemMenuItem struct {
 	Route      string `json:"route" structs:"route"`             // '路由地址'
 	Component  string `json:"component" structs:"component"`     // '前端组件'
 	Params     string `json:"params" structs:"params"`           // '路由参数'
+	Selected   string `json:"selected" form:"selected"`          // 选中菜单
 	Status     string `json:"status" structs:"status"`           // '状态: disable=停用, enable=启用'
 }
 
@@ -101,6 +106,7 @@ type RespSystemMenuTree struct {
 	Route      string                `json:"route" structs:"route"`             // '路由地址'
 	Component  string                `json:"component" structs:"component"`     // '前端组件'
 	Params     string                `json:"params" structs:"params"`           // '路由参数'
+	Selected   string                `json:"selected" form:"selected"`          // 选中菜单
 	Status     string                `json:"status" structs:"status"`           // '状态: disable=停用, enable=启用'
 	ParentName string                `json:"parent_name" structs:"parent_name"` // '父级名称'
 	Children   []*RespSystemMenuTree `json:"children"`                          // 子节点

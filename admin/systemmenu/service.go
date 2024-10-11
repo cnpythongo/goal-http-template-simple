@@ -13,8 +13,8 @@ import (
 type ISystemMenuService interface {
 	List(req *ReqSystemMenuList) (res []*RespSystemMenuItem, total int64, code int, err error)
 	Detail(req *ReqSystemMenuDetail) (res *RespSystemMenuItem, code int, err error)
-	Create(payload *ReqSystemMenuCreate) (res *RespSystemMenuItem, code int, err error)
-	Update(payload *ReqSystemMenuUpdate) (res *RespSystemMenuItem, code int, err error)
+	Create(payload *ReqSystemMenuCreate) (*RespSystemMenuItem, int, error)
+	Update(payload *ReqSystemMenuUpdate) (*RespSystemMenuItem, int, error)
 	Delete(payload *ReqSystemMenuDelete) (code int, e error)
 	GetAllSystemMenu() ([]*model.SystemMenu, int, error)
 	Tree(req *ReqSystemMenuTree) ([]*RespSystemMenuTree, int, error)
@@ -112,9 +112,9 @@ func (s *systemMenuService) Detail(req *ReqSystemMenuDetail) (res *RespSystemMen
 }
 
 // Create 菜单管理创建
-func (s *systemMenuService) Create(payload *ReqSystemMenuCreate) (res *RespSystemMenuItem, code int, err error) {
+func (s *systemMenuService) Create(payload *ReqSystemMenuCreate) (*RespSystemMenuItem, int, error) {
 	obj := model.NewSystemMenu()
-	err = copier.Copy(&obj, &payload)
+	err := copier.Copy(&obj, &payload)
 	if err != nil {
 		log.GetLogger().Error(err)
 		return nil, render.DBAttributesCopyError, err
@@ -123,7 +123,8 @@ func (s *systemMenuService) Create(payload *ReqSystemMenuCreate) (res *RespSyste
 	if err != nil {
 		return nil, render.CreateError, err
 	}
-	err = copier.Copy(&res, obj)
+	res := &RespSystemMenuItem{}
+	err = copier.Copy(&res, &obj)
 	if err != nil {
 		log.GetLogger().Error(err)
 		return nil, render.DBAttributesCopyError, err
@@ -132,7 +133,7 @@ func (s *systemMenuService) Create(payload *ReqSystemMenuCreate) (res *RespSyste
 }
 
 // Update 菜单管理更新
-func (s *systemMenuService) Update(payload *ReqSystemMenuUpdate) (res *RespSystemMenuItem, code int, err error) {
+func (s *systemMenuService) Update(payload *ReqSystemMenuUpdate) (*RespSystemMenuItem, int, error) {
 	obj, err := model.GetSystemMenuInstance(
 		model.GetDB(),
 		map[string]interface{}{
@@ -157,6 +158,7 @@ func (s *systemMenuService) Update(payload *ReqSystemMenuUpdate) (res *RespSyste
 	if err != nil {
 		return nil, render.UpdateError, err
 	}
+	res := &RespSystemMenuItem{}
 	err = copier.Copy(&res, &obj)
 	if err != nil {
 		log.GetLogger().Error(err)
@@ -166,22 +168,9 @@ func (s *systemMenuService) Update(payload *ReqSystemMenuUpdate) (res *RespSyste
 }
 
 // Delete 菜单管理删除
-func (s *systemMenuService) Delete(payload *ReqSystemMenuDelete) (code int, e error) {
-	_, err := model.GetSystemMenuInstance(
-		model.GetDB(),
-		map[string]interface{}{
-			"id":          payload.ID,
-			"delete_time": 0,
-		},
-	)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return render.DataNotExistError, err
-		}
-		return render.QueryError, err
-	}
+func (s *systemMenuService) Delete(payload *ReqSystemMenuDelete) (int, error) {
 	// 删除
-	err = model.DeleteSystemMenu(model.GetDB(), payload.ID)
+	err := model.DeleteSystemMenu(model.GetDB(), payload.IDs)
 	if err != nil {
 		return render.DeleteError, err
 	}

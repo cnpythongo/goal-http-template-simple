@@ -11,9 +11,9 @@ import (
 type I{{{ .EntityName }}}Service interface {
 	List(req *Req{{{ .EntityName }}}List) (res []*Resp{{{ .EntityName }}}Item, total int64, code int, err error)
 	Detail(req *Req{{{ .EntityName }}}Detail) (res *Resp{{{ .EntityName }}}Item, code int, err error)
-	Create(payload *Req{{{ .EntityName }}}Create) (res *Resp{{{ .EntityName }}}Item, code int, err error)
+	Create(payload *Req{{{ .EntityName }}}Create) (*Resp{{{ .EntityName }}}Item, int, error)
 	Update(payload *Req{{{ .EntityName }}}Update) (res *Resp{{{ .EntityName }}}Item, code int, err error)
-	Delete(payload *Req{{{ .EntityName }}}Delete) (code int, e error)
+	Delete(payload *Req{{{ .EntityName }}}Delete) (int, error)
 	GetAll{{{ .EntityName }}}() ([]*model.{{{ .EntityName }}}, int, error)
 	{{{- if eq .GenTpl "tree" }}}
 	Tree(req *Req{{{ .EntityName }}}Tree) ([]*Resp{{{ .EntityName }}}Tree, int, error)
@@ -105,9 +105,9 @@ func (s *{{{ lowerFirst .EntityName }}}Service) Detail(req *Req{{{ .EntityName }
 }
 
 // Create {{{ .FunctionName }}}创建
-func (s *{{{ lowerFirst .EntityName }}}Service) Create(payload *Req{{{ .EntityName }}}Create) (res *Resp{{{ .EntityName }}}Item, code int, err error) {
+func (s *{{{ lowerFirst .EntityName }}}Service) Create(payload *Req{{{ .EntityName }}}Create) (*Resp{{{ .EntityName }}}Item, int, error) {
 	obj := model.New{{{ .EntityName }}}()
-    err = copier.Copy(&obj, &payload)
+    err := copier.Copy(&obj, &payload)
     if err != nil {
         log.GetLogger().Error(err)
         return nil, render.DBAttributesCopyError, err
@@ -116,6 +116,7 @@ func (s *{{{ lowerFirst .EntityName }}}Service) Create(payload *Req{{{ .EntityNa
     if err != nil {
         return nil, render.CreateError, err
     }
+    res := &Resp{{{ .EntityName }}}Item{}
     err = copier.Copy(&res, obj)
     if err != nil {
         log.GetLogger().Error(err)
@@ -159,22 +160,9 @@ func (s *{{{ lowerFirst .EntityName }}}Service) Update(payload *Req{{{ .EntityNa
 }
 
 // Delete {{{ .FunctionName }}}删除
-func (s *{{{ lowerFirst .EntityName }}}Service) Delete(payload *Req{{{ .EntityName }}}Delete) (code int, e error) {
-	_, err := model.Get{{{ .EntityName }}}Instance(
-        model.GetDB(),
-        map[string]interface{}{
-            "{{{ $.PrimaryKey }}}": payload.ID,
-            {{{ if contains .AllFields "delete_time" }}}"delete_time": 0,{{{ end }}}
-        },
-    )
-    if err != nil {
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-            return render.DataNotExistError, err
-        }
-        return render.QueryError, err
-    }
+func (s *{{{ lowerFirst .EntityName }}}Service) Delete(payload *Req{{{ .EntityName }}}Delete) (int, error) {
     // 删除
-    err = model.Delete{{{ .EntityName }}}(model.GetDB(), payload.ID)
+    err = model.Delete{{{ .EntityName }}}(model.GetDB(), payload.IDs)
     if err != nil {
         return render.DeleteError, err
     }

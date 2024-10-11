@@ -537,6 +537,9 @@ definitions:
       route:
         description: '''路由地址'''
         type: string
+      selected:
+        description: 选中菜单
+        type: string
       sort:
         description: '''菜单排序'''
         type: integer
@@ -572,6 +575,9 @@ definitions:
         type: integer
       route:
         description: '''路由地址'''
+        type: string
+      selected:
+        description: 选中菜单
         type: string
       sort:
         description: '''菜单排序'''
@@ -611,6 +617,9 @@ definitions:
         type: integer
       route:
         description: '''路由地址'''
+        type: string
+      selected:
+        description: 选中菜单
         type: string
       sort:
         description: '''菜单排序'''
@@ -661,6 +670,9 @@ definitions:
         type: string
       route:
         description: '''路由地址'''
+        type: string
+      selected:
+        description: 选中菜单
         type: string
       sort:
         description: '''菜单排序'''
@@ -1963,6 +1975,10 @@ paths:
       - description: '''路由地址'''
         in: query
         name: route
+        type: string
+      - description: 选中菜单
+        in: query
+        name: selected
         type: string
       - description: '''菜单排序'''
         in: query

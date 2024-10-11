@@ -1922,6 +1922,12 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "选中菜单",
+                        "name": "selected",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "'菜单排序'",
                         "name": "sort",
@@ -2999,6 +3005,10 @@
                     "description": "'路由地址'",
                     "type": "string"
                 },
+                "selected": {
+                    "description": "选中菜单",
+                    "type": "string"
+                },
                 "sort": {
                     "description": "'菜单排序'",
                     "type": "integer"
@@ -3046,6 +3056,10 @@
                 },
                 "route": {
                     "description": "'路由地址'",
+                    "type": "string"
+                },
+                "selected": {
+                    "description": "选中菜单",
                     "type": "string"
                 },
                 "sort": {
@@ -3099,6 +3113,10 @@
                 },
                 "route": {
                     "description": "'路由地址'",
+                    "type": "string"
+                },
+                "selected": {
+                    "description": "选中菜单",
                     "type": "string"
                 },
                 "sort": {
@@ -3167,6 +3185,10 @@
                 },
                 "route": {
                     "description": "'路由地址'",
+                    "type": "string"
+                },
+                "selected": {
+                    "description": "选中菜单",
                     "type": "string"
                 },
                 "sort": {
