@@ -30,24 +30,18 @@ func NewSystemRoleService() ISystemRoleService {
 // List 角色管理列表
 func (s *systemRoleService) List(req *ReqSystemRoleList) (res []*RespSystemRoleItem, total int64, code int, err error) {
 	// 分页信息
-	limit := req.Page
+	limit := req.Limit
 	offset := req.Limit * (req.Page - 1)
 	// 查询
-	query := model.GetDB().Model(&model.SystemRole{})
-	if req.OrgId >= 0 {
-		query = query.Where("org_id = ?", req.OrgId)
-	}
+	query := model.GetDB().Model(&model.SystemRole{}).Where("delete_time = 0")
 	if req.Name != "" {
 		query = query.Where("name like ?", "%"+req.Name+"%")
 	}
 	if req.Desc != "" {
-		query = query.Where("desc = ?", req.Desc)
+		query = query.Where("desc like ?", "%"+req.Desc+"%")
 	}
-	if req.Status >= 0 {
+	if req.Status != nil {
 		query = query.Where("status = ?", req.Status)
-	}
-	if req.IsDeleted >= 0 {
-		query = query.Where("is_deleted = ?", req.IsDeleted)
 	}
 	// 总数
 	err = query.Count(&total).Error
@@ -116,7 +110,7 @@ func (s *systemRoleService) Create(payload *ReqSystemRoleCreate) (*RespSystemRol
 }
 
 // Update 角色管理更新
-func (s *systemRoleService) Update(payload *ReqSystemRoleUpdate) (res *RespSystemRoleItem, code int, err error) {
+func (s *systemRoleService) Update(payload *ReqSystemRoleUpdate) (*RespSystemRoleItem, int, error) {
 	obj, err := model.GetSystemRoleInstance(
 		model.GetDB(),
 		map[string]interface{}{
@@ -141,6 +135,7 @@ func (s *systemRoleService) Update(payload *ReqSystemRoleUpdate) (res *RespSyste
 	if err != nil {
 		return nil, render.UpdateError, err
 	}
+	res := &RespSystemRoleItem{}
 	err = copier.Copy(&res, &obj)
 	if err != nil {
 		log.GetLogger().Error(err)

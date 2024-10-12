@@ -60,7 +60,7 @@ type Req{{{ .EntityName }}}Delete struct {
 type Resp{{{ .EntityName }}}Item struct {
 	{{{- range .Columns }}}
     {{{- if or .IsList .IsPk }}}
-    {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `json:"{{{ toSnakeCase .GoField }}}" structs:"{{{ toSnakeCase .GoField }}}"` // {{{ .ColumnComment }}}
+    {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `json:"{{{ toSnakeCase .GoField }}}"` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }
@@ -70,7 +70,7 @@ type Resp{{{ .EntityName }}}Item struct {
 type Resp{{{ .EntityName }}}Tree struct {
     {{{- range .Columns }}}
     {{{- if or .IsList .IsPk }}}
-    {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `json:"{{{ toSnakeCase .GoField }}}" structs:"{{{ toSnakeCase .GoField }}}"` // {{{ .ColumnComment }}}
+    {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `json:"{{{ toSnakeCase .GoField }}}"` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
     ParentName string                `json:"parent_name" structs:"parent_name"` // '父级名称'

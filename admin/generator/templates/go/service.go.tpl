@@ -12,7 +12,7 @@ type I{{{ .EntityName }}}Service interface {
 	List(req *Req{{{ .EntityName }}}List) (res []*Resp{{{ .EntityName }}}Item, total int64, code int, err error)
 	Detail(req *Req{{{ .EntityName }}}Detail) (res *Resp{{{ .EntityName }}}Item, code int, err error)
 	Create(payload *Req{{{ .EntityName }}}Create) (*Resp{{{ .EntityName }}}Item, int, error)
-	Update(payload *Req{{{ .EntityName }}}Update) (res *Resp{{{ .EntityName }}}Item, code int, err error)
+	Update(payload *Req{{{ .EntityName }}}Update) (*Resp{{{ .EntityName }}}Item, int, error)
 	Delete(payload *Req{{{ .EntityName }}}Delete) (int, error)
 	GetAll{{{ .EntityName }}}() ([]*model.{{{ .EntityName }}}, int, error)
 	{{{- if eq .GenTpl "tree" }}}
@@ -33,7 +33,7 @@ func New{{{ .EntityName }}}Service() I{{{ .EntityName }}}Service {
 // List {{{ .FunctionName }}}列表
 func (s *{{{ lowerFirst .EntityName }}}Service) List(req *Req{{{ .EntityName }}}List) (res []*Resp{{{ .EntityName }}}Item, total int64, code int, err error) {
 	// 分页信息
-	limit := req.Page
+	limit := req.Limit
 	offset := req.Limit * (req.Page - 1)
 	// 查询
 	query := model.GetDB().Model(&model.{{{ .EntityName }}}{})
@@ -126,7 +126,7 @@ func (s *{{{ lowerFirst .EntityName }}}Service) Create(payload *Req{{{ .EntityNa
 }
 
 // Update {{{ .FunctionName }}}更新
-func (s *{{{ lowerFirst .EntityName }}}Service) Update(payload *Req{{{ .EntityName }}}Update) (res *Resp{{{ .EntityName }}}Item, code int, err error) {
+func (s *{{{ lowerFirst .EntityName }}}Service) Update(payload *Req{{{ .EntityName }}}Update) (*Resp{{{ .EntityName }}}Item, int, error) {
 	obj, err := model.Get{{{ .EntityName }}}Instance(
         model.GetDB(),
         map[string]interface{}{
@@ -151,6 +151,7 @@ func (s *{{{ lowerFirst .EntityName }}}Service) Update(payload *Req{{{ .EntityNa
     if err != nil {
         return nil, render.UpdateError, err
     }
+    res := &Resp{{{ .EntityName }}}Item{}
     err = copier.Copy(&res, &obj)
     if err != nil {
         log.GetLogger().Error(err)

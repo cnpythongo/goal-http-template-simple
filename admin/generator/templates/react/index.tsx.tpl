@@ -9,6 +9,7 @@ import api, {
   {{{.EntityName}}}UpdateBody
 } from '@/api{{{.GenPath}}}';
 import dayjs from 'dayjs';
+import { TimestampToDatetime } from '@/utils/datetime';
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -40,11 +41,13 @@ type TableColumns = TableProps<{{{.EntityName}}}Item>['columns'];
 type TableRowSelection<T extends object = object> =
   TableProps<T>['rowSelection'];
 
+type EditFormFieldType = {{{.EntityName}}}CreateBody;
+
 // 主函数
 export default function {{{.EntityName}}}Page() {
   // 表单属性定义
   const [searchForm] = Form.useForm();
-  const [editForm] = Form.useForm();
+  const [editForm] = Form.useForm<EditFormFieldType>();
   const [editRecord, setEditRecord] = useState<any>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showDataModal, setShowDataModal] = useState<boolean>(false);
@@ -116,7 +119,7 @@ export default function {{{.EntityName}}}Page() {
 
   // 查询
   const onSearch = () => {
-      const formValues = searchForm.getFieldsValues();
+      const formValues = searchForm.getFieldsValue();
       setParams({
         ...params,
         ...formValues,
@@ -162,16 +165,19 @@ export default function {{{.EntityName}}}Page() {
     setShowEditModal(true);
   };
 
-  const handleDataFormOk = () => {
-    if (editRecord) {
-      update();
-    } else {
-      create();
-    }
-    setShowEditModal(false);
-  };
+  // 表单提交
+  const onEditFormOK = async () => {
+      const values: EditFormFieldType = await editForm.validateFields();
+      if (editRecord) {
+        update(values);
+      } else {
+        console.log(values);
+        create(values);
+      }
+    };
 
-  const handleDataFormCancel = () => {
+  // 表单取消
+  const onEditFormCancel = () => {
     setShowEditModal(false);
   };
 
@@ -181,6 +187,7 @@ export default function {{{.EntityName}}}Page() {
     api
       .list(params)
       .then(res => {
+        setTotal(res.page.total);
         setTableData(res.result);
       })
       .catch(err => {
@@ -201,30 +208,32 @@ export default function {{{.EntityName}}}Page() {
   };
 
   // 新增
-  const create = () => {
-    api
-      .create({ ...editForm.getFieldsValue() })
-      .then(res => {
-        console.log(res);
-        list();
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+  const create = (values: EditFormFieldType) => {
+      api
+        .create({ ...values })
+        .then(res => {
+          console.log(res);
+          list();
+          setShowEditModal(false);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
 
-  // 更新
-  const update = () => {
-    api
-      .update({ ...editRecord, ...editForm.getFieldsValue() })
-      .then(res => {
-        console.log(res);
-        list();
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+    // 更新
+    const update = (values: EditFormFieldType) => {
+      api
+        .update({ ...editRecord, ...values })
+        .then(res => {
+          console.log(res);
+          list();
+          setShowEditModal(false);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
 
   // 删除
   const del = (ids: Array<number>) => {
@@ -247,7 +256,7 @@ export default function {{{.EntityName}}}Page() {
       total,
       current: page,
       pageLimit,
-      showTotal: (v: any) => `共${v}条记录`,
+      showTotal: (v: any) => `共 ${v} 条记录`,
       onChange: (pNumber: any, pSize: any) => {
         setPage(pNumber);
         setPageLimit(pSize);
@@ -261,7 +270,15 @@ export default function {{{.EntityName}}}Page() {
     {
       title: '{{{ .ColumnComment }}}',
       dataIndex: '{{{ .GoField }}}',
-      key: '{{{ .ColumnComment }}}'
+      key: '{{{ .GoField }}}',
+      {{{- if and (eq .GoField 'create_time') (eq .GoField 'update_time')}}}
+      width: 180,
+      render: value => {
+        return TimestampToDatetime(value);
+      }
+      {{{- else if eq .GoField 'id')}}}
+      width: 60
+      {{{- end }}}
     },
     {{{- end }}}
     {{{- end }}}
@@ -269,6 +286,7 @@ export default function {{{.EntityName}}}Page() {
       title: '操作',
       key: 'id',
       dataIndex: 'id',
+      width: 300,
       render: (_, record) => (
         <>
           <div
@@ -359,8 +377,8 @@ export default function {{{.EntityName}}}Page() {
         centered={true}
         maskClosable={false}
         open={showEditModal}
-        onOk={handleDataFormOk}
-        onCancel={handleDataFormCancel}
+        onOk={onEditFormOK}
+        onCancel={onEditFormCancel}
         width={600}
       >
         <Form
@@ -372,7 +390,7 @@ export default function {{{.EntityName}}}Page() {
         >
         {{{- range .Columns }}}
         {{{- if .IsEdit }}}
-        <Form.Item
+        <Form.Item<EditFormFieldType>
           name="{{{.ColumnName}}}"
           label="{{{.ColumnComment}}}"
           rules={[{ required: true, message: '请输入{{{.ColumnComment}}}' }]}

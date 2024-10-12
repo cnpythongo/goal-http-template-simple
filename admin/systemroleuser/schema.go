@@ -44,10 +44,10 @@ type ReqSystemRoleUserDelete struct {
 
 // RespSystemRoleUserItem 角色用户关联单条详情
 type RespSystemRoleUserItem struct {
-	Id         int64 `json:"id" structs:"id"`                   // 流水ID
-	CreateTime int64 `json:"create_time" structs:"create_time"` // 数据创建时间
-	UpdateTime int64 `json:"update_time" structs:"update_time"` // 数据更新时间
-	OrgId      int64 `json:"org_id" structs:"org_id"`           // 组织机构ID
-	RoleId     int64 `json:"role_id" structs:"role_id"`         // 角色ID
-	UserId     int64 `json:"user_id" structs:"user_id"`         // 用户ID
+	ID         int64 `json:"id"`          // 流水ID
+	CreateTime int64 `json:"create_time"` // 数据创建时间
+	UpdateTime int64 `json:"update_time"` // 数据更新时间
+	OrgId      int64 `json:"org_id"`      // 组织机构ID
+	RoleId     int64 `json:"role_id"`     // 角色ID
+	UserId     int64 `json:"user_id"`     // 用户ID
 }

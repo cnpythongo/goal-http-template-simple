@@ -9,11 +9,10 @@ import (
 
 type SystemRole struct {
 	BaseModel
-	OrgID     int64  `json:"org_id" gorm:"column:org_id;type:int(11);comment:组织机构ID"`                            // 组织机构ID
-	Name      string `json:"name" gorm:"column:name;type:varchar(200);comment:角色名称"`                             // 角色名称
-	Desc      string `json:"desc" gorm:"column:desc;type:varchar(200);default:'';comment:角色描述"`                  // 角色描述
-	Status    int    `json:"status" gorm:"column:status;type:int(11);default:1;comment:角色状态, 0-禁用, 1-启用"`        // 角色状态, 0-禁用, 1-启用
-	IsDeleted int    `json:"is_deleted" gorm:"column:is_deleted;type:int(11);default:0;comment:是否被删除, 0-否, 1-是"` // 是否被删除, 0-否, 1-是
+	OrgID  int64  `json:"org_id" gorm:"column:org_id;type:int(11);null;default:null;comment:组织机构ID"` // 组织机构ID
+	Name   string `json:"name" gorm:"column:name;type:varchar(200);comment:角色名称"`                    // 角色名称
+	Desc   string `json:"desc" gorm:"column:desc;type:varchar(200);default:'';comment:角色描述"`         // 角色描述
+	Status int64  `json:"status" gorm:"column:status;type:int(11);comment:角色状态, 0-禁用, 1-启用"`         // 角色状态, 0-禁用, 1-启用
 }
 
 func (t *SystemRole) TableName() string {

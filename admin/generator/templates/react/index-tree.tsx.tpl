@@ -39,11 +39,13 @@ type TableColumns = TableProps<{{{.EntityName}}}Item>['columns'];
 type TableRowSelection<T extends object = object> =
   TableProps<T>['rowSelection'];
 
+type EditFormFieldType = {{{.EntityName}}}CreateBody;
+
 // 主函数
 export default function {{{.EntityName}}}Page() {
   // 表单属性定义
   const [searchForm] = Form.useForm();
-  const [editForm] = Form.useForm();
+  const [editForm] = Form.useForm<EditFormFieldType>();
   const [editRecord, setEditRecord] = useState<any>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [disableTreeSelect, setDisableTreeSelect] = useState(false);
@@ -225,7 +227,15 @@ export default function {{{.EntityName}}}Page() {
     {
       title: '{{{ .ColumnComment }}}',
       dataIndex: '{{{ .GoField }}}',
-      key: '{{{ .GoField }}}'
+      key: '{{{ .GoField }}}',
+      {{{- if and (eq .GoField 'create_time') (eq .GoField 'update_time')}}}
+      width: 180,
+      render: value => {
+        return TimestampToDatetime(value);
+      }
+      {{{- else if eq .GoField 'id')}}}
+      width: 60
+      {{{- end }}}
     },
     {{{- end }}}
     {{{- end }}}
@@ -233,6 +243,7 @@ export default function {{{.EntityName}}}Page() {
       title: '操作',
       key: 'id',
       dataIndex: 'id',
+      width: 300,
       render: (_, record) => (
         <>
           <div
@@ -360,7 +371,7 @@ export default function {{{.EntityName}}}Page() {
         >
         {{{- range .Columns }}}
         {{{- if .IsEdit }}}
-        <Form.Item
+        <Form.Item<EditFormFieldType>
           name="{{{.ColumnName}}}"
           label="{{{.ColumnComment}}}"
           rules={[{ required: {{{- if .IsRequired }}}true{{{- else }}}false{{{- end }}}, message: '请输入{{{.ColumnComment}}}' }]}
