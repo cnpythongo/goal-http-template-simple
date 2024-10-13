@@ -7,6 +7,7 @@ import (
 	"goal-app/model"
 	"goal-app/pkg/log"
 	"goal-app/pkg/render"
+	"goal-app/pkg/utils"
 	"gorm.io/gorm"
 	"strings"
 )
@@ -16,6 +17,8 @@ type IUserService interface {
 	GetUserDetail(uuid string) (*RespUserDetail, int, error)
 	CreateUser(payload *ReqCreateUser) (*RespUserDetail, int, error)
 	DeleteUserByUUID(uuid string) (int, error)
+	EditUserByUUID(uuid string, payload *ReqEditUser) (int, error)
+	ResetUserPasswordByUUID(uuid string) (int, error)
 	UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int, error)
 	GetUserByPhone(phone string) (*model.User, int, error)
 	GetUserByUUID(uuid string) (*model.User, int, error)
@@ -191,6 +194,24 @@ func (s *userService) transUserToResponseData(user *model.User) (*RespUserDetail
 	return result, render.OK, nil
 }
 
+func (s *userService) EditUserByUUID(uuid string, payload *ReqEditUser) (int, error) {
+	user, code, err := s.GetUserByUUID(uuid)
+	if err != nil {
+		return code, err
+	}
+	err = copier.Copy(user, payload)
+	if err != nil {
+		log.GetLogger().Error(err)
+		return render.DBAttributesCopyError, err
+	}
+	err = model.GetDB().Save(&user).Error
+	if err != nil {
+		log.GetLogger().Error(err)
+		return render.DataExistError, err
+	}
+	return render.OK, nil
+}
+
 func (s *userService) UpdateUserByUUID(uuid string, payload *ReqUpdateUser) (int, error) {
 	user, code, err := s.GetUserByUUID(uuid)
 	if err != nil {
@@ -230,6 +251,15 @@ func (s *userService) UpdateUserProfile(payload *ReqUpdateUserProfile) (int, err
 	_, err = model.UpdateUserProfile(model.GetDB(), pf)
 	if err != nil {
 		log.GetLogger().Errorf("model.UpdateUserProfile Error ==> %v", err)
+		return render.UpdateError, err
+	}
+	return render.OK, nil
+}
+
+func (s *userService) ResetUserPasswordByUUID(uuid string) (int, error) {
+	hashPwd, salt := utils.GeneratePassword("123456")
+	err := model.UpdateUser(model.GetDB(), uuid, map[string]interface{}{"password": hashPwd, "salt": salt})
+	if err != nil {
 		return render.UpdateError, err
 	}
 	return render.OK, nil

@@ -271,12 +271,12 @@ export default function {{{.EntityName}}}Page() {
       title: '{{{ .ColumnComment }}}',
       dataIndex: '{{{ .GoField }}}',
       key: '{{{ .GoField }}}',
-      {{{- if and (eq .GoField 'create_time') (eq .GoField 'update_time')}}}
+      {{{- if or (eq .GoField "create_time") (eq .GoField "update_time")}}}
       width: 180,
       render: value => {
         return TimestampToDatetime(value);
       }
-      {{{- else if eq .GoField 'id')}}}
+      {{{- else if eq .GoField "id"}}}
       width: 60
       {{{- end }}}
     },
@@ -373,7 +373,7 @@ export default function {{{.EntityName}}}Page() {
       </div>
 
       <Modal
-        title={editRecord ? '编辑数据' : '新增数据'}
+        title={editRecord ? '编辑{{{ .FunctionName }}}' : '新增数据'}
         centered={true}
         maskClosable={false}
         open={showEditModal}
@@ -397,6 +397,7 @@ export default function {{{.EntityName}}}Page() {
         >
         {{{- if and (ne $.Table.TreeParent "") (eq .GoField $.Table.TreeParent) }}}
             <TreeSelect
+              placeholder="请输入{{{.ColumnComment}}}"
               treeDefaultExpandAll={true}
               treeLine={true}
               treeData={[]}
@@ -408,7 +409,7 @@ export default function {{{.EntityName}}}Page() {
               }}
             />
         {{{- else if eq .HtmlType "input" }}}
-          <Input />
+          <Input placeholder="请输入{{{.ColumnComment}}}" />
         {{{- else if eq .HtmlType "number" }}}
           <InputNumber min={1} max={10} defaultValue={3} onChange={onChange} />
         {{{- else if eq .HtmlType "textarea" }}}
@@ -418,16 +419,17 @@ export default function {{{.EntityName}}}Page() {
         {{{- else if eq .HtmlType "select" }}}
         <Select options={[]} />
         {{{- else if eq .HtmlType "radio" }}}
-        <Radio.Group onChange={onUpdateGenTpl}>
+        <Radio.Group>
           <Radio value={'crud'}>单表</Radio>
           <Radio value={'tree'}>树表</Radio>
         </Radio.Group>
         {{{- else if eq .HtmlType "date" }}}
-        <DatePicker onChange={onChange} />
-        <RangePicker showTime />
+        <DatePicker placeholder="请选择{{{.ColumnComment}}}" onChange={onChange} />
+        <RangePicker placeholder="请选择{{{.ColumnComment}}}" showTime />
         {{{- else if eq .HtmlType "datetime" }}}
         <Form.Item label="选择日期">
           <RangePicker
+            placeholder="请选择{{{.ColumnComment}}}"
             onChange={onSearchDateChange}
             allowClear
             value={[
@@ -458,7 +460,7 @@ export default function {{{.EntityName}}}Page() {
       </Modal>
       
       <Modal
-          title={'数据详情'}
+          title={'{{{ .FunctionName }}}详情'}
           centered={true}
           maskClosable={false}
           open={showDataModal}

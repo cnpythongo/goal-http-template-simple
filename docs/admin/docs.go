@@ -161,6 +161,17 @@ const docTemplate = `{
                     "用户管理"
                 ],
                 "summary": "删除用户",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_accountuser.ReqUserUUIDs"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -209,6 +220,51 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/admin_accountuser.RespUserDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/user/edit": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "修改用户基本信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "修改用户基本信息",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_accountuser.ReqEditUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
                     },
                     "400": {
@@ -371,6 +427,51 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/account/user/reset-password": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "将用户密码重置为123456",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "将用户密码重置为123456",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_accountuser.ReqUserUUID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
                     }
                 }
             }
@@ -2440,12 +2541,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "是否被删除, 0-否, 1-是",
-                        "name": "is_deleted",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "default": 10,
                         "example": 10,
                         "description": "每页数量",
@@ -2456,12 +2551,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "角色名称",
                         "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "组织机构ID",
-                        "name": "org_id",
                         "in": "query"
                     },
                     {
@@ -2507,6 +2596,296 @@ const docTemplate = `{
                                                     }
                                                 }
                                             ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/roles/menus/create": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "创建角色菜单关联",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色菜单关联"
+                ],
+                "summary": "创建角色菜单关联",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemrolemenu.ReqSystemRoleMenuCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_systemrolemenu.RespSystemRoleMenuItem"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/roles/menus/delete": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "删除角色菜单关联",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色菜单关联"
+                ],
+                "summary": "删除角色菜单关联",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/roles/menus/detail": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "角色菜单关联详情",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色菜单关联"
+                ],
+                "summary": "角色菜单关联详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "流水ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemrolemenu.RespSystemRoleMenuItem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/roles/menus/list": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "角色菜单关联列表",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色菜单关联"
+                ],
+                "summary": "角色菜单关联列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "数据创建结束区间",
+                        "name": "create_time_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "数据创建开始区间",
+                        "name": "create_time_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "菜单ID",
+                        "name": "menu_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "组织机构ID",
+                        "name": "org_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "example": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "角色ID",
+                        "name": "role_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/goal-app_pkg_render.RespPageJson"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "result": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/admin_systemrolemenu.RespSystemRoleMenuItem"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/roles/menus/update": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "更新角色菜单关联",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色菜单关联"
+                ],
+                "summary": "更新角色菜单关联",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemrolemenu.ReqSystemRoleMenuUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_systemrolemenu.RespSystemRoleMenuItem"
                                         }
                                     }
                                 }
@@ -2572,6 +2951,296 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/system/roles/users/create": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "创建角色用户关联",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色用户关联"
+                ],
+                "summary": "创建角色用户关联",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemroleuser.ReqSystemRoleUserCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_systemroleuser.RespSystemRoleUserItem"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/roles/users/delete": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "删除角色用户关联",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色用户关联"
+                ],
+                "summary": "删除角色用户关联",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/roles/users/detail": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "角色用户关联详情",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色用户关联"
+                ],
+                "summary": "角色用户关联详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "流水ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemroleuser.RespSystemRoleUserItem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/roles/users/list": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "角色用户关联列表",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色用户关联"
+                ],
+                "summary": "角色用户关联列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "数据创建结束区间",
+                        "name": "create_time_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "数据创建开始区间",
+                        "name": "create_time_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "组织机构ID",
+                        "name": "org_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "example": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "角色ID",
+                        "name": "role_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "user_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/goal-app_pkg_render.RespPageJson"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "result": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/admin_systemroleuser.RespSystemRoleUserItem"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/system/roles/users/update": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "更新角色用户关联",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色用户关联"
+                ],
+                "summary": "更新角色用户关联",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin_systemroleuser.ReqSystemRoleUserUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_systemroleuser.RespSystemRoleUserItem"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2615,6 +3284,43 @@ const docTemplate = `{
                 }
             }
         },
+        "admin_accountuser.ReqEditUser": {
+            "type": "object",
+            "required": [
+                "phone",
+                "uuid"
+            ],
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string",
+                    "example": "abc@a.com"
+                },
+                "is_admin": {
+                    "description": "是否属于管理员账号",
+                    "type": "boolean",
+                    "example": true
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string",
+                    "example": "Tom"
+                },
+                "phone": {
+                    "description": "手机号",
+                    "type": "string",
+                    "example": "13800138000"
+                },
+                "status": {
+                    "description": "用户状态",
+                    "type": "string",
+                    "example": "FREEZE"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
         "admin_accountuser.ReqUpdateUser": {
             "type": "object",
             "properties": {
@@ -2651,6 +3357,31 @@ const docTemplate = `{
                     "description": "用户状态",
                     "type": "string",
                     "example": "FREEZE"
+                }
+            }
+        },
+        "admin_accountuser.ReqUserUUID": {
+            "type": "object",
+            "required": [
+                "uuid"
+            ],
+            "properties": {
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "admin_accountuser.ReqUserUUIDs": {
+            "type": "object",
+            "required": [
+                "uuids"
+            ],
+            "properties": {
+                "uuids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -3661,10 +4392,6 @@ const docTemplate = `{
                     "description": "角色名称",
                     "type": "string"
                 },
-                "org_id": {
-                    "description": "组织机构ID",
-                    "type": "integer"
-                },
                 "status": {
                     "description": "角色状态, 0-禁用, 1-启用",
                     "type": "integer"
@@ -3682,17 +4409,9 @@ const docTemplate = `{
                     "description": "流水ID",
                     "type": "integer"
                 },
-                "is_deleted": {
-                    "description": "是否被删除, 0-否, 1-是",
-                    "type": "integer"
-                },
                 "name": {
                     "description": "角色名称",
                     "type": "string"
-                },
-                "org_id": {
-                    "description": "组织机构ID",
-                    "type": "integer"
                 },
                 "status": {
                     "description": "角色状态, 0-禁用, 1-启用",
@@ -3715,17 +4434,9 @@ const docTemplate = `{
                     "description": "流水ID",
                     "type": "integer"
                 },
-                "is_deleted": {
-                    "description": "是否被删除, 0-否, 1-是",
-                    "type": "integer"
-                },
                 "name": {
                     "description": "角色名称",
                     "type": "string"
-                },
-                "org_id": {
-                    "description": "组织机构ID",
-                    "type": "integer"
                 },
                 "status": {
                     "description": "角色状态, 0-禁用, 1-启用",
@@ -3733,6 +4444,140 @@ const docTemplate = `{
                 },
                 "update_time": {
                     "description": "数据更新时间",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_systemrolemenu.ReqSystemRoleMenuCreate": {
+            "type": "object",
+            "properties": {
+                "menu_id": {
+                    "description": "菜单ID",
+                    "type": "integer"
+                },
+                "org_id": {
+                    "description": "组织机构ID",
+                    "type": "integer"
+                },
+                "role_id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_systemrolemenu.ReqSystemRoleMenuUpdate": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "流水ID",
+                    "type": "integer"
+                },
+                "menu_id": {
+                    "description": "菜单ID",
+                    "type": "integer"
+                },
+                "org_id": {
+                    "description": "组织机构ID",
+                    "type": "integer"
+                },
+                "role_id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_systemrolemenu.RespSystemRoleMenuItem": {
+            "type": "object",
+            "properties": {
+                "create_time": {
+                    "description": "数据创建时间",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "流水ID",
+                    "type": "integer"
+                },
+                "menu_id": {
+                    "description": "菜单ID",
+                    "type": "integer"
+                },
+                "org_id": {
+                    "description": "组织机构ID",
+                    "type": "integer"
+                },
+                "role_id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                },
+                "update_time": {
+                    "description": "数据更新时间",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_systemroleuser.ReqSystemRoleUserCreate": {
+            "type": "object",
+            "properties": {
+                "org_id": {
+                    "description": "组织机构ID",
+                    "type": "integer"
+                },
+                "role_id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_systemroleuser.ReqSystemRoleUserUpdate": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "流水ID",
+                    "type": "integer"
+                },
+                "org_id": {
+                    "description": "组织机构ID",
+                    "type": "integer"
+                },
+                "role_id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_systemroleuser.RespSystemRoleUserItem": {
+            "type": "object",
+            "properties": {
+                "create_time": {
+                    "description": "数据创建时间",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "流水ID",
+                    "type": "integer"
+                },
+                "org_id": {
+                    "description": "组织机构ID",
+                    "type": "integer"
+                },
+                "role_id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                },
+                "update_time": {
+                    "description": "数据更新时间",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "description": "用户ID",
                     "type": "integer"
                 }
             }

@@ -2,6 +2,7 @@ package generator
 
 import (
 	"github.com/gin-gonic/gin"
+	"goal-app/router/middleware"
 )
 
 func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
@@ -9,7 +10,7 @@ func RegisterRoute(route *gin.Engine) *gin.RouterGroup {
 	h := NewGeneratorHandler(svc)
 
 	r := route.Group("/api/v1/system/generator")
-	// r.Use(middleware.JWTAuthenticationMiddleware())
+	r.Use(middleware.JWTAuthenticationMiddleware())
 	r.GET("/list", h.List)
 	r.GET("/tables", h.GetDbTableList)
 	r.POST("/create", h.Create)

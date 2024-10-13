@@ -44,6 +44,26 @@ type (
 		IsAdmin         bool   `json:"is_admin" example:"true"`                              // 是否属于管理员账号
 	}
 
+	// ReqEditUser 修改用户基本信息的请求结构体
+	ReqEditUser struct {
+		UUID     string `json:"uuid" binding:"required"`
+		Phone    string `json:"phone" binding:"required" example:"13800138000"` // 手机号
+		Email    string `json:"email" example:"abc@a.com"`                      // 邮箱
+		Nickname string `json:"nickname" example:"Tom"`                         // 昵称
+		Status   string `json:"status,omitempty" example:"FREEZE"`              // 用户状态
+		IsAdmin  bool   `json:"is_admin" example:"true"`                        // 是否属于管理员账号
+	}
+
+	// ReqUserUUID 用户UUID参数
+	ReqUserUUID struct {
+		UUID string `json:"uuid" form:"uuid" binding:"required"`
+	}
+
+	// ReqUserUUIDs 用户UUIDs参数
+	ReqUserUUIDs struct {
+		UUIDs []string `json:"uuids" binding:"required"`
+	}
+
 	// ReqUpdateUser 更新用户的请求结构体
 	ReqUpdateUser struct {
 		Email     string           `json:"email,omitempty" example:"abc@abc.com"` // 邮箱

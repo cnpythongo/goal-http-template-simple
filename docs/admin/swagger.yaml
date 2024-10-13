@@ -31,6 +31,34 @@ definitions:
     - password_confirm
     - phone
     type: object
+  admin_accountuser.ReqEditUser:
+    properties:
+      email:
+        description: 邮箱
+        example: abc@a.com
+        type: string
+      is_admin:
+        description: 是否属于管理员账号
+        example: true
+        type: boolean
+      nickname:
+        description: 昵称
+        example: Tom
+        type: string
+      phone:
+        description: 手机号
+        example: "13800138000"
+        type: string
+      status:
+        description: 用户状态
+        example: FREEZE
+        type: string
+      uuid:
+        type: string
+    required:
+    - phone
+    - uuid
+    type: object
   admin_accountuser.ReqUpdateUser:
     properties:
       avatar:
@@ -58,6 +86,22 @@ definitions:
         description: 用户状态
         example: FREEZE
         type: string
+    type: object
+  admin_accountuser.ReqUserUUID:
+    properties:
+      uuid:
+        type: string
+    required:
+    - uuid
+    type: object
+  admin_accountuser.ReqUserUUIDs:
+    properties:
+      uuids:
+        items:
+          type: string
+        type: array
+    required:
+    - uuids
     type: object
   admin_accountuser.RespUserDetail:
     properties:
@@ -790,9 +834,6 @@ definitions:
       name:
         description: 角色名称
         type: string
-      org_id:
-        description: 组织机构ID
-        type: integer
       status:
         description: 角色状态, 0-禁用, 1-启用
         type: integer
@@ -805,15 +846,9 @@ definitions:
       id:
         description: 流水ID
         type: integer
-      is_deleted:
-        description: 是否被删除, 0-否, 1-是
-        type: integer
       name:
         description: 角色名称
         type: string
-      org_id:
-        description: 组织机构ID
-        type: integer
       status:
         description: 角色状态, 0-禁用, 1-启用
         type: integer
@@ -829,20 +864,110 @@ definitions:
       id:
         description: 流水ID
         type: integer
-      is_deleted:
-        description: 是否被删除, 0-否, 1-是
-        type: integer
       name:
         description: 角色名称
         type: string
-      org_id:
-        description: 组织机构ID
-        type: integer
       status:
         description: 角色状态, 0-禁用, 1-启用
         type: integer
       update_time:
         description: 数据更新时间
+        type: integer
+    type: object
+  admin_systemrolemenu.ReqSystemRoleMenuCreate:
+    properties:
+      menu_id:
+        description: 菜单ID
+        type: integer
+      org_id:
+        description: 组织机构ID
+        type: integer
+      role_id:
+        description: 角色ID
+        type: integer
+    type: object
+  admin_systemrolemenu.ReqSystemRoleMenuUpdate:
+    properties:
+      id:
+        description: 流水ID
+        type: integer
+      menu_id:
+        description: 菜单ID
+        type: integer
+      org_id:
+        description: 组织机构ID
+        type: integer
+      role_id:
+        description: 角色ID
+        type: integer
+    type: object
+  admin_systemrolemenu.RespSystemRoleMenuItem:
+    properties:
+      create_time:
+        description: 数据创建时间
+        type: integer
+      id:
+        description: 流水ID
+        type: integer
+      menu_id:
+        description: 菜单ID
+        type: integer
+      org_id:
+        description: 组织机构ID
+        type: integer
+      role_id:
+        description: 角色ID
+        type: integer
+      update_time:
+        description: 数据更新时间
+        type: integer
+    type: object
+  admin_systemroleuser.ReqSystemRoleUserCreate:
+    properties:
+      org_id:
+        description: 组织机构ID
+        type: integer
+      role_id:
+        description: 角色ID
+        type: integer
+      user_id:
+        description: 用户ID
+        type: integer
+    type: object
+  admin_systemroleuser.ReqSystemRoleUserUpdate:
+    properties:
+      id:
+        description: 流水ID
+        type: integer
+      org_id:
+        description: 组织机构ID
+        type: integer
+      role_id:
+        description: 角色ID
+        type: integer
+      user_id:
+        description: 用户ID
+        type: integer
+    type: object
+  admin_systemroleuser.RespSystemRoleUserItem:
+    properties:
+      create_time:
+        description: 数据创建时间
+        type: integer
+      id:
+        description: 流水ID
+        type: integer
+      org_id:
+        description: 组织机构ID
+        type: integer
+      role_id:
+        description: 角色ID
+        type: integer
+      update_time:
+        description: 数据更新时间
+        type: integer
+      user_id:
+        description: 用户ID
         type: integer
     type: object
   goal-app_pkg_render.JsonDataResp:
@@ -999,6 +1124,13 @@ paths:
       consumes:
       - application/json
       description: 删除单个用户
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_accountuser.ReqUserUUIDs'
       produces:
       - application/json
       responses:
@@ -1040,6 +1172,34 @@ paths:
       security:
       - AdminAuth: []
       summary: 通过用户UUID获取用户详情
+      tags:
+      - 用户管理
+  /account/user/edit:
+    post:
+      consumes:
+      - application/json
+      description: 修改用户基本信息
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_accountuser.ReqEditUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 修改用户基本信息
       tags:
       - 用户管理
   /account/user/list:
@@ -1140,6 +1300,34 @@ paths:
       security:
       - AdminAuth: []
       summary: 获取用户列表
+      tags:
+      - 用户管理
+  /account/user/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: 将用户密码重置为123456
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_accountuser.ReqUserUUID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 将用户密码重置为123456
       tags:
       - 用户管理
   /account/user/update:
@@ -2342,10 +2530,6 @@ paths:
         in: query
         name: desc
         type: string
-      - description: 是否被删除, 0-否, 1-是
-        in: query
-        name: is_deleted
-        type: integer
       - default: 10
         description: 每页数量
         example: 10
@@ -2356,10 +2540,6 @@ paths:
         in: query
         name: name
         type: string
-      - description: 组织机构ID
-        in: query
-        name: org_id
-        type: integer
       - default: 1
         description: 页码
         example: 1
@@ -2396,6 +2576,179 @@ paths:
       summary: 角色管理列表
       tags:
       - 角色管理
+  /system/roles/menus/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建角色菜单关联
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemrolemenu.ReqSystemRoleMenuCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemrolemenu.RespSystemRoleMenuItem'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 创建角色菜单关联
+      tags:
+      - 角色菜单关联
+  /system/roles/menus/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除角色菜单关联
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 删除角色菜单关联
+      tags:
+      - 角色菜单关联
+  /system/roles/menus/detail:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 角色菜单关联详情
+      parameters:
+      - description: 流水ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_systemrolemenu.RespSystemRoleMenuItem'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 角色菜单关联详情
+      tags:
+      - 角色菜单关联
+  /system/roles/menus/list:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 角色菜单关联列表
+      parameters:
+      - description: 数据创建结束区间
+        in: query
+        name: create_time_end
+        type: integer
+      - description: 数据创建开始区间
+        in: query
+        name: create_time_start
+        type: integer
+      - default: 10
+        description: 每页数量
+        example: 10
+        in: query
+        name: limit
+        type: integer
+      - description: 菜单ID
+        in: query
+        name: menu_id
+        type: integer
+      - description: 组织机构ID
+        in: query
+        name: org_id
+        type: integer
+      - default: 1
+        description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 角色ID
+        in: query
+        name: role_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/goal-app_pkg_render.RespPageJson'
+                  - properties:
+                      result:
+                        items:
+                          $ref: '#/definitions/admin_systemrolemenu.RespSystemRoleMenuItem'
+                        type: array
+                    type: object
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 角色菜单关联列表
+      tags:
+      - 角色菜单关联
+  /system/roles/menus/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新角色菜单关联
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemrolemenu.ReqSystemRoleMenuUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemrolemenu.RespSystemRoleMenuItem'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 更新角色菜单关联
+      tags:
+      - 角色菜单关联
   /system/roles/update:
     post:
       consumes:
@@ -2427,6 +2780,179 @@ paths:
       summary: 更新角色管理
       tags:
       - 角色管理
+  /system/roles/users/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建角色用户关联
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemroleuser.ReqSystemRoleUserCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemroleuser.RespSystemRoleUserItem'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 创建角色用户关联
+      tags:
+      - 角色用户关联
+  /system/roles/users/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除角色用户关联
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 删除角色用户关联
+      tags:
+      - 角色用户关联
+  /system/roles/users/detail:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 角色用户关联详情
+      parameters:
+      - description: 流水ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_systemroleuser.RespSystemRoleUserItem'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+      security:
+      - AdminAuth: []
+      summary: 角色用户关联详情
+      tags:
+      - 角色用户关联
+  /system/roles/users/list:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 角色用户关联列表
+      parameters:
+      - description: 数据创建结束区间
+        in: query
+        name: create_time_end
+        type: integer
+      - description: 数据创建开始区间
+        in: query
+        name: create_time_start
+        type: integer
+      - default: 10
+        description: 每页数量
+        example: 10
+        in: query
+        name: limit
+        type: integer
+      - description: 组织机构ID
+        in: query
+        name: org_id
+        type: integer
+      - default: 1
+        description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 角色ID
+        in: query
+        name: role_id
+        type: integer
+      - description: 用户ID
+        in: query
+        name: user_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/goal-app_pkg_render.RespPageJson'
+                  - properties:
+                      result:
+                        items:
+                          $ref: '#/definitions/admin_systemroleuser.RespSystemRoleUserItem'
+                        type: array
+                    type: object
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 角色用户关联列表
+      tags:
+      - 角色用户关联
+  /system/roles/users/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新角色用户关联
+      parameters:
+      - description: 请求体
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin_systemroleuser.ReqSystemRoleUserUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_systemroleuser.RespSystemRoleUserItem'
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 更新角色用户关联
+      tags:
+      - 角色用户关联
 securityDefinitions:
   AdminAuth:
     description: Type "Bearer" followed by a space and JWT token.

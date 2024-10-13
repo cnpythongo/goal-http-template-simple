@@ -101,7 +101,7 @@ func GetUserList(db *gorm.DB, page, size int, query interface{}, args []interfac
 		qs = qs.Limit(size).Offset(offset)
 	}
 	result := NewUserList()
-	err = qs.Find(&result).Error
+	err = qs.Order("create_time desc").Find(&result).Error
 	if err != nil {
 		log.GetLogger().Errorf("model.account_user.GetUserList Query Error ==> %v", err)
 		return nil, 0, err

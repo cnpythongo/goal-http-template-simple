@@ -12,6 +12,8 @@ type IUserHandler interface {
 	List(c *gin.Context)
 	Detail(c *gin.Context)
 	Create(c *gin.Context)
+	Edit(c *gin.Context)
+	ResetPwd(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
 	Profile(c *gin.Context)
@@ -120,6 +122,56 @@ func (h *userHandler) Create(c *gin.Context) {
 	render.Json(c, render.OK, user)
 }
 
+// Edit 修改用户基本信息
+// @Tags 用户管理
+// @Summary 修改用户基本信息
+// @Description 修改用户基本信息
+// @Accept json
+// @Produce json
+// @Param data body ReqEditUser true "请求体"
+// @Success 200 {object} render.JsonDataResp
+// @Failure 400 {object} render.JsonDataResp
+// @Security AdminAuth
+// @Router /account/user/edit [post]
+func (h *userHandler) Edit(c *gin.Context) {
+	var payload ReqEditUser
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		render.Json(c, render.ParamsError, err)
+		return
+	}
+	code, err := h.svc.EditUserByUUID(payload.UUID, &payload)
+	if err != nil {
+		render.Json(c, code, err)
+		return
+	}
+	render.Json(c, render.OK, "ok")
+}
+
+// ResetPwd 重置用户密码
+// @Tags 用户管理
+// @Summary 将用户密码重置为123456
+// @Description 将用户密码重置为123456
+// @Accept json
+// @Produce json
+// @Param data body ReqUserUUID true "请求体"
+// @Success 200 {object} render.JsonDataResp
+// @Failure 400 {object} render.JsonDataResp
+// @Security AdminAuth
+// @Router /account/user/reset-password [post]
+func (h *userHandler) ResetPwd(c *gin.Context) {
+	var payload ReqUserUUID
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		render.Json(c, render.ParamsError, err)
+		return
+	}
+	code, err := h.svc.ResetUserPasswordByUUID(payload.UUID)
+	if err != nil {
+		render.Json(c, code, err)
+		return
+	}
+	render.Json(c, render.OK, "ok")
+}
+
 // Update 更新用户数据
 // @Tags 用户管理
 // @Summary 更新用户
@@ -152,13 +204,18 @@ func (h *userHandler) Update(c *gin.Context) {
 // @Description 删除单个用户
 // @Accept json
 // @Produce json
+// @Param data body ReqUserUUIDs true "请求体"
 // @Success 200 {object} render.JsonDataResp
 // @Failure 400 {object} render.JsonDataResp
 // @Security AdminAuth
 // @Router /account/user/delete [post]
 func (h *userHandler) Delete(c *gin.Context) {
-	uuid := c.Param("uuid")
-	code, err := h.svc.DeleteUserByUUID(uuid)
+	var payload ReqUserUUIDs
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		render.Json(c, render.ParamsError, err)
+		return
+	}
+	code, err := h.svc.DeleteUserByUUID(payload.UUIDs[0])
 	if err != nil {
 		log.GetLogger().Errorln(err)
 		render.Json(c, code, err)
