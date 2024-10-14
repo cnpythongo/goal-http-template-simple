@@ -42,6 +42,35 @@ func CreateSystemRoleMenu(tx *gorm.DB, obj *SystemRoleMenu) (*SystemRoleMenu, er
 	return obj, nil
 }
 
+func CreateSystemRoleMenuByRoleId(db *gorm.DB, orgId int64, roleId int64, menuIds []int64) error {
+	tx := db.Begin()
+	items := NewSystemRoleMenuList()
+	for _, menuId := range menuIds {
+		items = append(items, &SystemRoleMenu{
+			OrgID:  orgId,
+			RoleID: roleId,
+			MenuID: menuId,
+		})
+	}
+
+	err := DeleteSystemRoleMenuByRoleId(tx, roleId)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if len(menuIds) > 0 {
+		err = tx.Create(&items).Error
+		if err != nil {
+			tx.Rollback()
+			log.GetLogger().Errorf("model.SystemRoleMenu.CreateSystemRoleMenuByRoleId Error ==> %v", err)
+			return err
+		}
+	}
+	tx.Commit()
+	return nil
+}
+
 func UpdateSystemRoleMenu(tx *gorm.DB, obj *SystemRoleMenu) error {
 	err := tx.Save(&obj).Error
 	if err != nil {
@@ -56,6 +85,14 @@ func DeleteSystemRoleMenu(tx *gorm.DB, ids []int64) error {
 	}).Error
 	if err != nil {
 		log.GetLogger().Errorf("model.SystemRoleMenu.DeleteSystemRoleMenu Error ==> %v", err)
+	}
+	return err
+}
+
+func DeleteSystemRoleMenuByRoleId(tx *gorm.DB, roleId int64) error {
+	err := tx.Where("role_id = ?", roleId).Delete(NewSystemRoleMenu()).Error
+	if err != nil {
+		log.GetLogger().Errorf("model.SystemRoleMenu.DeleteSystemRoleMenuByRoleId Error ==> %v", err)
 	}
 	return err
 }

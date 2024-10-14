@@ -2649,7 +2649,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/admin_systemrolemenu.RespSystemRoleMenuItem"
+                                            "type": "string"
                                         }
                                     }
                                 }
@@ -4450,10 +4450,17 @@ const docTemplate = `{
         },
         "admin_systemrolemenu.ReqSystemRoleMenuCreate": {
             "type": "object",
+            "required": [
+                "menu_ids",
+                "role_id"
+            ],
             "properties": {
-                "menu_id": {
-                    "description": "菜单ID",
-                    "type": "integer"
+                "menu_ids": {
+                    "description": "菜单ID数组",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "org_id": {
                     "description": "组织机构ID",

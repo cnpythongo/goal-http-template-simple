@@ -29,9 +29,6 @@ func NewSystemRoleUserService() ISystemRoleUserService {
 
 // List 角色用户关联列表
 func (s *systemRoleUserService) List(req *ReqSystemRoleUserList) (res []*RespSystemRoleUserItem, total int64, code int, err error) {
-	// 分页信息
-	limit := req.Page
-	offset := req.Limit * (req.Page - 1)
 	// 查询
 	query := model.GetDB().Model(&model.SystemRoleUser{})
 	if req.OrgId >= 0 {
@@ -51,7 +48,13 @@ func (s *systemRoleUserService) List(req *ReqSystemRoleUserList) (res []*RespSys
 	}
 	// 数据
 	var objs []*model.SystemRoleUser
-	err = query.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	if req.Page > 0 && req.Limit > 0 {
+		// 分页信息
+		limit := req.Page
+		offset := req.Limit * (req.Page - 1)
+		query = query.Limit(limit).Offset(offset)
+	}
+	err = query.Order("id desc").Find(&objs).Error
 	if err != nil {
 		log.GetLogger().Error(err)
 		return nil, total, render.QueryError, err

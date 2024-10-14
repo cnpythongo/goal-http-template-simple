@@ -90,7 +90,7 @@ func (h *SystemRoleMenuHandler) detail(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param data body ReqSystemRoleMenuCreate true "请求体"
-// @Success 200 {object} render.JsonDataResp{data=RespSystemRoleMenuItem} "code不为0时表示错误"
+// @Success 200 {object} render.JsonDataResp{data=string} "code不为0时表示错误"
 // @Failure 500
 // @Security AdminAuth
 // @Router /system/roles/menus/create [post]
@@ -102,12 +102,12 @@ func (h *SystemRoleMenuHandler) create(c *gin.Context) {
 		return
 	}
 
-	result, code, err := h.svc.Create(&payload)
+	code, err := h.svc.Create(&payload)
 	if err != nil {
 		render.Json(c, code, err)
 		return
 	}
-	render.Json(c, render.OK, result)
+	render.Json(c, render.OK, "ok")
 }
 
 // update 更新角色菜单关联

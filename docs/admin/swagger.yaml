@@ -876,15 +876,20 @@ definitions:
     type: object
   admin_systemrolemenu.ReqSystemRoleMenuCreate:
     properties:
-      menu_id:
-        description: 菜单ID
-        type: integer
+      menu_ids:
+        description: 菜单ID数组
+        items:
+          type: integer
+        type: array
       org_id:
         description: 组织机构ID
         type: integer
       role_id:
         description: 角色ID
         type: integer
+    required:
+    - menu_ids
+    - role_id
     type: object
   admin_systemrolemenu.ReqSystemRoleMenuUpdate:
     properties:
@@ -2598,7 +2603,7 @@ paths:
             - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
             - properties:
                 data:
-                  $ref: '#/definitions/admin_systemrolemenu.RespSystemRoleMenuItem'
+                  type: string
               type: object
         "500":
           description: Internal Server Error

@@ -24,9 +24,9 @@ type ReqSystemRoleMenuDetail struct {
 
 // ReqSystemRoleMenuCreate 角色菜单关联创建请求参数
 type ReqSystemRoleMenuCreate struct {
-	OrgId  int64 `json:"org_id" form:"org_id"`   // 组织机构ID
-	RoleId int64 `json:"role_id" form:"role_id"` // 角色ID
-	MenuId int64 `json:"menu_id" form:"menu_id"` // 菜单ID
+	OrgId   int64   `json:"org_id" form:"org_id"`                        // 组织机构ID
+	RoleId  int64   `json:"role_id" binding:"required" form:"role_id"`   // 角色ID
+	MenuIds []int64 `json:"menu_ids" binding:"required" form:"menu_ids"` // 菜单ID数组
 }
 
 // ReqSystemRoleMenuUpdate 角色菜单关联更新请求参数
