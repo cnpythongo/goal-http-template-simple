@@ -42,6 +42,35 @@ func CreateSystemRoleUser(tx *gorm.DB, obj *SystemRoleUser) (*SystemRoleUser, er
 	return obj, nil
 }
 
+func CreateSystemRoleUsersByRoleId(db *gorm.DB, orgId int64, roleId int64, userIds []int64) error {
+	tx := db.Begin()
+	items := NewSystemRoleUserList()
+	for _, uid := range userIds {
+		items = append(items, &SystemRoleUser{
+			OrgID:  orgId,
+			RoleID: roleId,
+			UserID: uid,
+		})
+	}
+
+	err := DeleteSystemRoleUsersByRoleId(tx, roleId)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if len(userIds) > 0 {
+		err = tx.Create(&items).Error
+		if err != nil {
+			tx.Rollback()
+			log.GetLogger().Errorf("model.SystemRoleMenu.CreateSystemRoleUsersByRoleId Error ==> %v", err)
+			return err
+		}
+	}
+	tx.Commit()
+	return nil
+}
+
 func UpdateSystemRoleUser(tx *gorm.DB, obj *SystemRoleUser) error {
 	err := tx.Save(&obj).Error
 	if err != nil {
@@ -56,6 +85,14 @@ func DeleteSystemRoleUser(tx *gorm.DB, ids []int64) error {
 	}).Error
 	if err != nil {
 		log.GetLogger().Errorf("model.SystemRoleUser.DeleteSystemRoleUser Error ==> %v", err)
+	}
+	return err
+}
+
+func DeleteSystemRoleUsersByRoleId(tx *gorm.DB, roleId int64) error {
+	err := tx.Where("role_id = ?", roleId).Delete(NewSystemRoleUser()).Error
+	if err != nil {
+		log.GetLogger().Errorf("model.SystemRoleMenu.DeleteSystemRoleUsersByRoleId Error ==> %v", err)
 	}
 	return err
 }

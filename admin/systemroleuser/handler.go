@@ -102,12 +102,12 @@ func (h *SystemRoleUsersHandler) create(c *gin.Context) {
 		return
 	}
 
-	result, code, err := h.svc.Create(&payload)
+	code, err := h.svc.Create(&payload)
 	if err != nil {
 		render.Json(c, code, err)
 		return
 	}
-	render.Json(c, render.OK, result)
+	render.Json(c, render.OK, "ok")
 }
 
 // update 更新角色用户关联

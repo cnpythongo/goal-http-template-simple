@@ -3398,6 +3398,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "abc@abc.com"
                 },
+                "id": {
+                    "description": "主键",
+                    "type": "integer"
+                },
                 "is_admin": {
                     "description": "是否管理员",
                     "type": "boolean",
@@ -4533,9 +4537,12 @@ const docTemplate = `{
                     "description": "角色ID",
                     "type": "integer"
                 },
-                "user_id": {
+                "user_ids": {
                     "description": "用户ID",
-                    "type": "integer"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },

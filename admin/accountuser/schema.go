@@ -21,6 +21,7 @@ type (
 
 	// RespUserBasic 用户基础数据结构体
 	RespUserBasic struct {
+		ID            int64                `json:"id"`                                              // 主键
 		UUID          string               `json:"uuid" example:"826d6b1aa64d471d822d667e92218158"` // 用户UUID,32位字符串
 		Phone         string               `json:"phone" example:"13800138000"`                     // 手机号
 		Email         string               `json:"email" example:"abc@abc.com"`                     // 邮箱

@@ -11,10 +11,10 @@ import (
 )
 
 type ISystemRoleMenuService interface {
-	List(req *ReqSystemRoleMenuList) (res []*RespSystemRoleMenuItem, total int64, code int, err error)
-	Detail(req *ReqSystemRoleMenuDetail) (res *RespSystemRoleMenuItem, code int, err error)
+	List(req *ReqSystemRoleMenuList) ([]*RespSystemRoleMenuItem, int64, int, error)
+	Detail(req *ReqSystemRoleMenuDetail) (*RespSystemRoleMenuItem, int, error)
 	Create(payload *ReqSystemRoleMenuCreate) (int, error)
-	Update(payload *ReqSystemRoleMenuUpdate) (res *RespSystemRoleMenuItem, code int, err error)
+	Update(payload *ReqSystemRoleMenuUpdate) (*RespSystemRoleMenuItem, int, error)
 	Delete(payload *ReqSystemRoleMenuDelete) (int, error)
 	GetAllSystemRoleMenu() ([]*model.SystemRoleMenu, int, error)
 }
@@ -28,7 +28,7 @@ func NewSystemRoleMenuService() ISystemRoleMenuService {
 }
 
 // List 角色菜单关联列表
-func (s *systemRoleMenuService) List(req *ReqSystemRoleMenuList) (res []*RespSystemRoleMenuItem, total int64, code int, err error) {
+func (s *systemRoleMenuService) List(req *ReqSystemRoleMenuList) ([]*RespSystemRoleMenuItem, int64, int, error) {
 	// 查询
 	query := model.GetDB().Model(&model.SystemRoleMenu{})
 	if req.OrgId > 0 {
@@ -41,7 +41,8 @@ func (s *systemRoleMenuService) List(req *ReqSystemRoleMenuList) (res []*RespSys
 		query = query.Where("menu_id = ?", req.MenuId)
 	}
 	// 总数
-	err = query.Count(&total).Error
+	var total int64
+	err := query.Count(&total).Error
 	if err != nil {
 		log.GetLogger().Error(err)
 		return nil, total, render.QueryError, err
@@ -59,6 +60,8 @@ func (s *systemRoleMenuService) List(req *ReqSystemRoleMenuList) (res []*RespSys
 		log.GetLogger().Error(err)
 		return nil, total, render.QueryError, err
 	}
+
+	res := make([]*RespSystemRoleMenuItem, 0)
 	err = copier.Copy(&res, objs)
 	if err != nil {
 		log.GetLogger().Error(err)
@@ -68,8 +71,7 @@ func (s *systemRoleMenuService) List(req *ReqSystemRoleMenuList) (res []*RespSys
 }
 
 // Detail 角色菜单关联详情
-func (s *systemRoleMenuService) Detail(req *ReqSystemRoleMenuDetail) (res *RespSystemRoleMenuItem, code int, err error) {
-	res = &RespSystemRoleMenuItem{}
+func (s *systemRoleMenuService) Detail(req *ReqSystemRoleMenuDetail) (*RespSystemRoleMenuItem, int, error) {
 	obj, err := model.GetSystemRoleMenuInstance(
 		model.GetDB(),
 		map[string]interface{}{
@@ -83,12 +85,14 @@ func (s *systemRoleMenuService) Detail(req *ReqSystemRoleMenuDetail) (res *RespS
 		}
 		return nil, render.QueryError, err
 	}
+
+	res := &RespSystemRoleMenuItem{}
 	err = copier.Copy(&res, &obj)
 	if err != nil {
 		log.GetLogger().Error(err)
 		return nil, render.DBAttributesCopyError, err
 	}
-	return
+	return res, render.OK, nil
 }
 
 // Create 角色菜单关联创建
@@ -101,7 +105,7 @@ func (s *systemRoleMenuService) Create(payload *ReqSystemRoleMenuCreate) (int, e
 }
 
 // Update 角色菜单关联更新
-func (s *systemRoleMenuService) Update(payload *ReqSystemRoleMenuUpdate) (res *RespSystemRoleMenuItem, code int, err error) {
+func (s *systemRoleMenuService) Update(payload *ReqSystemRoleMenuUpdate) (*RespSystemRoleMenuItem, int, error) {
 	obj, err := model.GetSystemRoleMenuInstance(
 		model.GetDB(),
 		map[string]interface{}{
@@ -126,6 +130,8 @@ func (s *systemRoleMenuService) Update(payload *ReqSystemRoleMenuUpdate) (res *R
 	if err != nil {
 		return nil, render.UpdateError, err
 	}
+
+	res := &RespSystemRoleMenuItem{}
 	err = copier.Copy(&res, &obj)
 	if err != nil {
 		log.GetLogger().Error(err)

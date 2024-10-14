@@ -24,9 +24,9 @@ type ReqSystemRoleUserDetail struct {
 
 // ReqSystemRoleUserCreate 角色用户关联创建请求参数
 type ReqSystemRoleUserCreate struct {
-	OrgId  int64 `json:"org_id" form:"org_id"`   // 组织机构ID
-	RoleId int64 `json:"role_id" form:"role_id"` // 角色ID
-	UserId int64 `json:"user_id" form:"user_id"` // 用户ID
+	OrgId   int64   `json:"org_id" form:"org_id"`     // 组织机构ID
+	RoleId  int64   `json:"role_id" form:"role_id"`   // 角色ID
+	UserIds []int64 `json:"user_ids" form:"user_ids"` // 用户ID
 }
 
 // ReqSystemRoleUserUpdate 角色用户关联更新请求参数

@@ -113,6 +113,9 @@ definitions:
         description: 邮箱
         example: abc@abc.com
         type: string
+      id:
+        description: 主键
+        type: integer
       is_admin:
         description: 是否管理员
         example: false
@@ -935,9 +938,11 @@ definitions:
       role_id:
         description: 角色ID
         type: integer
-      user_id:
+      user_ids:
         description: 用户ID
-        type: integer
+        items:
+          type: integer
+        type: array
     type: object
   admin_systemroleuser.ReqSystemRoleUserUpdate:
     properties:

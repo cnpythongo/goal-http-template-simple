@@ -11,10 +11,10 @@ import (
 )
 
 type ISystemRoleUserService interface {
-	List(req *ReqSystemRoleUserList) (res []*RespSystemRoleUserItem, total int64, code int, err error)
-	Detail(req *ReqSystemRoleUserDetail) (res *RespSystemRoleUserItem, code int, err error)
-	Create(payload *ReqSystemRoleUserCreate) (*RespSystemRoleUserItem, int, error)
-	Update(payload *ReqSystemRoleUserUpdate) (res *RespSystemRoleUserItem, code int, err error)
+	List(req *ReqSystemRoleUserList) ([]*RespSystemRoleUserItem, int64, int, error)
+	Detail(req *ReqSystemRoleUserDetail) (*RespSystemRoleUserItem, int, error)
+	Create(payload *ReqSystemRoleUserCreate) (int, error)
+	Update(payload *ReqSystemRoleUserUpdate) (*RespSystemRoleUserItem, int, error)
 	Delete(payload *ReqSystemRoleUserDelete) (int, error)
 	GetAllSystemRoleUser() ([]*model.SystemRoleUser, int, error)
 }
@@ -28,20 +28,21 @@ func NewSystemRoleUserService() ISystemRoleUserService {
 }
 
 // List 角色用户关联列表
-func (s *systemRoleUserService) List(req *ReqSystemRoleUserList) (res []*RespSystemRoleUserItem, total int64, code int, err error) {
+func (s *systemRoleUserService) List(req *ReqSystemRoleUserList) ([]*RespSystemRoleUserItem, int64, int, error) {
 	// 查询
 	query := model.GetDB().Model(&model.SystemRoleUser{})
-	if req.OrgId >= 0 {
+	if req.OrgId > 0 {
 		query = query.Where("org_id = ?", req.OrgId)
 	}
-	if req.RoleId >= 0 {
+	if req.RoleId > 0 {
 		query = query.Where("role_id = ?", req.RoleId)
 	}
-	if req.UserId >= 0 {
+	if req.UserId > 0 {
 		query = query.Where("user_id = ?", req.UserId)
 	}
 	// 总数
-	err = query.Count(&total).Error
+	var total int64
+	err := query.Count(&total).Error
 	if err != nil {
 		log.GetLogger().Error(err)
 		return nil, total, render.QueryError, err
@@ -59,6 +60,7 @@ func (s *systemRoleUserService) List(req *ReqSystemRoleUserList) (res []*RespSys
 		log.GetLogger().Error(err)
 		return nil, total, render.QueryError, err
 	}
+	res := make([]*RespSystemRoleUserItem, 0)
 	err = copier.Copy(&res, objs)
 	if err != nil {
 		log.GetLogger().Error(err)
@@ -68,8 +70,7 @@ func (s *systemRoleUserService) List(req *ReqSystemRoleUserList) (res []*RespSys
 }
 
 // Detail 角色用户关联详情
-func (s *systemRoleUserService) Detail(req *ReqSystemRoleUserDetail) (res *RespSystemRoleUserItem, code int, err error) {
-	res = &RespSystemRoleUserItem{}
+func (s *systemRoleUserService) Detail(req *ReqSystemRoleUserDetail) (*RespSystemRoleUserItem, int, error) {
 	obj, err := model.GetSystemRoleUserInstance(
 		model.GetDB(),
 		map[string]interface{}{
@@ -83,28 +84,9 @@ func (s *systemRoleUserService) Detail(req *ReqSystemRoleUserDetail) (res *RespS
 		}
 		return nil, render.QueryError, err
 	}
-	err = copier.Copy(&res, &obj)
-	if err != nil {
-		log.GetLogger().Error(err)
-		return nil, render.DBAttributesCopyError, err
-	}
-	return
-}
 
-// Create 角色用户关联创建
-func (s *systemRoleUserService) Create(payload *ReqSystemRoleUserCreate) (*RespSystemRoleUserItem, int, error) {
-	obj := model.NewSystemRoleUser()
-	err := copier.Copy(&obj, &payload)
-	if err != nil {
-		log.GetLogger().Error(err)
-		return nil, render.DBAttributesCopyError, err
-	}
-	obj, err = model.CreateSystemRoleUser(model.GetDB(), obj)
-	if err != nil {
-		return nil, render.CreateError, err
-	}
 	res := &RespSystemRoleUserItem{}
-	err = copier.Copy(&res, obj)
+	err = copier.Copy(&res, &obj)
 	if err != nil {
 		log.GetLogger().Error(err)
 		return nil, render.DBAttributesCopyError, err
@@ -112,8 +94,17 @@ func (s *systemRoleUserService) Create(payload *ReqSystemRoleUserCreate) (*RespS
 	return res, render.OK, nil
 }
 
+// Create 角色用户关联创建
+func (s *systemRoleUserService) Create(payload *ReqSystemRoleUserCreate) (int, error) {
+	err := model.CreateSystemRoleUsersByRoleId(model.GetDB(), payload.OrgId, payload.RoleId, payload.UserIds)
+	if err != nil {
+		return render.CreateError, err
+	}
+	return render.OK, nil
+}
+
 // Update 角色用户关联更新
-func (s *systemRoleUserService) Update(payload *ReqSystemRoleUserUpdate) (res *RespSystemRoleUserItem, code int, err error) {
+func (s *systemRoleUserService) Update(payload *ReqSystemRoleUserUpdate) (*RespSystemRoleUserItem, int, error) {
 	obj, err := model.GetSystemRoleUserInstance(
 		model.GetDB(),
 		map[string]interface{}{
@@ -138,6 +129,8 @@ func (s *systemRoleUserService) Update(payload *ReqSystemRoleUserUpdate) (res *R
 	if err != nil {
 		return nil, render.UpdateError, err
 	}
+
+	res := &RespSystemRoleUserItem{}
 	err = copier.Copy(&res, &obj)
 	if err != nil {
 		log.GetLogger().Error(err)
