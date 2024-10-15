@@ -99,3 +99,7 @@ $ docker-compose up -d
 ```shell script
 $ docker-compose -f docker-compose-all-in-one.yml up -d 
 ```
+
+## 鸣谢：
+
+* 代码生成器功能接口 和 菜单管理功能接口 基于 [likeadmin_go](https://gitee.com/likeadmin/likeadmin_go) 的代码生成器进行了适配改造；
