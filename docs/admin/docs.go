@@ -25,7 +25,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "登录退出"
+                    "认证"
                 ],
                 "summary": "登录",
                 "parameters": [
@@ -76,7 +76,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "登录退出"
+                    "认证"
                 ],
                 "summary": "退出",
                 "responses": {
@@ -85,6 +85,52 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
                         }
+                    }
+                }
+            }
+        },
+        "/account/menus": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "账号可用菜单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "认证"
+                ],
+                "summary": "账号可用菜单",
+                "responses": {
+                    "200": {
+                        "description": "code不为0时表示有错误",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/goal-app_pkg_render.JsonDataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/admin_auth.RespSystemMenuItem"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }
@@ -3502,6 +3548,67 @@ const docTemplate = `{
                 "uuid": {
                     "description": "用户uuid",
                     "type": "string"
+                }
+            }
+        },
+        "admin_auth.RespSystemMenuItem": {
+            "type": "object",
+            "properties": {
+                "auth_tag": {
+                    "description": "'权限标识'",
+                    "type": "string"
+                },
+                "component": {
+                    "description": "'前端组件'",
+                    "type": "string"
+                },
+                "create_time": {
+                    "description": "数据创建时间",
+                    "type": "integer"
+                },
+                "icon": {
+                    "description": "'菜单图标'",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "流水ID",
+                    "type": "integer"
+                },
+                "kind": {
+                    "description": "'权限类型: dir=目录，menu=菜单，button=按钮''",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "'菜单名称'",
+                    "type": "string"
+                },
+                "params": {
+                    "description": "'路由参数'",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "'上级菜单ID'",
+                    "type": "integer"
+                },
+                "route": {
+                    "description": "'路由地址'",
+                    "type": "string"
+                },
+                "selected": {
+                    "description": "选中菜单",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "'菜单排序'",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "'状态: disable=停用, enable=启用'",
+                    "type": "string"
+                },
+                "update_time": {
+                    "description": "数据更新时间",
+                    "type": "integer"
                 }
             }
         },

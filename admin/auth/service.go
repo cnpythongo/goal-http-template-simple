@@ -16,6 +16,8 @@ type IAuthService interface {
 	Login(c *gin.Context, payload *ReqAdminAuth) (*RespAdminAuth, int, error)
 	Logout(c *gin.Context) error
 	UpdateUserLastLogin(uuid string) error
+	GetAccountMenus(c *gin.Context, userId int64) ([]*RespSystemMenuItem, int, error)
+	GetAccountMenuAuthTags(c *gin.Context, userId int64) ([]string, int, error)
 }
 
 type authService struct {
@@ -87,4 +89,64 @@ func (s *authService) Logout(c *gin.Context) error {
 
 func (s *authService) UpdateUserLastLogin(uuid string) error {
 	return model.UpdateUserLastLoginAt(model.GetDB(), uuid)
+}
+
+func (s *authService) GetAccountMenus(c *gin.Context, userId int64) ([]*RespSystemMenuItem, int, error) {
+	res := make([]*RespSystemMenuItem, 0)
+	roleUsers, _, err := model.GetSystemRoleUserList(
+		model.GetDB(), 0, 0, "user_id = ?", []interface{}{userId},
+	)
+	if err != nil {
+		return nil, render.QueryError, err
+	}
+	if roleUsers == nil || len(roleUsers) == 0 {
+		return res, render.OK, nil
+	}
+
+	roleIds := make([]int64, 0)
+	for _, roleUser := range roleUsers {
+		roleIds = append(roleIds, roleUser.RoleID)
+	}
+
+	roleMenus, _, err := model.GetSystemRoleMenuList(
+		model.GetDB(), 0, 0, "role_id in ?", []interface{}{roleIds},
+	)
+	if err != nil {
+		return nil, render.QueryError, err
+	}
+	if roleMenus == nil || len(roleMenus) == 0 {
+		return res, render.OK, nil
+	}
+
+	menuIds := make([]int64, 0)
+	for _, rm := range roleMenus {
+		menuIds = append(menuIds, rm.MenuID)
+	}
+
+	menus, _, err := model.GetSystemMenuList(
+		model.GetDB(), 0, 0, "id in ? and status = ?", []interface{}{menuIds, "enable"},
+	)
+	if err != nil {
+		return nil, render.QueryError, err
+	}
+
+	err = copier.Copy(&res, &menus)
+	if err != nil {
+		return nil, render.DBAttributesCopyError, err
+	}
+	return res, render.OK, nil
+}
+
+func (s *authService) GetAccountMenuAuthTags(c *gin.Context, userId int64) ([]string, int, error) {
+	menus, _, err := s.GetAccountMenus(c, userId)
+	if err != nil {
+		return nil, render.QueryError, err
+	}
+	result := make([]string, 0)
+	for _, menu := range menus {
+		if menu.AuthTag != "" {
+			result = append(result, menu.AuthTag)
+		}
+	}
+	return result, render.OK, err
 }

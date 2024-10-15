@@ -1,5 +1,7 @@
 package auth
 
+import "goal-app/admin/systemmenu"
+
 type (
 	// ReqAdminAuth 用户登录请求结构体
 	ReqAdminAuth struct {
@@ -22,4 +24,6 @@ type (
 		ExpireTime string            `json:"expire_time"` // 过期时间
 		User       RespAdminAuthUser `json:"user"`        // 用户基本信息
 	}
+
+	RespSystemMenuItem systemmenu.RespSystemMenuItem
 )

@@ -189,6 +189,51 @@ definitions:
         description: 用户uuid
         type: string
     type: object
+  admin_auth.RespSystemMenuItem:
+    properties:
+      auth_tag:
+        description: '''权限标识'''
+        type: string
+      component:
+        description: '''前端组件'''
+        type: string
+      create_time:
+        description: 数据创建时间
+        type: integer
+      icon:
+        description: '''菜单图标'''
+        type: string
+      id:
+        description: 流水ID
+        type: integer
+      kind:
+        description: '''权限类型: dir=目录，menu=菜单，button=按钮'''''
+        type: string
+      name:
+        description: '''菜单名称'''
+        type: string
+      params:
+        description: '''路由参数'''
+        type: string
+      parent_id:
+        description: '''上级菜单ID'''
+        type: integer
+      route:
+        description: '''路由地址'''
+        type: string
+      selected:
+        description: 选中菜单
+        type: string
+      sort:
+        description: '''菜单排序'''
+        type: integer
+      status:
+        description: '''状态: disable=停用, enable=启用'''
+        type: string
+      update_time:
+        description: 数据更新时间
+        type: integer
+    type: object
   admin_generator.ReqDelGenTableColumn:
     properties:
       ids:
@@ -1054,7 +1099,7 @@ paths:
           description: Internal Server Error
       summary: 登录
       tags:
-      - 登录退出
+      - 认证
   /account/logout:
     post:
       description: |-
@@ -1072,7 +1117,33 @@ paths:
       - AdminAuth: []
       summary: 退出
       tags:
-      - 登录退出
+      - 认证
+  /account/menus:
+    get:
+      consumes:
+      - application/json
+      description: 账号可用菜单
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code不为0时表示有错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/goal-app_pkg_render.JsonDataResp'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/admin_auth.RespSystemMenuItem'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+      security:
+      - AdminAuth: []
+      summary: 账号可用菜单
+      tags:
+      - 认证
   /account/user/{uuid}/profile:
     get:
       description: 用户个人资料

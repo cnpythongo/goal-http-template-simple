@@ -11,12 +11,12 @@ import (
 )
 
 type ISystemMenuService interface {
-	List(req *ReqSystemMenuList) (res []*RespSystemMenuItem, total int64, code int, err error)
+	List(req *ReqSystemMenuList) ([]*RespSystemMenuItem, int64, int, error)
 	Detail(req *ReqSystemMenuDetail) (res *RespSystemMenuItem, code int, err error)
 	Create(payload *ReqSystemMenuCreate) (*RespSystemMenuItem, int, error)
 	Update(payload *ReqSystemMenuUpdate) (*RespSystemMenuItem, int, error)
 	Delete(payload *ReqSystemMenuDelete) (code int, e error)
-	GetAllSystemMenu() ([]*model.SystemMenu, int, error)
+	GetAllSystemMenu(conditions map[string]interface{}) ([]*model.SystemMenu, int, error)
 	Tree(req *ReqSystemMenuTree) ([]*RespSystemMenuTree, int, error)
 	ConvertSystemMenuTreeToJSON(nodes []*model.SystemMenu, parent *model.SystemMenu) ([]*RespSystemMenuTree, int, error)
 }
@@ -30,7 +30,7 @@ func NewSystemMenuService() ISystemMenuService {
 }
 
 // List 菜单管理列表
-func (s *systemMenuService) List(req *ReqSystemMenuList) (res []*RespSystemMenuItem, total int64, code int, err error) {
+func (s *systemMenuService) List(req *ReqSystemMenuList) ([]*RespSystemMenuItem, int64, int, error) {
 	// 分页信息
 	limit := req.Page
 	offset := req.Limit * (req.Page - 1)
@@ -67,7 +67,8 @@ func (s *systemMenuService) List(req *ReqSystemMenuList) (res []*RespSystemMenuI
 		query = query.Where("status = ?", req.Status)
 	}
 	// 总数
-	err = query.Count(&total).Error
+	var total int64
+	err := query.Count(&total).Error
 	if err != nil {
 		log.GetLogger().Error(err)
 		return nil, total, render.QueryError, err
@@ -79,6 +80,8 @@ func (s *systemMenuService) List(req *ReqSystemMenuList) (res []*RespSystemMenuI
 		log.GetLogger().Error(err)
 		return nil, total, render.QueryError, err
 	}
+
+	res := make([]*RespSystemMenuItem, 0)
 	err = copier.Copy(&res, objs)
 	if err != nil {
 		log.GetLogger().Error(err)
@@ -170,7 +173,15 @@ func (s *systemMenuService) Update(payload *ReqSystemMenuUpdate) (*RespSystemMen
 // Delete 菜单管理删除
 func (s *systemMenuService) Delete(payload *ReqSystemMenuDelete) (int, error) {
 	// 删除
-	err := model.DeleteSystemMenu(model.GetDB(), payload.IDs)
+	_, total, err := model.GetSystemMenuList(model.GetDB(), 0, 0, "parent_id in ?", []interface{}{payload.IDs})
+	if err != nil {
+		return render.QueryError, err
+	}
+	if total > 0 {
+		return render.AssociatedDataExistsError, errors.New("存在子菜单，无法删除")
+	}
+
+	err = model.DeleteSystemMenu(model.GetDB(), payload.IDs)
 	if err != nil {
 		return render.DeleteError, err
 	}
@@ -178,8 +189,8 @@ func (s *systemMenuService) Delete(payload *ReqSystemMenuDelete) (int, error) {
 }
 
 // GetAllSystemMenu 菜单管理获取所有有效数据
-func (s *systemMenuService) GetAllSystemMenu() ([]*model.SystemMenu, int, error) {
-	result, err := model.GetAllSystemMenu(model.GetDB())
+func (s *systemMenuService) GetAllSystemMenu(conditions map[string]interface{}) ([]*model.SystemMenu, int, error) {
+	result, err := model.GetAllSystemMenu(model.GetDB(), conditions)
 	if err != nil {
 		return nil, render.QueryError, err
 	}
@@ -188,7 +199,11 @@ func (s *systemMenuService) GetAllSystemMenu() ([]*model.SystemMenu, int, error)
 
 // Tree 菜单管理树
 func (s *systemMenuService) Tree(req *ReqSystemMenuTree) ([]*RespSystemMenuTree, int, error) {
-	rows, code, err := s.GetAllSystemMenu()
+	conditions := make(map[string]interface{})
+	if req.Status != "" {
+		conditions["status"] = req.Status
+	}
+	rows, code, err := s.GetAllSystemMenu(conditions)
 	if err != nil {
 		return nil, code, err
 	}

@@ -86,7 +86,7 @@ func GetSystemLogInstance(tx *gorm.DB, conditions map[string]interface{}) (*Syst
 }
 
 func GetSystemLogList(tx *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*SystemLog, int64, error) {
-	qs := tx.Model(NewSystemLog()).Where("delete_time == 0")
+	qs := tx.Model(NewSystemLog()).Where("delete_time = 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}
@@ -111,7 +111,7 @@ func GetSystemLogList(tx *gorm.DB, page, size int, query interface{}, args []int
 
 func GetAllSystemLog(tx *gorm.DB) ([]*SystemLog, error) {
 	result := NewSystemLogList()
-	err := tx.Where("delete_time == 0").Find(&result).Error
+	err := tx.Where("delete_time = 0").Find(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.GetLogger().Errorf("model.SystemLog.GetAllSystemLog Error ==> %v", err)

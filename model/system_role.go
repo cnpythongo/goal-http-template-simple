@@ -75,7 +75,7 @@ func GetSystemRoleInstance(tx *gorm.DB, conditions map[string]interface{}) (*Sys
 }
 
 func GetSystemRoleList(tx *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*SystemRole, int64, error) {
-	qs := tx.Model(NewSystemRole()).Where("delete_time == 0")
+	qs := tx.Model(NewSystemRole()).Where("delete_time = 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}
@@ -100,7 +100,7 @@ func GetSystemRoleList(tx *gorm.DB, page, size int, query interface{}, args []in
 
 func GetAllSystemRole(tx *gorm.DB) ([]*SystemRole, error) {
 	result := NewSystemRoleList()
-	err := tx.Where("delete_time == 0").Find(&result).Error
+	err := tx.Where("delete_time = 0").Find(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.GetLogger().Errorf("model.SystemRole.GetAllSystemRole Error ==> %v", err)

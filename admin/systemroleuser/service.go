@@ -16,7 +16,7 @@ type ISystemRoleUserService interface {
 	Create(payload *ReqSystemRoleUserCreate) (int, error)
 	Update(payload *ReqSystemRoleUserUpdate) (*RespSystemRoleUserItem, int, error)
 	Delete(payload *ReqSystemRoleUserDelete) (int, error)
-	GetAllSystemRoleUser() ([]*model.SystemRoleUser, int, error)
+	GetAllSystemRoleUser(conditions map[string]interface{}) ([]*model.SystemRoleUser, int, error)
 }
 
 // systemRoleUserService 角色用户关联服务实现类
@@ -150,8 +150,8 @@ func (s *systemRoleUserService) Delete(payload *ReqSystemRoleUserDelete) (int, e
 }
 
 // GetAllSystemRoleUser 角色用户关联获取所有有效数据
-func (s *systemRoleUserService) GetAllSystemRoleUser() ([]*model.SystemRoleUser, int, error) {
-	result, err := model.GetAllSystemRoleUser(model.GetDB())
+func (s *systemRoleUserService) GetAllSystemRoleUser(conditions map[string]interface{}) ([]*model.SystemRoleUser, int, error) {
+	result, err := model.GetAllSystemRoleUser(model.GetDB(), conditions)
 	if err != nil {
 		return nil, render.QueryError, err
 	}

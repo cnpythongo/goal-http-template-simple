@@ -18,13 +18,15 @@ const (
 	AuthLoginRequireError  = 1007
 	AuthCaptchaError       = 1008
 
-	QueryError            = 1100
-	DBAttributesCopyError = 1101
-	DeleteError           = 1102
-	UpdateError           = 1103
-	CreateError           = 1104
-	DataExistError        = 1105
-	DataNotExistError     = 1106
+	QueryError                = 1100
+	DBAttributesCopyError     = 1101
+	DeleteError               = 1102
+	UpdateError               = 1103
+	CreateError               = 1104
+	DataExistError            = 1105
+	DataNotExistError         = 1106
+	AssociatedDataExistsError = 1107
+	DataNameExistError        = 1108
 
 	AccountEmailExistsError  = 1200
 	AccountUserOrPwdError    = 1201

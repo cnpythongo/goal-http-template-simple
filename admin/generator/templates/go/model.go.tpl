@@ -82,7 +82,7 @@ func Get{{{ .EntityName }}}Instance(tx *gorm.DB, conditions map[string]interface
 }
 
 
-func Get{{{ .EntityName }}}List(tx *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*{{{ .EntityName }}}, int64, error) {
+func Get{{{ .EntityName }}}List(tx *gorm.DB, page, limit int, query interface{}, args []interface{}) ([]*{{{ .EntityName }}}, int64, error) {
 	qs := tx.Model(New{{{ .EntityName }}}()).Where("delete_time == 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
@@ -93,9 +93,9 @@ func Get{{{ .EntityName }}}List(tx *gorm.DB, page, size int, query interface{}, 
 		log.GetLogger().Errorf("model.{{{ .EntityName }}}.Get{{{ .EntityName }}}List Count Error ==> %v", err)
 		return nil, 0, err
 	}
-	if page > 0 && size > 0 {
-		offset := (page - 1) * size
-		qs = qs.Limit(size).Offset(offset)
+	if page > 0 && limit > 0 {
+		offset := (page - 1) * limit
+		qs = qs.Limit(limit).Offset(offset)
 	}
 	result := New{{{ .EntityName }}}List()
 	err = qs.Find(&result).Error

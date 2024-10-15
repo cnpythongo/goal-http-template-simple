@@ -43,6 +43,19 @@ func (m *SystemMenu) BeforeCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
+func GetSystemMenuByName(tx *gorm.DB, name string) (*SystemMenu, error) {
+	obj := NewSystemMenu()
+	err := tx.Model(NewSystemMenu()).Where("name = ?", name).First(&obj).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		log.GetLogger().Errorf("model.SystemMenu.GetSystemMenuByName Error ==> %v", err)
+		return nil, err
+	}
+	return obj, nil
+}
+
 func CreateSystemMenu(tx *gorm.DB, obj *SystemMenu) (*SystemMenu, error) {
 	err := tx.Create(&obj).Error
 	if err != nil {
@@ -60,13 +73,22 @@ func UpdateSystemMenu(tx *gorm.DB, obj *SystemMenu) error {
 	return err
 }
 
-func DeleteSystemMenu(tx *gorm.DB, ids []int64) error {
+func DeleteSystemMenu(db *gorm.DB, ids []int64) error {
+	tx := db.Begin()
 	err := tx.Model(NewSystemMenu()).Where("id in ?", ids).UpdateColumns(map[string]interface{}{
 		"delete_time": time.Now().Unix(),
 	}).Error
 	if err != nil {
+		tx.Rollback()
 		log.GetLogger().Errorf("model.SystemMenu.DeleteSystemMenu Error ==> %v", err)
 	}
+
+	err = tx.Where("menu_id in ?", ids).Delete(NewSystemRoleMenu()).Error
+	if err != nil {
+		tx.Rollback()
+		log.GetLogger().Errorf("model.SystemMenu.DeleteSystemMenu.DeleteSystemRoleMenu Error ==> %v", err)
+	}
+	tx.Commit()
 	return err
 }
 
@@ -83,8 +105,8 @@ func GetSystemMenuInstance(tx *gorm.DB, conditions map[string]interface{}) (*Sys
 	return result, nil
 }
 
-func GetSystemMenuList(tx *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*SystemMenu, int64, error) {
-	qs := tx.Model(NewSystemMenu()).Where("delete_time == 0")
+func GetSystemMenuList(tx *gorm.DB, page, limit int, query interface{}, args []interface{}) ([]*SystemMenu, int64, error) {
+	qs := tx.Model(NewSystemMenu()).Where("delete_time = 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}
@@ -94,12 +116,12 @@ func GetSystemMenuList(tx *gorm.DB, page, size int, query interface{}, args []in
 		log.GetLogger().Errorf("model.SystemMenu.GetSystemMenuList Count Error ==> %v", err)
 		return nil, 0, err
 	}
-	if page > 0 && size > 0 {
-		offset := (page - 1) * size
-		qs = qs.Limit(size).Offset(offset)
+	if page > 0 && limit > 0 {
+		offset := (page - 1) * limit
+		qs = qs.Limit(limit).Offset(offset)
 	}
 	result := NewSystemMenuList()
-	err = qs.Find(&result).Error
+	err = qs.Order("sort desc").Find(&result).Error
 	if err != nil {
 		log.GetLogger().Errorf("model.SystemMenu.GetSystemMenuList Query Error ==> %v", err)
 		return nil, 0, err
@@ -107,9 +129,13 @@ func GetSystemMenuList(tx *gorm.DB, page, size int, query interface{}, args []in
 	return result, total, nil
 }
 
-func GetAllSystemMenu(tx *gorm.DB) ([]*SystemMenu, error) {
+func GetAllSystemMenu(tx *gorm.DB, conditions map[string]interface{}) ([]*SystemMenu, error) {
 	result := NewSystemMenuList()
-	err := tx.Where("delete_time = 0").Find(&result).Error
+	query := tx.Where("delete_time = 0")
+	if conditions != nil && len(conditions) > 0 {
+		query = query.Where(conditions)
+	}
+	err := query.Order("sort desc").Find(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.GetLogger().Errorf("model.SystemMenu.GetAllSystemMenu Error ==> %v", err)

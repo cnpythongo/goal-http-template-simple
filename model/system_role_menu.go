@@ -111,7 +111,7 @@ func GetSystemRoleMenuInstance(tx *gorm.DB, conditions map[string]interface{}) (
 }
 
 func GetSystemRoleMenuList(tx *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*SystemRoleMenu, int64, error) {
-	qs := tx.Model(NewSystemRoleMenu()).Where("delete_time == 0")
+	qs := tx.Model(NewSystemRoleMenu()).Where("delete_time = 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}
@@ -136,7 +136,7 @@ func GetSystemRoleMenuList(tx *gorm.DB, page, size int, query interface{}, args 
 
 func GetAllSystemRoleMenu(tx *gorm.DB) ([]*SystemRoleMenu, error) {
 	result := NewSystemRoleMenuList()
-	err := tx.Where("delete_time == 0").Find(&result).Error
+	err := tx.Where("delete_time = 0").Find(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.GetLogger().Errorf("model.SystemRoleMenu.GetAllSystemRoleMenu Error ==> %v", err)

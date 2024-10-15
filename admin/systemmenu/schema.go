@@ -76,38 +76,38 @@ type ReqSystemMenuDelete struct {
 
 // RespSystemMenuItem 菜单管理单条详情
 type RespSystemMenuItem struct {
-	ID         int64  `json:"id" structs:"id"`                   // 流水ID
-	CreateTime int64  `json:"create_time" structs:"create_time"` // 数据创建时间
-	UpdateTime int64  `json:"update_time" structs:"update_time"` // 数据更新时间
-	ParentID   int64  `json:"parent_id" structs:"parent_id"`     // '上级菜单ID'
-	Kind       string `json:"kind" structs:"kind"`               // '权限类型: dir=目录，menu=菜单，button=按钮''
-	Name       string `json:"name" structs:"name"`               // '菜单名称'
-	Icon       string `json:"icon" structs:"icon"`               // '菜单图标'
-	Sort       int64  `json:"sort" structs:"sort"`               // '菜单排序'
-	AuthTag    string `json:"auth_tag" structs:"auth_tag"`       // '权限标识'
-	Route      string `json:"route" structs:"route"`             // '路由地址'
-	Component  string `json:"component" structs:"component"`     // '前端组件'
-	Params     string `json:"params" structs:"params"`           // '路由参数'
-	Selected   string `json:"selected" form:"selected"`          // 选中菜单
-	Status     string `json:"status" structs:"status"`           // '状态: disable=停用, enable=启用'
+	ID         int64  `json:"id"`          // 流水ID
+	CreateTime int64  `json:"create_time"` // 数据创建时间
+	UpdateTime int64  `json:"update_time"` // 数据更新时间
+	ParentID   int64  `json:"parent_id"`   // '上级菜单ID'
+	Kind       string `json:"kind"`        // '权限类型: dir=目录，menu=菜单，button=按钮''
+	Name       string `json:"name"`        // '菜单名称'
+	Icon       string `json:"icon"`        // '菜单图标'
+	Sort       int64  `json:"sort"`        // '菜单排序'
+	AuthTag    string `json:"auth_tag"`    // '权限标识'
+	Route      string `json:"route"`       // '路由地址'
+	Component  string `json:"component"`   // '前端组件'
+	Params     string `json:"params"`      // '路由参数'
+	Selected   string `json:"selected"`    // 选中菜单
+	Status     string `json:"status"`      // '状态: disable=停用, enable=启用'
 }
 
 // RespSystemMenuTree 菜单管理树结构数据
 type RespSystemMenuTree struct {
-	ID         int64                 `json:"id" structs:"id"`                   // 流水ID
-	CreateTime int64                 `json:"create_time" structs:"create_time"` // 数据创建时间
-	UpdateTime int64                 `json:"update_time" structs:"update_time"` // 数据更新时间
-	ParentID   int64                 `json:"parent_id" structs:"parent_id"`     // '上级菜单ID'
-	Kind       string                `json:"kind" structs:"kind"`               // '权限类型: dir=目录，menu=菜单，button=按钮''
-	Name       string                `json:"name" structs:"name"`               // '菜单名称'
-	Icon       string                `json:"icon" structs:"icon"`               // '菜单图标'
-	Sort       int64                 `json:"sort" structs:"sort"`               // '菜单排序'
-	AuthTag    string                `json:"auth_tag" structs:"auth_tag"`       // '权限标识'
-	Route      string                `json:"route" structs:"route"`             // '路由地址'
-	Component  string                `json:"component" structs:"component"`     // '前端组件'
-	Params     string                `json:"params" structs:"params"`           // '路由参数'
-	Selected   string                `json:"selected" form:"selected"`          // 选中菜单
-	Status     string                `json:"status" structs:"status"`           // '状态: disable=停用, enable=启用'
-	ParentName string                `json:"parent_name" structs:"parent_name"` // '父级名称'
-	Children   []*RespSystemMenuTree `json:"children"`                          // 子节点
+	ID         int64                 `json:"id"`          // 流水ID
+	CreateTime int64                 `json:"create_time"` // 数据创建时间
+	UpdateTime int64                 `json:"update_time"` // 数据更新时间
+	ParentID   int64                 `json:"parent_id"`   // '上级菜单ID'
+	Kind       string                `json:"kind"`        // '权限类型: dir=目录，menu=菜单，button=按钮''
+	Name       string                `json:"name"`        // '菜单名称'
+	Icon       string                `json:"icon"`        // '菜单图标'
+	Sort       int64                 `json:"sort"`        // '菜单排序'
+	AuthTag    string                `json:"auth_tag"`    // '权限标识'
+	Route      string                `json:"route"`       // '路由地址'
+	Component  string                `json:"component"`   // '前端组件'
+	Params     string                `json:"params"`      // '路由参数'
+	Selected   string                `json:"selected"`    // 选中菜单
+	Status     string                `json:"status"`      // '状态: disable=停用, enable=启用'
+	ParentName string                `json:"parent_name"` // '父级名称'
+	Children   []*RespSystemMenuTree `json:"children"`    // 子节点
 }

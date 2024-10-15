@@ -76,7 +76,7 @@ func GetSystemConfigInstance(tx *gorm.DB, conditions map[string]interface{}) (*S
 }
 
 func GetSystemConfigList(tx *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*SystemConfig, int64, error) {
-	qs := tx.Model(NewSystemConfig()).Where("delete_time == 0")
+	qs := tx.Model(NewSystemConfig()).Where("delete_time = 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}
@@ -101,7 +101,7 @@ func GetSystemConfigList(tx *gorm.DB, page, size int, query interface{}, args []
 
 func GetAllSystemConfig(tx *gorm.DB) ([]*SystemConfig, error) {
 	result := NewSystemConfigList()
-	err := tx.Where("delete_time == 0").Find(&result).Error
+	err := tx.Where("delete_time = 0").Find(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.GetLogger().Errorf("model.SystemConfig.GetAllSystemConfig Error ==> %v", err)

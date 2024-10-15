@@ -111,7 +111,7 @@ func GetSystemRoleUserInstance(tx *gorm.DB, conditions map[string]interface{}) (
 }
 
 func GetSystemRoleUserList(tx *gorm.DB, page, size int, query interface{}, args []interface{}) ([]*SystemRoleUser, int64, error) {
-	qs := tx.Model(NewSystemRoleUser()).Where("delete_time == 0")
+	qs := tx.Model(NewSystemRoleUser()).Where("delete_time = 0")
 	if query != nil && args != nil && len(args) > 0 {
 		qs = qs.Where(query, args...)
 	}
@@ -134,9 +134,13 @@ func GetSystemRoleUserList(tx *gorm.DB, page, size int, query interface{}, args 
 	return result, total, nil
 }
 
-func GetAllSystemRoleUser(tx *gorm.DB) ([]*SystemRoleUser, error) {
+func GetAllSystemRoleUser(tx *gorm.DB, conditions map[string]interface{}) ([]*SystemRoleUser, error) {
 	result := NewSystemRoleUserList()
-	err := tx.Where("delete_time == 0").Find(&result).Error
+	query := tx.Where("delete_time = 0")
+	if conditions != nil && len(conditions) > 0 {
+		query = query.Where(conditions)
+	}
+	err := query.Find(&result).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.GetLogger().Errorf("model.SystemRoleUser.GetAllSystemRoleUser Error ==> %v", err)
