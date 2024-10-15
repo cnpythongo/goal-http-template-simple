@@ -91,11 +91,13 @@ $ make run-admin
 按实际需要修改 settings/compose.json 文件内的其他各项配置.
 
 * 运行api和admin接口服务
+
 ```shell script
 $ docker-compose up -d 
 ```
 
 * 运行All-In-One服务(含mysql,redis,api,admin服务)
+
 ```shell script
 $ docker-compose -f docker-compose-all-in-one.yml up -d 
 ```
