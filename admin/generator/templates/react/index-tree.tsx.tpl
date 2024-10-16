@@ -39,7 +39,7 @@ type TableColumns = TableProps<{{{.EntityName}}}Item>['columns'];
 type TableRowSelection<T extends object = object> =
   TableProps<T>['rowSelection'];
 
-type EditFormFieldType = {{{.EntityName}}}CreateBody;
+type EditFormFieldType = {{{.EntityName}}}CreateBody | {{{.EntityName}}}UpdateBody;
 
 // 主函数
 export default function {{{.EntityName}}}Page() {
@@ -49,9 +49,20 @@ export default function {{{.EntityName}}}Page() {
   const [editRecord, setEditRecord] = useState<any>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [disableTreeSelect, setDisableTreeSelect] = useState(false);
+
+  const getDateInterval = (days: number) => {
+    return [dayjs().subtract(days, 'days').unix(), dayjs().unix()];
+  };
+  const [initial_start, initial_end] = getDateInterval(30);
+  const [dateFilter, setDateFilter] = useState({
+    create_time_start: initial_start,
+    create_time_end: initial_end
+  });
+
   // 数据表格属性定义
   const [treeData, setTreeData] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
   // 上传组件
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
@@ -75,9 +86,10 @@ export default function {{{.EntityName}}}Page() {
         <div style={{ marginTop: 8 }}>Upload</div>
       </button>
     );
-    
+
   // 请求参数定义
   const [params, setParams] = useState<{{{.EntityName}}}ListParams>({
+  ...dateFilter,
     page: 1,
     limit: 10
   });
@@ -94,8 +106,29 @@ export default function {{{.EntityName}}}Page() {
     onChange: onSelectChange
   };
 
+  const onSearchDateChange = (_, dateStrings) => {
+    setDateFilter({
+      create_time_start: dayjs(dateStrings[0]).unix(),
+      create_time_end: dayjs(dateStrings[1]).unix()
+    });
+  };
+
   // 查询
-  const onSearch = () => {};
+  const onSearch = () => {
+    searchForm
+    .validateFields()
+    .then(values => {
+      setParams({
+        ...params,
+        ...values,
+        page: 1,
+        limit: pageLimit
+      });
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  };
 
   // 详情
   const onDetail = (record: {{{.EntityName}}}Item) => {
@@ -108,10 +141,8 @@ export default function {{{.EntityName}}}Page() {
   };
 
   // 更新
-  const onUpdate = (record: {{{.EntityName}}}Item) => {
-    setEditRecord(record);
-    editForm.resetFields();
-    showEditFormModal(record);
+  const onUpdate = (record: {{{.EntityName}}}UpdateBody) => {
+    showEditFormModal(record as {{{.EntityName}}}UpdateBody);
   };
 
   // 删除
@@ -126,21 +157,23 @@ export default function {{{.EntityName}}}Page() {
   };
 
   // 弹出层事件
-  const showEditFormModal = (record?: {{{.EntityName}}}Item) => {
+  const showEditFormModal = (record?: {{{.EntityName}}}UpdateBody) => {
+    setEditRecord(record);
+    editForm.resetFields();
     if (record) {
       editForm.setFieldsValue({ ...record });
     }
     setShowEditModal(true);
   };
 
-  const onEditFormOK = () => {
-    editForm.validateFields().then(values => {
-        if (editRecord) {
-          update();
-        } else {
-          create();
-        }
-      });
+  const onEditFormOK = async () => {
+    const values: EditFormFieldType = await editForm.validateFields();
+    console.log(values);
+    if (editRecord) {
+      update(values as {{{.EntityName}}}UpdateBody);
+    } else {
+      create(values as {{{.EntityName}}}CreateBody);
+    }
   };
 
   const onEditFormCancel = () => {
@@ -292,7 +325,7 @@ export default function {{{.EntityName}}}Page() {
         <div className="w-full flex flex-row border-b border-b-gray justify-between pb-4 mb-5">
           <Form layout="inline" form={searchForm}>
             {{{- range .Columns }}}
-            <Form.Item label="{{{.ColumnComment}}}" name="{{{.ColumnName}}}">
+            <Form.Item label="{{{.ColumnComment}}}" name="{{{.ColumnName}}}" rules={[{required: true, message: '' }]}>
               <Input
                 placeholder="输入{{{.ColumnComment}}}查询"
                 allowClear
@@ -414,22 +447,24 @@ export default function {{{.EntityName}}}Page() {
         <DatePicker onChange={onChange} />
         <RangePicker showTime />
         {{{- else if eq .HtmlType "datetime" }}}
-        <RangePicker
-          showTime={{ format: 'HH:mm' }}
-          format="YYYY-MM-DD HH:mm"
-          onChange={(value, dateString) => {
-            console.log('Selected Time: ', value);
-            console.log('Formatted Selected Time: ', dateString);
-          }}
-          onOk={onOk}
-        />
+          <RangePicker
+            placeholder="请选择{{{.ColumnComment}}}"
+            onChange={onSearchDateChange}
+            allowClear
+            value={[
+              dayjs.unix(dateFilter.create_time_start),
+              dayjs.unix(dateFilter.create_time_end)
+            ]}
+            format="YYYY-MM-DD"
+            separator="~"
+          />
         {{{- else if eq .HtmlType "imageUpload" }}}
         <Upload
             name="avatar"
             listType="picture-card"
             className="avatar-uploader"
             showUploadList={false}
-            action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+            action="https://github.com/api/upload"
             beforeUpload={beforeUpload}
             onChange={handleChange}
           >

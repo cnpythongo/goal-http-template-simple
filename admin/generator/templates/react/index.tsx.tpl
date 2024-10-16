@@ -41,7 +41,7 @@ type TableColumns = TableProps<{{{.EntityName}}}Item>['columns'];
 type TableRowSelection<T extends object = object> =
   TableProps<T>['rowSelection'];
 
-type EditFormFieldType = {{{.EntityName}}}CreateBody;
+type EditFormFieldType = {{{.EntityName}}}CreateBody | {{{.EntityName}}}UpdateBody;
 
 // 主函数
 export default function {{{.EntityName}}}Page() {
@@ -90,7 +90,7 @@ export default function {{{.EntityName}}}Page() {
         <div style={{ marginTop: 8 }}>Upload</div>
       </button>
     );
-    
+
   // 请求参数定义
   const [params, setParams] = useState<{{{.EntityName}}}ListParams>({
       ...dateFilter,
@@ -119,14 +119,19 @@ export default function {{{.EntityName}}}Page() {
 
   // 查询
   const onSearch = () => {
-      const formValues = searchForm.getFieldsValue();
-      setParams({
-        ...params,
-        ...formValues,
-        ...dateFilter,
-        page: 1,
-        limit: pageLimit
-      });
+      searchForm
+        .validateFields()
+        .then(values => {
+          setParams({
+            ...params,
+            ...values,
+            page: 1,
+            limit: pageLimit
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     };
 
   // 详情
@@ -141,7 +146,7 @@ export default function {{{.EntityName}}}Page() {
 
   // 更新
   const onUpdate = (record: {{{.EntityName}}}Item) => {
-    showEditFormModal(record);
+    showEditFormModal(record as {{{.EntityName}}}UpdateBody);
   };
 
   // 删除
@@ -156,7 +161,7 @@ export default function {{{.EntityName}}}Page() {
   };
 
   // 弹出层事件
-  const showEditFormModal = (record?: {{{.EntityName}}}Item) => {
+  const showEditFormModal = (record?: {{{.EntityName}}}UpdateBody) => {
     setEditRecord(record);
     editForm.resetFields();
     if (record) {
@@ -168,11 +173,11 @@ export default function {{{.EntityName}}}Page() {
   // 表单提交
   const onEditFormOK = async () => {
       const values: EditFormFieldType = await editForm.validateFields();
+      console.log(values);
       if (editRecord) {
-        update(values);
+        update(values as {{{.EntityName}}}UpdateBody);
       } else {
-        console.log(values);
-        create(values);
+        create(values as {{{.EntityName}}}CreateBody);
       }
     };
 
@@ -187,7 +192,7 @@ export default function {{{.EntityName}}}Page() {
     api
       .list(params)
       .then(res => {
-        setTotal(res.page.total);
+        setTotal(res.total);
         setTableData(res.result);
       })
       .catch(err => {
@@ -208,7 +213,7 @@ export default function {{{.EntityName}}}Page() {
   };
 
   // 新增
-  const create = (values: EditFormFieldType) => {
+  const create = (values: {{{.EntityName}}}CreateBody) => {
       api
         .create({ ...values })
         .then(res => {
@@ -222,7 +227,7 @@ export default function {{{.EntityName}}}Page() {
     };
 
     // 更新
-    const update = (values: EditFormFieldType) => {
+    const update = (values: {{{.EntityName}}}UpdateBody) => {
       api
         .update({ ...editRecord, ...values })
         .then(res => {
@@ -335,7 +340,7 @@ export default function {{{.EntityName}}}Page() {
         <div className="w-full flex flex-row border-b border-b-gray justify-between pb-4 mb-5">
           <Form layout="inline" form={searchForm}>
             {{{- range .Columns }}}
-            <Form.Item label="{{{.ColumnComment}}}" name="{{{.ColumnName}}}">
+            <Form.Item label="{{{.ColumnComment}}}" name="{{{.ColumnName}}}" rules={[{required: true, message: '' }]}>
               <Input
                 placeholder="输入{{{.ColumnComment}}}查询"
                 allowClear
@@ -427,7 +432,6 @@ export default function {{{.EntityName}}}Page() {
         <DatePicker placeholder="请选择{{{.ColumnComment}}}" onChange={onChange} />
         <RangePicker placeholder="请选择{{{.ColumnComment}}}" showTime />
         {{{- else if eq .HtmlType "datetime" }}}
-        <Form.Item label="选择日期">
           <RangePicker
             placeholder="请选择{{{.ColumnComment}}}"
             onChange={onSearchDateChange}
@@ -439,7 +443,6 @@ export default function {{{.EntityName}}}Page() {
             format="YYYY-MM-DD"
             separator="~"
           />
-        </Form.Item>
         {{{- else if eq .HtmlType "imageUpload" }}}
         <Upload
             name="avatar"
