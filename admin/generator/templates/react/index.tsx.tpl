@@ -118,19 +118,14 @@ export default function {{{.EntityName}}}Page() {
     };
 
   // 查询
-  const onSearch = () => {
-      searchForm
-        .validateFields()
-        .then(values => {
-          setParams({
-            ...params,
-            ...values,
-            page: 1,
-            limit: pageLimit
-          });
-        })
-        .catch(err => {
-          console.log(err);
+    const onSearch = () => {
+      const formValues = searchForm.getFieldsValue();
+        setParams({
+          ...params,
+          ...formValues,
+          ...dateFilter,
+          page: 1,
+          limit: pageLimit
         });
     };
 
@@ -340,7 +335,7 @@ export default function {{{.EntityName}}}Page() {
         <div className="w-full flex flex-row border-b border-b-gray justify-between pb-4 mb-5">
           <Form layout="inline" form={searchForm}>
             {{{- range .Columns }}}
-            <Form.Item label="{{{.ColumnComment}}}" name="{{{.ColumnName}}}" rules={[{required: true, message: '' }]}>
+            <Form.Item label="{{{.ColumnComment}}}" name="{{{.ColumnName}}}">
               <Input
                 placeholder="输入{{{.ColumnComment}}}查询"
                 allowClear

@@ -54,7 +54,15 @@
     "db": 0
   },
   "storage": {
-    "upload_directory": "/tmp/goal-upload-files",
-    "upload_image_size": 10485760
+    "driver": "local",
+    "upload_directory": "./tmp/upload",
+    "upload_image_size": 10485760,
+    "public_prefix": "/static/"
+  },
+  "storage_cos": {
+    "secret_id": "",
+    "secret_key": "",
+    "bucket": "",
+    "region": ""
   }
 }

@@ -5,6 +5,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"goal-app/admin/accountuser"
+	"goal-app/admin/attachment"
 	"goal-app/admin/auth"
 	"goal-app/admin/generator"
 	"goal-app/admin/systemconfig"
@@ -26,6 +27,9 @@ func InitAdminRouters(cfg *config.Configuration) *gin.Engine {
 
 	// auth
 	_ = auth.RegisterRoute(route)
+
+	// attachment api
+	_ = attachment.RegisterRoute(route)
 
 	// account api
 	_ = accountuser.RegisterRoute(route)

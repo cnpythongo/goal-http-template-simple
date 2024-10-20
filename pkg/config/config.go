@@ -69,9 +69,18 @@ type (
 	}
 
 	StorageConfig struct {
+		Driver          string `json:"driver"`            // local(本地存储) or cos(腾讯云COS)
 		UploadDirectory string `json:"upload_directory"`  // 文件上传根目录
 		UploadImageSize int64  `json:"upload_image_size"` // 1024 * 1024 * 10  = 10m
 		PublicPrefix    string `json:"public_prefix"`     // 文件访问路径前缀
+	}
+
+	// StorageCOS 腾讯云COS
+	StorageCOS struct {
+		SecretID  string `json:"secret_id"`
+		SecretKey string `json:"secret_key"`
+		Bucket    string `json:"bucket"`
+		Region    string `json:"region"`
 	}
 
 	Configuration struct {
@@ -82,6 +91,7 @@ type (
 		Logger     LoggerConfig  `json:"logger"`
 		Redis      RedisConfig   `json:"redis"`
 		Storage    StorageConfig `json:"storage"`
+		StorageCOS StorageCOS    `json:"storage_cos"` // 腾讯云COS
 	}
 )
 

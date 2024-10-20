@@ -5,8 +5,9 @@ import (
 )
 
 const (
-	OK    = 0
-	Error = 1
+	CustomerError = -1
+	OK            = 0
+	Error         = 1
 
 	UnknownError           = 1000
 	PayloadError           = 1001
@@ -57,7 +58,7 @@ func GetCodeMsg(code int, other interface{}) string {
 		if other == nil {
 			return "unknown error"
 		} else {
-			return other.(string)
+			return other.(error).Error()
 		}
 	}
 	return msg

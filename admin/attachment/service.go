@@ -16,7 +16,7 @@ import (
 )
 
 type IAttachmentService interface {
-	Add(payload AttachmentAddReq, file *multipart.FileHeader) (*AttachmentResp, int, error)
+	Create(c *gin.Context, payload *ReqAttachmentCreate, file *multipart.FileHeader) (*RespAttachment, int, error)
 }
 
 type attachmentService struct {
@@ -27,14 +27,14 @@ func NewAttachmentService() IAttachmentService {
 	return &attachmentService{}
 }
 
-func (svc *attachmentService) Add(payload AttachmentAddReq, file *multipart.FileHeader) (*AttachmentResp, int, error) {
-	res := &AttachmentResp{}
+func (svc *attachmentService) Create(c *gin.Context, payload *ReqAttachmentCreate, file *multipart.FileHeader) (*RespAttachment, int, error) {
+	res := &RespAttachment{}
 	driver, err := storage.NewStorageDriver(config.Cfg.Storage.Driver)
 	if err != nil {
 		return nil, render.CustomerError, err
 	}
 
-	folder := path.Join("attachments", payload.UserUuid)
+	folder := path.Join("attachments", payload.Biz)
 	upFile, err := driver.Upload(file, folder)
 	if err != nil {
 		log.GetLogger().Errorf("attachmentService.Create driver.Upload err=%v", err)
@@ -65,7 +65,7 @@ func (svc *attachmentService) Add(payload AttachmentAddReq, file *multipart.File
 		}
 		err = model.GetDB().Create(&att).Error
 		if err != nil {
-			return res, render.CustomerError, errors.New("创建上传附件记录失败")
+			return res, render.CreateError, errors.New("创建上传附件记录失败")
 		}
 	}
 
